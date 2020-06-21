@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/main.css"/>
+    </head>
+    <body>
+        <div id="lobby" class="lobby gameState active">
+            <h1 class="game-title">Tethered</h1>
+            <div class="lobby__stats">
+                <div class="lobby__stat">Lobby: <span id="lobby-count">0</span></div><br/>
+                <div class="lobby__stat">Rooms: <span id="rooms-count">0</span></div>
+                <div class="lobby__stat">- Players: <span id="rooms-players">0</span></div>
+                <div class="lobby__stat">- Spectators: <span id="rooms-spectators">0</span></div>
+            </div>
+
+            <div id="lobby-menu" class="menu">
+                <div class="lobby__player">
+                    Player Name:
+                    <input id="lobbyPlayerInput" value="Player">
+                </div>
+                <div>
+                    <button id="createRoom">Create Room</button>
+                </div>
+                <div>
+                    <button id="joinRoom">Join Room</button><input id="joinRoomId" type="text"/>
+                    <span id="joinRoomError" class="error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="room-waiting" class="gameState">
+            <h1 class="game-title">Tethered</h1>
+            <div class="room__id">Room Id: <span id="roomId"></span></div>
+            <div id="players" class="room__players clearfix">
+
+            </div>
+            <div class="room__menu">
+                <button id="startGame">Start Game</button>
+            </div>
+        </div>
+
+        <div id="room-game" class="gameState"></div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/phaser@3.0.0/dist/phaser.min.js"></script>
+        <script src="js/game.js"></script>
+    </body>
+</html>
