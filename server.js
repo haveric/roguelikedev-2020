@@ -34,8 +34,10 @@ io.on('connection', function (socket) {
 
     socket.on('createRoom', function(playerName) {
         var roomId = createRoomId();
+        console.log("Room Created: " + roomId);
         rooms[roomId] = {
             roomId: roomId,
+            gameState: "setup",
             players: [],
             spectators: []
         };
@@ -88,13 +90,13 @@ io.on('connection', function (socket) {
                 room.spectators.push(socket.id);
 
                 moveSpectatorToRoom(socket, roomId);
-
-                io.sockets.in("room-" + roomId).emit("roomAddSpectator", room);
             }
 
-            socket.broadcast.emit('lobbyUpdate', lobbyStats);
-
-            socket.emit("roomJoin", room);
+            if (room.gameState == "setup") {
+                socket.emit("roomJoin", room);
+            } else if (room.gameState == "play") {
+                socket.emit("startGame", room);
+            }
 
             socket.join("room-" + roomId);
         }
@@ -133,11 +135,15 @@ io.on('connection', function (socket) {
                 player.ready = data.ready;
 
                 var allPlayersReady = true;
-                for (var i = 0; i < players.length; i++) {
-                    if (players[i].ready == false) {
-                        allPlayersReady = false;
-                        break;
+                if (players.length >= 2) {
+                    for (var i = 0; i < players.length; i++) {
+                        if (players[i].ready == false) {
+                            allPlayersReady = false;
+                            break;
+                        }
                     }
+                } else {
+                    allPlayersReady = false;
                 }
 
                 io.sockets.in("room-" + roomId).emit("roomUpdatePlayer", { player: player, initialPlayerId: players[0].playerId, allPlayersReady: allPlayersReady });
@@ -155,6 +161,8 @@ io.on('connection', function (socket) {
         var players = room.players;
 
         if (players[0].playerId == playerId) {
+            room.gameState = "play";
+
             room.players.forEach(function(player) {
                 player.x = Math.floor(Math.random() * 600) + 100;
                 player.y = Math.floor(Math.random() * 400) + 100;

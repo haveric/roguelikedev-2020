@@ -43,8 +43,11 @@ socket.on('roomJoin', function(room) {
     var roomIdText = document.getElementById("roomId");
     roomIdText.innerText = room.roomId;
 
-    var lobby = document.getElementById("lobby");
-    lobby.classList.remove("active");
+    var gameStates = document.getElementsByClassName("gameState");
+    for (var i = 0; i < gameStates.length; i++) {
+        var gameState = gameStates[i];
+        gameState.classList.remove("active");
+    }
 
     var roomWaiting = document.getElementById("room-waiting");
     roomWaiting.classList.add("active");
@@ -54,10 +57,6 @@ socket.on('roomJoin', function(room) {
 
 socket.on('roomAddPlayer', function(player) {
     addPlayer(player);
-});
-
-socket.on('roomAddSpectator', function(player) {
-    //addPlayer(player);
 });
 
 function updateRoomPlayers(room) {
@@ -280,8 +279,11 @@ function create() {
     this.otherPlayers = this.add.group();
 
     socket.on('startGame', function(room) {
-        var roomWaiting = document.getElementById("room-waiting");
-        roomWaiting.classList.remove("active");
+        var gameStates = document.getElementsByClassName("gameState");
+        for (var i = 0; i < gameStates.length; i++) {
+            var gameState = gameStates[i];
+            gameState.classList.remove("active");
+        }
 
         var roomGame = document.getElementById("room-game");
         roomGame.classList.add("active");
@@ -370,8 +372,10 @@ function update() {
 }
 
 function movePlayer(player, x, y) {
-    player.x += x;
-    player.y += y;
+    if (player) {
+        player.x += x;
+        player.y += y;
 
-    socket.emit('playerMovement', { roomId: roomId, playerId: socket.id, x: player.x, y: player.y });
+        socket.emit('playerMovement', { roomId: roomId, playerId: socket.id, x: player.x, y: player.y });
+    }
 }
