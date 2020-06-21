@@ -44,13 +44,7 @@ io.on('connection', function (socket) {
 
         moveUserToRoomCreate(socket, roomId);
 
-        var newPlayer = {
-            playerId: socket.id,
-            name: playerName,
-            color: "#000000",
-            icon: "@",
-            ready: false
-        }
+        var newPlayer = createNewPlayer(socket, playerName);
         rooms[roomId].players.push(newPlayer);
 
         socket.emit("roomJoin", rooms[roomId]);
@@ -73,13 +67,7 @@ io.on('connection', function (socket) {
             socket.emit("roomJoinFailed", "Room " + roomId + " does not exist.");
         } else {
             if (room.players.length < 2) {
-                var newPlayer = {
-                    playerId: socket.id,
-                    name: playerName,
-                    color: "#000000",
-                    icon: "@",
-                    ready: false
-                }
+                var newPlayer = createNewPlayer(socket, playerName);
                 room.players.push(newPlayer);
 
                 moveUserToRoomJoin(socket, roomId);
@@ -182,19 +170,26 @@ io.on('connection', function (socket) {
         var room = rooms[roomId];
         var players = room.players;
 
-        var player;
+        var updatedPlayer;
         for (var i = 0; i < players.length; i++) {
-            player = players[i];
+            var player = players[i];
 
             if (player.playerId == playerId) {
                 player.x = x;
                 player.y = y;
-                break;
+                updatedPlayer = player;
+
+                player.energy -= 1;
+            } else {
+                if (player.energy < player.energyMax) {
+                    player.energy += 1;
+                }
             }
         }
 
         // emit a message to all players about the player that moved
-        io.sockets.in("room-" + roomId).emit("playerMoved", player);
+        io.sockets.in("room-" + roomId).emit("playerMoved", updatedPlayer);
+        io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
     });
 });
 
@@ -315,4 +310,16 @@ function generateRandomRoomId() {
    }
 
    return roomId;
+}
+
+function createNewPlayer(socket, playerName) {
+    return {
+        playerId: socket.id,
+        name: playerName,
+        color: "#000000",
+        icon: "@",
+        ready: false,
+        energy: 5,
+        energyMax: 10
+    }
 }

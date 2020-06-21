@@ -2,6 +2,8 @@ var socket = io();
 
 var roomId;
 var ready = false;
+var energy = 0;
+var energyMax = 0;
 
 let getSiblings = function (e) {
     // for collecting siblings
@@ -80,6 +82,8 @@ function addPlayer(player) {
 
     var currentPlayer = socket.id == player.playerId;
     if (currentPlayer) {
+        energy = player.energy;
+        energyMax = player.energyMax;
         playerDiv.classList.add("currentPlayer");
         playerName = document.createElement("input");
         playerName.id = "playerNameInput";
@@ -295,6 +299,9 @@ function create() {
                 var text = self.add.text(player.x, player.y, player.icon, style);
 
                 self.player = text;
+
+                var energyStyle = {font: "30px Arial", fill: "#000000" };
+                self.energy = self.add.text(30, 30, "Energy: " + player.energy, energyStyle);
             } else {
                 var style = {font: "30px Arial", fill: player.color };
                 var text = self.add.text(player.x, player.y, player.icon, style);
@@ -305,10 +312,6 @@ function create() {
         });
     });
 
-    socket.on('playerMoved', function(data) {
-
-    });
-
     var canMoveLeft = true;
     var canMoveRight = true;
     var canMoveUp = true;
@@ -316,7 +319,7 @@ function create() {
     //  Left
     this.input.keyboard.on('keydown_A', function (event) {
         if (canMoveLeft) {
-            movePlayer(self.player, -32, 0);
+            movePlayer(self, self.player, -32, 0);
             canMoveLeft = false;
         }
     });
@@ -327,7 +330,7 @@ function create() {
     //  Right
     this.input.keyboard.on('keydown_D', function (event) {
         if (canMoveRight) {
-            movePlayer(self.player, 32, 0);
+            movePlayer(self, self.player, 32, 0);
             canMoveRight = false;
         }
     });
@@ -338,7 +341,7 @@ function create() {
     //  Up
     this.input.keyboard.on('keydown_W', function (event) {
         if (canMoveUp) {
-            movePlayer(self.player, 0, -32);
+            movePlayer(self, self.player, 0, -32);
             canMoveUp = false;
         }
     });
@@ -349,7 +352,7 @@ function create() {
     //  Down
     this.input.keyboard.on('keydown_S', function (event) {
         if (canMoveDown) {
-            movePlayer(self.player, 0, 32);
+            movePlayer(self, self.player, 0, 32);
             canMoveDown = false;
         }
     });
@@ -365,16 +368,30 @@ function create() {
             }
         });
     });
+
+    socket.on('updatePlayerData', function (players) {
+        for (var i = 0; i < players.length; i++) {
+            var player = players[i];
+            if (player.playerId == socket.id) {
+                energy = player.energy;
+                self.energy.setText("Energy: " + energy);
+                break;
+            }
+        }
+    });
 }
 
 function update() {
 
 }
 
-function movePlayer(player, x, y) {
-    if (player) {
+function movePlayer(self, player, x, y) {
+    if (player && energy > 0) {
         player.x += x;
         player.y += y;
+
+        energy -= 1;
+        self.energy.setText("Energy: " + energy);
 
         socket.emit('playerMovement', { roomId: roomId, playerId: socket.id, x: player.x, y: player.y });
     }
