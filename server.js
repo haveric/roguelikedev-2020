@@ -14,7 +14,6 @@ var lobbyStats = {
 var lobby = {
     users: { }
 };
-var players = {};
 
 app.use(express.static(__dirname + '/public'));
 
@@ -25,27 +24,12 @@ app.get('/', function (req, res) {
 io.on('connection', function (socket) {
     console.log('User connected: ' + socket.id);
 
-    lobby.users[socket.id] = {
-        userId: socket.id
-    }
-
-    lobbyStats.numUsers += 1;
-
-
-    socket.emit('lobbyUpdate', lobbyStats);
-    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    addUserToLobby(socket);
 
     socket.on('disconnect', function () {
         console.log('User disconnected: ' + socket.id);
 
-        // remove this player from our players object
-        delete lobby.users[socket.id];
-        lobbyStats.numUsers -= 1;
-
-        socket.broadcast.emit('lobbyUpdate', lobbyStats);
-
-        // emit a message to all players to remove this player
-        //io.emit('disconnect', socket.id);
+        removeUserFromLobby(socket);
     });
 
     socket.on('createRoom', function(playerName) {
@@ -56,11 +40,7 @@ io.on('connection', function (socket) {
             spectators: []
         };
 
-        lobbyStats.numRooms += 1;
-        lobbyStats.playersInRooms += 1;
-
-        socket.emit('lobbyUpdate', lobbyStats);
-        socket.broadcast.emit('lobbyUpdate', lobbyStats);
+        moveUserToRoomCreate(socket, roomId);
 
         var newPlayer = {
             playerId: socket.id,
@@ -99,13 +79,15 @@ io.on('connection', function (socket) {
                     ready: false
                 }
                 room.players.push(newPlayer);
-                lobbyStats.playersInRooms += 1;
+
+                moveUserToRoomJoin(socket, roomId);
 
                 io.sockets.in("room-" + roomId).emit("roomAddPlayer", newPlayer);
                 io.sockets.in("room-" + roomId).emit("roomUpdatePlayer", { initialPlayerId: room.players[0].playerId, allPlayersReady: false });
             } else {
                 room.spectators.push(socket.id);
-                lobbyStats.spectatorsInRooms += 1;
+
+                moveSpectatorToRoom(socket, roomId);
 
                 io.sockets.in("room-" + roomId).emit("roomAddSpectator", room);
             }
@@ -211,6 +193,98 @@ io.on('connection', function (socket) {
 server.listen(8081, function () {
     console.log(`Listening on ${server.address().port}`);
 });
+
+function addUserToLobby(socket) {
+    lobby.users[socket.id] = {
+        userId: socket.id
+    }
+
+    lobbyStats.numUsers += 1;
+
+    socket.emit('lobbyUpdate', lobbyStats);
+    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+}
+
+function removeUserFromLobby(socket) {
+    var user = lobby.users[socket.id];
+    if (user.roomId) {
+        lobbyStats.playersInRooms -= 1;
+
+        var room = rooms[user.roomId];
+        var indexToDelete = -1;
+        for (var i = 0; i < room.players.length; i++) {
+            var player = room.players[i];
+            if (player.playerId == socket.id) {
+                indexToDelete = i;
+                break;
+            }
+        }
+
+        if (indexToDelete != -1) {
+            room.players.splice(indexToDelete, 1);
+        }
+
+        killRoom(socket, user.roomId);
+    } else if (user.spectatorRoomId) {
+        lobbyStats.spectatorsInRooms -= 1;
+
+        var room = rooms[user.spectatorRoomId];
+        var indexToDelete = -1;
+        for (var i = 0; i < room.spectators.length; i++) {
+            var player = room.spectators[i];
+            if (player.playerId == socket.id) {
+                indexToDelete = i;
+                break;
+            }
+        }
+
+        if (indexToDelete != -1) {
+            room.spectators.splice(indexToDelete, 1);
+        }
+
+        killRoom(socket, user.spectatorRoomId);
+    } else {
+        lobbyStats.numUsers -= 1;
+    }
+
+    delete lobby.users[socket.id];
+    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+}
+
+function moveUserToRoomCreate(socket, roomId) {
+    lobbyStats.numRooms += 1;
+
+    moveUserToRoomJoin(socket, roomId);
+}
+
+function moveUserToRoomJoin(socket, roomId) {
+    lobbyStats.numUsers -= 1;
+    lobbyStats.playersInRooms += 1;
+
+    lobby.users[socket.id].roomId = roomId;
+
+    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+}
+
+function moveSpectatorToRoom(socket, roomId) {
+    lobbyStats.numUsers -= 1;
+    lobbyStats.spectatorsInRooms += 1;
+
+    lobby.users[socket.id].spectatorRoomId = roomId;
+
+    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+}
+
+function killRoom(socket, roomId) {
+    var room = rooms[roomId];
+
+    if (room.players.length == 0 && room.spectators.length == 0) {
+        delete rooms[roomId];
+        lobbyStats.numRooms -= 1;
+
+        socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    }
+}
 
 function createRoomId() {
     var roomId;
