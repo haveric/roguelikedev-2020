@@ -5,26 +5,6 @@ var ready = false;
 var energy = 0;
 var energyMax = 0;
 
-let getSiblings = function (e) {
-    // for collecting siblings
-    let siblings = [];
-    // if no parent, return no sibling
-    if(!e.parentNode) {
-        return siblings;
-    }
-    // first child of the parent node
-    let sibling  = e.parentNode.firstChild;
-
-    // collecting siblings
-    while (sibling) {
-        if (sibling.nodeType === 1 && sibling !== e) {
-            siblings.push(sibling);
-        }
-        sibling = sibling.nextSibling;
-    }
-    return siblings;
-};
-
 socket.on('lobbyUpdate', function(lobbyStats) {
     var lobbyCount = document.getElementById("lobby-count");
     lobbyCount.innerText = lobbyStats.numUsers;
@@ -312,52 +292,64 @@ function create() {
         });
     });
 
-    var canMoveLeft = true;
-    var canMoveRight = true;
-    var canMoveUp = true;
-    var canMoveDown = true;
-    //  Left
-    this.input.keyboard.on('keydown_A', function (event) {
-        if (canMoveLeft) {
-            movePlayer(self, self.player, -32, 0);
-            canMoveLeft = false;
+    var keysDown = [];
+    this.input.keyboard.on('keydown', function(event) {
+        if (!keysDown[event.code]) {
+            switch (event.code) {
+                // Left
+                case "KeyA":
+                case "ArrowLeft":
+                case "Numpad4":
+                    movePlayer(self, self.player, -32, 0);
+                    break;
+                // Right
+                case "KeyD":
+                case "ArrowRight":
+                case "Numpad6":
+                    movePlayer(self, self.player, 32, 0);
+                    break;
+                // Up
+                case "KeyW":
+                case "ArrowUp":
+                case "Numpad8":
+                    movePlayer(self, self.player, 0, -32);
+                    break;
+                // Down
+                case "KeyS":
+                case "ArrowDown":
+                case "Numpad2":
+                    movePlayer(self, self.player, 0, 32);
+                    break;
+                // Northwest
+                case "Numpad7":
+                    movePlayer(self, self.player, -32, -32);
+                    break;
+                // Northeast
+                case "Numpad9":
+                    movePlayer(self, self.player, 32, -32);
+                    break;
+                // Southwest
+                case "Numpad1":
+                    movePlayer(self, self.player, -32, 32);
+                    break;
+                // Southeast
+                case "Numpad3":
+                    movePlayer(self, self.player, 32, 32);
+                    break;
+                // Wait
+                case "Numpad5":
+                    movePlayer(self, self.player, 0, 0);
+                    break;
+                default:
+                    break;
+            }
         }
-    });
-    this.input.keyboard.on('keyup_A', function (event) {
-        canMoveLeft = true;
+
+        keysDown[event.code] = 1;
     });
 
-    //  Right
-    this.input.keyboard.on('keydown_D', function (event) {
-        if (canMoveRight) {
-            movePlayer(self, self.player, 32, 0);
-            canMoveRight = false;
-        }
-    });
-    this.input.keyboard.on('keyup_D', function (event) {
-        canMoveRight = true;
-    });
-
-    //  Up
-    this.input.keyboard.on('keydown_W', function (event) {
-        if (canMoveUp) {
-            movePlayer(self, self.player, 0, -32);
-            canMoveUp = false;
-        }
-    });
-    this.input.keyboard.on('keyup_W', function (event) {
-        canMoveUp = true;
-    });
-
-    //  Down
-    this.input.keyboard.on('keydown_S', function (event) {
-        if (canMoveDown) {
-            movePlayer(self, self.player, 0, 32);
-            canMoveDown = false;
-        }
-    });
-    this.input.keyboard.on('keyup_S', function (event) {
-        canMoveDown = true;
+    this.input.keyboard.on('keyup', function(event) {
+        keysDown[event.code] = 0;
     });
 
     socket.on('playerMoved', function (playerInfo) {
