@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
+var create2dArray = require('./utils.js').create2dArray;
+var getRandomInt = require('./utils.js').getRandomInt;
 
 var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var rooms = {};
@@ -151,9 +153,11 @@ io.on('connection', function (socket) {
         if (players[0].playerId == playerId) {
             room.gameState = "play";
 
+            room.map = createMap();
+
             room.players.forEach(function(player) {
-                player.x = Math.floor(Math.random() * 600) + 100;
-                player.y = Math.floor(Math.random() * 400) + 100;
+                player.tileX = getRandomInt(1, room.map.rows - 2);
+                player.tileY = getRandomInt(1, room.map.cols - 2);
             });
 
             io.sockets.in("room-" + roomId).emit("startGame", room);
@@ -166,6 +170,8 @@ io.on('connection', function (socket) {
         var playerId = data.playerId;
         var x = data.x;
         var y = data.y;
+        var tileX = data.tileX;
+        var tileY = data.tileY;
 
         var room = rooms[roomId];
         var players = room.players;
@@ -177,6 +183,8 @@ io.on('connection', function (socket) {
             if (player.playerId == playerId) {
                 player.x = x;
                 player.y = y;
+                player.tileX = tileX;
+                player.tileY = tileY;
                 updatedPlayer = player;
 
                 player.energy -= 1;
@@ -316,10 +324,42 @@ function createNewPlayer(socket, playerName) {
     return {
         playerId: socket.id,
         name: playerName,
-        color: "#000000",
-        icon: "@",
+        color: "000000",
+        icon: 64,
         ready: false,
         energy: 5,
         energyMax: 10
     }
+}
+
+function createMap() {
+    var rows = 20;
+    var cols = 20;
+    var map = {
+        rows: rows,
+        cols: cols,
+        tiles: create2dArray(rows)
+    }
+
+    for (var i = 0; i < map.rows; i++) {
+        for (var j = 0; j < map.cols; j++) {
+            if (i == 0 || i == map.rows - 1 || j == 0 || j == map.cols - 1) {
+                map.tiles[i][j] = {
+                    icon: 35,
+                    color: "666666",
+                    bgIcon: 219,
+                    bgColor: "333333",
+                    blocked: true
+                }
+            } else {
+                map.tiles[i][j] = {
+                    bgIcon: 219,
+                    bgColor: "999999",
+                    blocked: false
+                }
+            }
+        }
+    }
+
+    return map;
 }

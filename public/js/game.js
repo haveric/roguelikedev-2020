@@ -82,7 +82,7 @@ function addPlayer(player) {
 
     var playerIcon = document.createElement("div");
     playerIcon.classList.add("room__player-icon");
-    playerIcon.style.color = player.color;
+    playerIcon.style.color = "#" + player.color;
     playerIcon.innerText = player.icon;
 
 
@@ -106,7 +106,7 @@ function addPlayer(player) {
             var playerColor = document.createElement("div");
             playerColor.classList.add("room__player-color");
 
-            if (player.color == color) {
+            if (player.color == color.substring(1)) {
                 playerColor.classList.add("active");
             }
             playerColor.style.backgroundColor = color;
@@ -114,7 +114,7 @@ function addPlayer(player) {
 
             playerColor.addEventListener("click", function() {
                 if (!ready) {
-                    socket.emit("roomUpdatePlayer", { roomId: roomId, playerId: socket.id, color: color });
+                    socket.emit("roomUpdatePlayer", { roomId: roomId, playerId: socket.id, color: color.substring(1) });
 
                     this.classList.add("active");
                     var siblings = getSiblings(this);
@@ -205,7 +205,7 @@ socket.on('roomUpdatePlayer', function(data) {
                 playerName.innerText = data.player.name;
 
                 var playerName = player.getElementsByClassName("room__player-icon")[0];
-                playerName.style.color = data.player.color;
+                playerName.style.color = "#" + data.player.color;
 
                 var playerReady = player.getElementsByClassName("player-ready")[0];
                 playerReady.checked = data.player.ready;
@@ -244,7 +244,7 @@ var config = {
     width: 800,
     height: 600,
     pixelArt: true,
-    backgroundColor: "#ccc",
+    backgroundColor: "#000000",
     scene: {
         preload: preload,
         create: create,
@@ -253,16 +253,46 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+var spriteSheetSize = 24;
+
 
 function preload() {
-    //this.load.image('transparent', 'assets/transparent.png');
+    //this.load.image('tilemap', 'assets/Curses_square_24.png');
+    this.load.spritesheet('tilemap', 'assets/Curses_square_24.png', {
+        frameWidth: 24,
+        frameHeight: 24
+    });
 }
 
 function create() {
     var self = this;
     this.otherPlayers = this.add.group();
+    self.mapOffsetWidth = 400;
+    self.mapOffsetHeight = 300;
 
     socket.on('startGame', function(room) {
+        self.map = room.map;
+
+        for (var i = 0; i < self.map.rows; i++) {
+            for (var j = 0; j < self.map.cols; j++) {
+                var tile = self.map.tiles[i][j];
+                if (tile.bgIcon) {
+                    var spriteBG = self.add.sprite(self.mapOffsetWidth + (i * spriteSheetSize), self.mapOffsetHeight + (j * spriteSheetSize), "tilemap").setOrigin(0, 0);
+                    spriteBG.setFrame(tile.bgIcon);
+                    spriteBG.setTint("0x" + tile.bgColor);
+                    tile.spriteBG = spriteBG;
+                }
+
+                if (tile.icon) {
+                    var sprite = self.add.sprite(self.mapOffsetWidth + (i * spriteSheetSize), self.mapOffsetHeight + (j * spriteSheetSize), "tilemap").setOrigin(0, 0);
+                    sprite.setFrame(tile.icon);
+                    sprite.setTint("0x" + tile.color);
+
+                    tile.sprite = sprite;
+                }
+            }
+        }
+
         var gameStates = document.getElementsByClassName("gameState");
         for (var i = 0; i < gameStates.length; i++) {
             var gameState = gameStates[i];
@@ -275,19 +305,27 @@ function create() {
         Object.keys(room.players).forEach(function(index) {
             var player = room.players[index];
             if (player.playerId == socket.id) {
-                var style = {font: "30px Arial", fill: player.color };
-                var text = self.add.text(player.x, player.y, player.icon, style);
+                var sprite = self.add.sprite(self.mapOffsetWidth + (player.tileX * spriteSheetSize), self.mapOffsetHeight + (player.tileY * spriteSheetSize), "tilemap").setOrigin(0, 0);
+                sprite.setFrame(player.icon);
+                sprite.setTint("0x" + player.color);
 
-                self.player = text;
+                self.player = sprite;
+                self.player.tileX = player.tileX;
+                self.player.tileY = player.tileY;
 
-                var energyStyle = {font: "30px Arial", fill: "#000000" };
+                var energyStyle = {font: "30px Arial", fill: "#ffff00" };
                 self.energy = self.add.text(30, 30, "Energy: " + player.energy, energyStyle);
-            } else {
-                var style = {font: "30px Arial", fill: player.color };
-                var text = self.add.text(player.x, player.y, player.icon, style);
-                text.playerId = player.playerId;
+                self.energy.setScrollFactor(0,0);
 
-                self.otherPlayers.add(text);
+                self.cameras.main.setBounds(0, 0, self.displayWidth, self.displayHeight);
+                self.cameras.main.startFollow(self.player);
+            } else {
+                var sprite = self.add.sprite(self.mapOffsetWidth + (player.tileX * spriteSheetSize), self.mapOffsetHeight + (player.tileY * spriteSheetSize), "tilemap").setOrigin(0, 0);
+                sprite.setFrame(player.icon);
+                sprite.setTint("0x" + player.color);
+                sprite.playerId = player.playerId;
+
+                self.otherPlayers.add(sprite);
             }
         });
     });
@@ -300,41 +338,41 @@ function create() {
                 case "KeyA":
                 case "ArrowLeft":
                 case "Numpad4":
-                    movePlayer(self, self.player, -32, 0);
+                    movePlayer(self, self.player, -1, 0);
                     break;
                 // Right
                 case "KeyD":
                 case "ArrowRight":
                 case "Numpad6":
-                    movePlayer(self, self.player, 32, 0);
+                    movePlayer(self, self.player, 1, 0);
                     break;
                 // Up
                 case "KeyW":
                 case "ArrowUp":
                 case "Numpad8":
-                    movePlayer(self, self.player, 0, -32);
+                    movePlayer(self, self.player, 0, -1);
                     break;
                 // Down
                 case "KeyS":
                 case "ArrowDown":
                 case "Numpad2":
-                    movePlayer(self, self.player, 0, 32);
+                    movePlayer(self, self.player, 0, 1);
                     break;
                 // Northwest
                 case "Numpad7":
-                    movePlayer(self, self.player, -32, -32);
+                    movePlayer(self, self.player, -1, -1);
                     break;
                 // Northeast
                 case "Numpad9":
-                    movePlayer(self, self.player, 32, -32);
+                    movePlayer(self, self.player, 1, -1);
                     break;
                 // Southwest
                 case "Numpad1":
-                    movePlayer(self, self.player, -32, 32);
+                    movePlayer(self, self.player, -1, 1);
                     break;
                 // Southeast
                 case "Numpad3":
-                    movePlayer(self, self.player, 32, 32);
+                    movePlayer(self, self.player, 1, 1);
                     break;
                 // Wait
                 case "Numpad5":
@@ -379,12 +417,21 @@ function update() {
 
 function movePlayer(self, player, x, y) {
     if (player && energy > 0) {
-        player.x += x;
-        player.y += y;
+        var newXTile = self.map.tiles[player.tileX + x];
+        if (newXTile) {
+            var newXYTile = newXTile[player.tileY + y];
+            if (newXYTile && !newXYTile.blocked) {
+                player.tileX += x;
+                player.tileY += y;
 
-        energy -= 1;
-        self.energy.setText("Energy: " + energy);
+                player.x += (x * spriteSheetSize);
+                player.y += (y * spriteSheetSize);
 
-        socket.emit('playerMovement', { roomId: roomId, playerId: socket.id, x: player.x, y: player.y });
+                energy -= 1;
+                self.energy.setText("Energy: " + energy);
+
+                socket.emit('playerMovement', { roomId: roomId, playerId: socket.id, x: player.x, y: player.y, tileX: player.tileX, tileY: player.tileY });
+            }
+        }
     }
 }
