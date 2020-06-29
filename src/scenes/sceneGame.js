@@ -1,3 +1,5 @@
+var getFrameOf = require('../../utils.js').getFrameOf;
+
 export class SceneGame extends Phaser.Scene {
     constructor() {
         super('SceneGame');
@@ -167,28 +169,6 @@ export class SceneGame extends Phaser.Scene {
             }
         });
     }
-}
-
-var getFrameOf = function(scene, sprite, iconFallback, bgIcon) {
-    var frame = null;
-    var bgFrame = null;
-    var drawBackground = true;
-    if (scene.tilemap.tiles[sprite]) {
-        frame = scene.tilemap.tiles[sprite];
-        drawBackground = false;
-    } else if (scene.tilemap.tiles[iconFallback]) {
-        frame = scene.tilemap.tiles[iconFallback];
-    }
-
-    if (drawBackground && scene.tilemap.tiles[bgIcon]) {
-        bgFrame = scene.tilemap.tiles[bgIcon];
-    }
-
-    if (frame == null && bgFrame == null) {
-        console.log("Tilemap missing sprites! " + sprite + ", " + iconFallback + ", " + bgIcon);
-    }
-
-    return {frame: frame, bgFrame: bgFrame };
 }
 
 var movePlayer = function(self, player, x, y) {

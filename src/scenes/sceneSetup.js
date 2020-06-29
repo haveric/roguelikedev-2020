@@ -1,3 +1,6 @@
+var getFrameOf = require('../../utils.js').getFrameOf;
+var hexToRgb = require('../../utils.js').hexToRgb;
+
 export class SceneSetup extends Phaser.Scene {
     constructor() {
         super('SceneSetup');
@@ -93,28 +96,6 @@ export class SceneSetup extends Phaser.Scene {
             self.scene.start('SceneGame', {room: room, socket: this});
         });
     }
-}
-
-var getFrameOf = function(scene, sprite, iconFallback, bgIcon) {
-    var frame = null;
-    var bgFrame = null;
-    var drawBackground = true;
-    if (scene.tilemap.tiles[sprite]) {
-        frame = scene.tilemap.tiles[sprite];
-        drawBackground = false;
-    } else if (scene.tilemap.tiles[iconFallback]) {
-        frame = scene.tilemap.tiles[iconFallback];
-    }
-
-    if (drawBackground && scene.tilemap.tiles[bgIcon]) {
-        bgFrame = scene.tilemap.tiles[bgIcon];
-    }
-
-    if (frame == null && bgFrame == null) {
-        console.log("Tilemap missing sprites! " + sprite + ", " + iconFallback + ", " + bgIcon);
-    }
-
-    return {frame: frame, bgFrame: bgFrame };
 }
 
 var createPlayerLoaders = function(scene, numPlayers) {
@@ -400,15 +381,6 @@ var createColorPickerDialog = function (scene, player) {
     mainPanel.setDepth(1000);
     return mainPanel;
 };
-
-var hexToRgb = function(hex) {
-    var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
-}
 
 var createController = function (scene, color) {
     var convertedColor = hexToRgb(color);
