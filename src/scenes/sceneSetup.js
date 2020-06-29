@@ -187,7 +187,7 @@ var createPlayerSelector = function(scene, index, player) {
 
     var isCurrentPlayer = player.playerId == scene.socket.id;
     if (isCurrentPlayer) {
-        var playerNameField = scene.rexUI.add.label({
+        scene.playerNameField = scene.rexUI.add.label({
             orientation: 'x',
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10).setStrokeStyle(2, 0x7b5e57),
             text: scene.rexUI.add.BBCodeText(0, 0, player.name, { fixedWidth: 180, fixedHeight: 36, valign: 'center' }),
@@ -196,15 +196,17 @@ var createPlayerSelector = function(scene, index, player) {
         .on('pointerdown', function () {
             var config = {
                 onTextChanged: function(textObject, text) {
-                    player.name = text;
-                    textObject.text = text;
-                    scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
+                    if (!scene.ready) {
+                        player.name = text;
+                        textObject.text = text;
+                        scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
+                    }
                 }
             }
-            scene.rexUI.edit(playerNameField.getElement('text'), config);
+            scene.rexUI.edit(scene.playerNameField.getElement('text'), config);
         });
 
-        playerSelector.add(playerNameField, 0, 'left', { top: 10, bottom: 10, left: 10, right: 10 }, true)
+        playerSelector.add(scene.playerNameField, 0, 'left', { top: 10, bottom: 10, left: 10, right: 10 }, true)
     } else {
         var playerField = scene.add.text(0, 0, player.name);
         playerSelector.add(playerField, 0, 'left', { top: 26, bottom: 20, left: 15, right: 10 }, false);
@@ -234,14 +236,16 @@ var createPlayerSelector = function(scene, index, player) {
         buttonOptions.add(scene.colorPicker);
 
         scene.colorPicker.setInteractive().on('pointerdown', function(pointer, localX, localY, event) {
-            if (scene.colorPickerDialog) {
-                if (scene.rexUI.isShown(scene.colorPickerDialog)) {
-                    scene.rexUI.hide(scene.colorPickerDialog);
+            if (!scene.ready) {
+                if (scene.colorPickerDialog) {
+                    if (scene.rexUI.isShown(scene.colorPickerDialog)) {
+                        scene.rexUI.hide(scene.colorPickerDialog);
+                    } else {
+                        scene.rexUI.show(scene.colorPickerDialog);
+                    }
                 } else {
-                    scene.rexUI.show(scene.colorPickerDialog);
+                    scene.colorPickerDialog = createColorPickerDialog(scene, player);
                 }
-            } else {
-                scene.colorPickerDialog = createColorPickerDialog(scene, player);
             }
         });
 
@@ -266,8 +270,26 @@ var createPlayerSelector = function(scene, index, player) {
         type: ((CheckboxesMode) ? 'checkboxes' : 'radio'),
         setValueCallback: function (button, value) {
             if (isCurrentPlayer) {
+                scene.ready = value;
                 button.getElement('icon').setFillStyle((value) ? COLOR_LIGHT : undefined);
                 scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, ready: value });
+
+                if (value) {
+                    scene.playerNameField.off('pointerdown');
+                } else {
+                    scene.playerNameField.on('pointerdown', function () {
+                        var config = {
+                            onTextChanged: function(textObject, text) {
+                                if (!scene.ready) {
+                                    player.name = text;
+                                    textObject.text = text;
+                                    scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
+                                }
+                            }
+                        }
+                        scene.rexUI.edit(scene.playerNameField.getElement('text'), config);
+                    });
+                }
             }
         }
     });
