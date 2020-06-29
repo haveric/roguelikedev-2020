@@ -257,6 +257,10 @@ var createPlayerSelector = function(scene, index, player) {
 
                 if (value) {
                     scene.playerNameField.off('pointerdown');
+
+                    if (scene.colorPickerDialog && scene.rexUI.isShown(scene.colorPickerDialog)) {
+                        scene.rexUI.hide(scene.colorPickerDialog);
+                    }
                 } else {
                     scene.playerNameField.on('pointerdown', function () {
                         var config = {
