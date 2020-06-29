@@ -17,7 +17,7 @@ var lobby = {
     users: { }
 };
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/src'));
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
@@ -50,7 +50,6 @@ io.on('connection', function (socket) {
         rooms[roomId].players.push(newPlayer);
 
         socket.emit("roomJoin", rooms[roomId]);
-
         socket.join("room-" + roomId);
     });
 
@@ -313,7 +312,7 @@ function createRoomId() {
 
 function generateRandomRoomId() {
    var roomId = "";
-   for (var i = 0; i < 6; i++) {
+   for (var i = 0; i < 4; i++) {
        roomId += characters.charAt(Math.floor(Math.random() * characters.length));
    }
 
@@ -325,7 +324,8 @@ function createNewPlayer(socket, playerName) {
         playerId: socket.id,
         name: playerName,
         color: "000000",
-        icon: 64,
+        sprite: "player",
+        icon: "@",//64,
         ready: false,
         energy: 5,
         energyMax: 10
@@ -345,15 +345,17 @@ function createMap() {
         for (var j = 0; j < map.cols; j++) {
             if (i == 0 || i == map.rows - 1 || j == 0 || j == map.cols - 1) {
                 map.tiles[i][j] = {
-                    icon: 35,
+                    sprite: "floor",
+                    icon: ".",
                     color: "666666",
-                    bgIcon: 219,
+                    bgIcon: "█",
                     bgColor: "333333",
                     blocked: true
                 }
             } else {
                 map.tiles[i][j] = {
-                    bgIcon: 219,
+                    sprite: "wall",
+                    bgIcon: "█",
                     bgColor: "999999",
                     blocked: false
                 }

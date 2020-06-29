@@ -4,7 +4,7 @@ var roomId;
 var ready = false;
 var energy = 0;
 var energyMax = 0;
-
+/*
 socket.on('lobbyUpdate', function(lobbyStats) {
     var lobbyCount = document.getElementById("lobby-count");
     lobbyCount.innerText = lobbyStats.numUsers;
@@ -18,7 +18,8 @@ socket.on('lobbyUpdate', function(lobbyStats) {
     var roomsSpectators = document.getElementById("rooms-spectators");
     roomsSpectators.innerText = lobbyStats.spectatorsInRooms;
 });
-
+*/
+/*
 socket.on('roomJoin', function(room) {
     roomId = room.roomId;
 
@@ -36,11 +37,10 @@ socket.on('roomJoin', function(room) {
 
     updateRoomPlayers(room);
 });
+*/
 
-socket.on('roomAddPlayer', function(player) {
-    addPlayer(player);
-});
 
+/*
 function updateRoomPlayers(room) {
     var players = document.getElementById("players");
     players.innerHtml = "";
@@ -50,6 +50,7 @@ function updateRoomPlayers(room) {
         addPlayer(player);
     }
 }
+*/
 
 function addPlayer(player) {
     var players = document.getElementById("players");
@@ -163,71 +164,6 @@ function addPlayer(player) {
     players.appendChild(playerDiv);
 }
 
-socket.on('roomJoinFailed', function(message) {
-    var joinRoomError = document.getElementById("joinRoomError");
-    joinRoomError.innerText = message;
-});
-
-var lobbyPlayerInput = document.getElementById("lobbyPlayerInput");
-lobbyPlayerInput.addEventListener("input", function() {
-    localStorage.setItem('playerName', lobbyPlayerInput.value);
-});
-
-var createRoomButton = document.getElementById("createRoom");
-createRoomButton.addEventListener("click", function() {
-    var playerName = document.getElementById("lobbyPlayerInput").value;
-    socket.emit('createRoom', playerName);
-});
-
-var joinRoomButton = document.getElementById("joinRoom");
-joinRoomButton.addEventListener("click", function() {
-    var playerName = document.getElementById("lobbyPlayerInput").value;
-    var roomIdInput = document.getElementById("joinRoomId");
-    var roomId = roomIdInput.value;
-    socket.emit('joinRoom', { roomId: roomId, playerName: playerName } );
-});
-
-var initialPlayerName = localStorage.getItem("playerName");
-if (initialPlayerName) {
-    lobbyPlayerInput.value = initialPlayerName;
-}
-
-socket.on('roomUpdatePlayer', function(data) {
-    var players = document.getElementsByClassName("room__player");
-
-    if (data.player && data.player.playerId != socket.id) {
-        var playerId = data.player.playerId;
-
-        for (i = 0; i < players.length; i++) {
-            var player = players[i];
-            if (player.getAttribute("data-player") == playerId) {
-                var playerName = player.getElementsByClassName("room__player-name")[0];
-                playerName.innerText = data.player.name;
-
-                var playerName = player.getElementsByClassName("room__player-icon")[0];
-                playerName.style.color = "#" + data.player.color;
-
-                var playerReady = player.getElementsByClassName("player-ready")[0];
-                playerReady.checked = data.player.ready;
-
-                break;
-            }
-        }
-    }
-
-    if (data.allPlayersReady != null) {
-        if (data.initialPlayerId == socket.id) {
-            var roomWaiting = document.getElementById("room-waiting");
-            var roomMenu = roomWaiting.getElementsByClassName("room__menu")[0];
-
-            if (data.allPlayersReady) {
-                roomMenu.classList.add("active");
-            } else {
-                roomMenu.classList.remove("active");
-            }
-        }
-    }
-});
 
 var startGame = document.getElementById("startGame");
 startGame.addEventListener("click", function() {
@@ -257,7 +193,6 @@ var spriteSheetSize = 24;
 
 
 function preload() {
-    //this.load.image('tilemap', 'assets/Curses_square_24.png');
     this.load.spritesheet('tilemap', 'assets/Curses_square_24.png', {
         frameWidth: 24,
         frameHeight: 24
