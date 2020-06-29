@@ -1,6 +1,6 @@
 # Tethered
 
-####Build Instructions
+#### Build Instructions
 - Install Node from `https://nodejs.org`
 - Run `npm i`
 
