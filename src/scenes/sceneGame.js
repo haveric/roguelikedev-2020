@@ -1,5 +1,5 @@
 import Engine from '../engine.js';
-import { createTestMap, generateDungeon } from '../procgen.js';
+import { createTestMap, generateDungeonSimple, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
 import Sprite from '../sprite.js';
 import EventHandler from '../eventHandler.js';
@@ -40,7 +40,6 @@ export class SceneGame extends Phaser.Scene {
 
         this.eventHandler = new EventHandler(this.input.keyboard);
 
-
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
             if (player.playerId == self.socket.id) {
@@ -56,10 +55,22 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
+        var isHost = self.room.players[0].playerId == self.socket.id;
+
         //this.gameMap = createTestMap(20, 20, self.entities);
-        this.gameMap = generateDungeon(80, 50, self.entities);
+        //this.gameMap = generateDungeonSimple(80, 50, self.entities);
+        this.gameMap = generateDungeon(30, 6, 10, 80, 50, self.entities, self.player, self.otherPlayers);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
+
+        if (isHost) {
+            //self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
+
+            for (var i = 0; i < self.otherPlayers.length; i++) {
+                var otherPlayer = self.otherPlayers[i];
+                //self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: otherPlayer.playerId, x: otherPlayer.x, y: otherPlayer.y });
+            }
+        }
 
         if (self.player) {
             var energyStyle = {font: "30px Arial", fill: "#ffff00" };
@@ -88,7 +99,7 @@ export class SceneGame extends Phaser.Scene {
         self.cameras.main.setBounds(0, 0, self.displayWidth, self.displayHeight);
         self.cameras.main.startFollow(objectToFollow);
 
-        self.socket.on('playerMoved', function (playerInfo) {
+        self.socket.on('otherPlayerMoved', function (playerInfo) {
             for (var i = 0; i < self.otherPlayers.length; i++) {
                 var otherPlayer = self.otherPlayers[i];
                 if (playerInfo.playerId === otherPlayer.playerId) {

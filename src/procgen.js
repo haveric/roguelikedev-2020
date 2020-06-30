@@ -48,7 +48,7 @@ export function createTestMap(width, height, entities) {
     return dungeon;
 }
 
-export function generateDungeon(width, height, entities) {
+export function generateDungeonSimple(width, height, entities) {
     var dungeon = new GameMap(width, height, entities);
 
     var room1 = new RectangularRoom(10, 5, 10, 15);
@@ -79,6 +79,72 @@ export function generateDungeon(width, height, entities) {
     var room1Center = room1.center();
     var room2Center = room2.center();
     tunnelBetween(dungeon, room1Center.x, room1Center.y, room2Center.x, room2Center.y);
+
+    return dungeon;
+}
+
+export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, height, entities, player, otherPlayers) {
+    var dungeon = new GameMap(width, height, entities);
+
+    var rooms = [];
+
+    for (var i = 0; i < maxRooms; i++) {
+        var roomWidth = getRandomInt(roomMinSize, roomMaxSize);
+        var roomHeight = getRandomInt(roomMinSize, roomMaxSize);
+
+        var x = getRandomInt(0, dungeon.width - roomWidth - 1);
+        var y = getRandomInt(0, dungeon.height - roomHeight - 1);
+
+        var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
+
+        var validRoom = true;
+        for (j = 0; j < rooms.length; j++) {
+            var room = rooms[j];
+            if (newRoom.intersects(room)) {
+                validRoom = false;
+                break;
+            }
+        }
+
+        if (!validRoom) {
+            continue;
+        }
+
+        // Create Room
+        for (var x = newRoom.x1; x < newRoom.x2; x++) {
+            for (var y = newRoom.y1; y < newRoom.y2; y++) {
+                var color;
+                if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
+                    color = "333333";
+
+                    dungeon.wallTiles[x][y] = new Tile(x, y, "wall", new Sprite("wall", "666666"), false, true);
+                } else {
+                    color = "999999";
+                }
+                dungeon.floorTiles[x][y] = new Tile(x, y, "floor", new Sprite("floor", color), true, false);
+            }
+        }
+
+        if (i == 0) {
+            var newRoomCenter = newRoom.center();
+            player.x = newRoomCenter.x;
+            player.y = newRoomCenter.y;
+
+            for (var j = 0; j < otherPlayers.length; j++) {
+                var otherPlayer = otherPlayers[j];
+                otherPlayer.x = player.x + j + 1;
+                otherPlayer.y = player.y;
+            }
+        } else {
+            var lastRoom = rooms[rooms.length - 1];
+            var lastRoomCenter = lastRoom.center();
+            var newRoomCenter = newRoom.center();
+
+            tunnelBetween(dungeon, lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
+        }
+
+        rooms.push(newRoom);
+    }
 
     return dungeon;
 }

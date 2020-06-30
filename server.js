@@ -189,7 +189,7 @@ io.on('connection', function (socket) {
         }
 
         // emit a message to all players about the player that moved
-        io.sockets.in("room-" + roomId).emit("playerMoved", updatedPlayer);
+        io.sockets.in("room-" + roomId).emit("otherPlayerMoved", updatedPlayer);
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
     });
 });
