@@ -9,8 +9,8 @@ export default class Engine {
     }
 
     createSprites(scene) {
-        for (var i = 0; i < this.gameMap.rows; i++) {
-            for (var j = 0; j < this.gameMap.cols; j++) {
+        for (var i = 0; i < this.gameMap.width; i++) {
+            for (var j = 0; j < this.gameMap.height; j++) {
                 var x = this.gameMap.offsetWidth + (i * this.tilemap.frameWidth);
                 var y = this.gameMap.offsetHeight + (j * this.tilemap.frameHeight);
 

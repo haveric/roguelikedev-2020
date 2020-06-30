@@ -23,10 +23,10 @@ export class RectangularRoom {
 
 export function createTestMap(width, height, entities) {
     var dungeon = new GameMap(width, height, entities);
-    for (var i = 0; i < dungeon.rows; i++) {
-        for (var j = 0; j < dungeon.cols; j++) {
+    for (var i = 0; i < dungeon.width; i++) {
+        for (var j = 0; j < dungeon.height; j++) {
             var color;
-            if (i == 0 || i == dungeon.rows - 1 || j == 0 || j == dungeon.cols - 1) {
+            if (i == 0 || i == dungeon.width - 1 || j == 0 || j == dungeon.height - 1) {
                 color = "333333";
 
                 dungeon.wallTiles[i][j] = new Tile(i, j, "wall", new Sprite("wall", "666666"), false, true);

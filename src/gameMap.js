@@ -1,17 +1,17 @@
 import { create2dArray } from '../utils.js';
 
 export default class GameMap {
-    constructor(rows, cols, entities) {
-        this.rows = rows;
-        this.cols = cols;
+    constructor(width, height, entities) {
+        this.width = width;
+        this.height = height;
         this.entities = entities || [];
 
         // Offsets to center the map on screen
         this.offsetWidth = 400;
         this.offsetHeight = 300;
 
-        this.floorTiles = create2dArray(this.rows);
-        this.wallTiles = create2dArray(this.rows);
+        this.floorTiles = create2dArray(this.width);
+        this.wallTiles = create2dArray(this.width);
     }
 
     getBlockingEntityAtLocation(x, y) {
