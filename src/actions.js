@@ -1,10 +1,10 @@
-class Action {
+export class Action {
     perform(engine, entity) {
         console.err("Not Implemented");
     }
 }
 
-class ActionWithDirection extends Action {
+export class ActionWithDirection extends Action {
     constructor(dx, dy) {
         super();
 
@@ -13,7 +13,7 @@ class ActionWithDirection extends Action {
     }
 }
 
-class MeleeAction extends ActionWithDirection {
+export class MeleeAction extends ActionWithDirection {
     constructor(dx, dy, target) {
         super(dx, dy);
 
@@ -27,7 +27,7 @@ class MeleeAction extends ActionWithDirection {
     }
 }
 
-class MovementAction extends ActionWithDirection {
+export class MovementAction extends ActionWithDirection {
     constructor(dx, dy) {
         super(dx, dy);
     }
@@ -39,7 +39,7 @@ class MovementAction extends ActionWithDirection {
 
         var floorTile = engine.gameMap.floorTiles[destX][destY];
         var wallTile = engine.gameMap.wallTiles[destX][destY];
-        if (floorTile.walkable && (!wallTile || wallTile.walkable)) {
+        if (floorTile && floorTile.walkable && (!wallTile || wallTile.walkable)) {
             entity.move(engine, this.dx, this.dy);
 
             success = true;
@@ -49,7 +49,7 @@ class MovementAction extends ActionWithDirection {
     }
 }
 
-class BumpAction extends ActionWithDirection {
+export class BumpAction extends ActionWithDirection {
     constructor(dx, dy) {
         super(dx, dy);
     }
@@ -67,10 +67,3 @@ class BumpAction extends ActionWithDirection {
         }
     }
 }
-
-
-exports.Action = Action;
-exports.ActionWithDirection = ActionWithDirection;
-exports.MeleeAction = MeleeAction;
-exports.MovementAction = MovementAction;
-exports.BumpAction = BumpAction;

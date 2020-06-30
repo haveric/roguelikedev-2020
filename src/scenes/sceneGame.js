@@ -1,5 +1,5 @@
 import Engine from '../engine.js';
-import GameMap from '../gameMap.js';
+import { createTestMap, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
 import Sprite from '../sprite.js';
 import EventHandler from '../eventHandler.js';
@@ -55,8 +55,9 @@ export class SceneGame extends Phaser.Scene {
                 self.otherPlayers.push(otherPlayer);
             }
         });
-        this.gameMap = new GameMap(20, 20, self.entities);
-        this.gameMap.createTestMap();
+
+        //this.gameMap = createTestMap(20, 20, self.entities);
+        this.gameMap = generateDungeon(80, 50, self.entities);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
 
