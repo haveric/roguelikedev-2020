@@ -39,25 +39,25 @@ export class SceneGame extends Phaser.Scene {
         var self = this;
 
         this.eventHandler = new EventHandler(this.input.keyboard);
-        this.gameMap = new GameMap(20, 20);
-        this.gameMap.createTestMap();
+
 
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
             if (player.playerId == self.socket.id) {
                 var playerSprite = new Sprite(player.sprite, player.color);
-                self.player = new Player(player.playerId, player.x, player.y, player.name, playerSprite, player.energy, player.energyMax);
+                self.player = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
                 self.entities.push(self.player);
             } else {
                 var playerSprite = new Sprite(player.sprite, player.color);
-                var otherPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, player.energy, player.energyMax);
+                var otherPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
                 self.entities.push(otherPlayer);
 
                 self.otherPlayers.push(otherPlayer);
             }
         });
-
-        this.engine = new Engine(this.entities, this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
+        this.gameMap = new GameMap(20, 20, self.entities);
+        this.gameMap.createTestMap();
+        this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
 
         if (self.player) {

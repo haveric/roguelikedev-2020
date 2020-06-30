@@ -1,7 +1,6 @@
 export default class Engine {
-    constructor(entities, eventHandler, gameMap, tilemap, player, otherPlayers) {
+    constructor(eventHandler, gameMap, tilemap, player, otherPlayers) {
         var self = this;
-        self.entities = entities;
         self.eventHandler = eventHandler;
         self.gameMap = gameMap;
         self.tilemap = tilemap;
@@ -27,8 +26,8 @@ export default class Engine {
             }
         }
 
-        for (var i = 0; i < this.entities.length; i++) {
-            var entity = this.entities[i];
+        for (var i = 0; i < this.gameMap.entities.length; i++) {
+            var entity = this.gameMap.entities[i];
 
             var x = this.gameMap.offsetWidth + (entity.x * this.tilemap.frameWidth);
             var y = this.gameMap.offsetHeight + (entity.y * this.tilemap.frameHeight);

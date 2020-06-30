@@ -1,9 +1,10 @@
 export default class Entity {
-    constructor(x, y, name, sprite) {
+    constructor(x, y, name, sprite, blocksMovement) {
         this.x = x;
         this.y = y;
         this.name = name;
         this.sprite = sprite;
+        this.blocksMovement = blocksMovement;
     }
 
     move(engine, dx, dy) {

@@ -1,4 +1,4 @@
-import { MovementAction } from './actions.js';
+import { BumpAction } from './actions.js';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard) {
@@ -78,7 +78,7 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
     }
 
     move(dx, dy) {
-        this.emit('action', new MovementAction(dx, dy));
+        this.emit('action', new BumpAction(dx, dy));
 
     }
 }
