@@ -152,11 +152,9 @@ io.on('connection', function (socket) {
         if (players[0].playerId == playerId) {
             room.gameState = "play";
 
-            room.map = createMap();
-
             room.players.forEach(function(player) {
-                player.tileX = getRandomInt(1, room.map.rows - 2);
-                player.tileY = getRandomInt(1, room.map.cols - 2);
+                player.x = getRandomInt(1, 18);
+                player.y = getRandomInt(1, 18);
             });
 
             io.sockets.in("room-" + roomId).emit("startGame", room);
@@ -169,8 +167,6 @@ io.on('connection', function (socket) {
         var playerId = data.playerId;
         var x = data.x;
         var y = data.y;
-        var tileX = data.tileX;
-        var tileY = data.tileY;
 
         var room = rooms[roomId];
         var players = room.players;
@@ -182,8 +178,6 @@ io.on('connection', function (socket) {
             if (player.playerId == playerId) {
                 player.x = x;
                 player.y = y;
-                player.tileX = tileX;
-                player.tileY = tileY;
                 updatedPlayer = player;
 
                 player.energy -= 1;
@@ -330,38 +324,4 @@ function createNewPlayer(socket, playerName) {
         energy: 5,
         energyMax: 10
     }
-}
-
-function createMap() {
-    var rows = 20;
-    var cols = 20;
-    var map = {
-        rows: rows,
-        cols: cols,
-        tiles: create2dArray(rows)
-    }
-
-    for (var i = 0; i < map.rows; i++) {
-        for (var j = 0; j < map.cols; j++) {
-            if (i == 0 || i == map.rows - 1 || j == 0 || j == map.cols - 1) {
-                map.tiles[i][j] = {
-                    sprite: "floor",
-                    icon: ".",
-                    color: "666666",
-                    bgIcon: "█",
-                    bgColor: "333333",
-                    blocked: true
-                }
-            } else {
-                map.tiles[i][j] = {
-                    sprite: "wall",
-                    bgIcon: "█",
-                    bgColor: "999999",
-                    blocked: false
-                }
-            }
-        }
-    }
-
-    return map;
 }

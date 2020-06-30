@@ -1,4 +1,9 @@
-var getFrameOf = require('../../utils.js').getFrameOf;
+import Engine from '../engine.js';
+import GameMap from '../gameMap.js';
+import Player from '../player.js';
+import Sprite from '../sprite.js';
+import EventHandler from '../eventHandler.js';
+import { getFrameOf, create2dArray } from '../../utils.js';
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -14,7 +19,7 @@ export class SceneGame extends Phaser.Scene {
             frameHeight: 24,
             tiles: {
                 "@": 64,
-                ".": 35,
+                "#": 35,
                 "█": 219
             }
         }
@@ -23,7 +28,8 @@ export class SceneGame extends Phaser.Scene {
 
         this.keysDown = [];
         this.player;
-        this.otherPlayers = this.add.group();
+        this.otherPlayers = [];
+        this.entities = [];
     }
 
     preload() {
@@ -33,129 +39,62 @@ export class SceneGame extends Phaser.Scene {
     create() {
         var self = this;
 
-        for (var i = 0; i < self.room.map.rows; i++) {
-            for (var j = 0; j < self.room.map.cols; j++) {
-                var tile = self.room.map.tiles[i][j];
-
-                var frameData = getFrameOf(self, tile.sprite, tile.icon, tile.bgIcon);
-                if (frameData.bgFrame != null) {
-                    var spriteBG = self.add.sprite(self.mapOffsetWidth + (i * self.tilemap.frameWidth), self.mapOffsetHeight + (j * self.tilemap.frameHeight), self.tilemap.name).setOrigin(0, 0);
-                    spriteBG.setFrame(frameData.bgFrame);
-                    spriteBG.setTint("0x" + tile.bgColor);
-                    tile.spriteBG = spriteBG;
-                }
-
-                if (frameData.frame != null) {
-                    var sprite = self.add.sprite(self.mapOffsetWidth + (i * self.tilemap.frameWidth), self.mapOffsetHeight + (j * self.tilemap.frameHeight), self.tilemap.name).setOrigin(0, 0);
-                    sprite.setFrame(frameData.frame);
-                    sprite.setTint("0x" + tile.color);
-
-                    tile.sprite = sprite;
-                }
-            }
-        }
+        this.eventHandler = new EventHandler(this.input.keyboard);
+        this.gameMap = new GameMap(20, 20);
+        this.gameMap.createTestMap();
 
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
             if (player.playerId == self.socket.id) {
-
-                var sprite = self.add.sprite(self.mapOffsetWidth + (player.tileX * self.tilemap.frameWidth), self.mapOffsetHeight + (player.tileY * self.tilemap.frameHeight), self.tilemap.name).setOrigin(0, 0);
-                var frameData = getFrameOf(self, player.sprite, player.icon);
-                if (frameData.frame != null) {
-                    sprite.setFrame(frameData.frame);
-                    sprite.setTint("0x" + player.color);
-                }
-                self.player = player;
-
-                self.playerSprite = sprite;
-                self.playerSprite.tileX = player.tileX;
-                self.playerSprite.tileY = player.tileY;
-
-                var energyStyle = {font: "30px Arial", fill: "#ffff00" };
-                self.energy = self.add.text(30, 30, "Energy: " + player.energy, energyStyle);
-                self.energy.setScrollFactor(0,0);
-
-                self.cameras.main.setBounds(0, 0, self.displayWidth, self.displayHeight);
-                self.cameras.main.startFollow(self.playerSprite);
+                var playerSprite = new Sprite(player.sprite, player.icon, player.color);
+                self.player = new Player(player.playerId, player.x, player.y, player.name, playerSprite, player.energy, player.energyMax);
+                self.entities.push(self.player);
             } else {
-                var sprite = self.add.sprite(self.mapOffsetWidth + (player.tileX * self.tilemap.frameWidth), self.mapOffsetHeight + (player.tileY * self.tilemap.frameHeight), self.tilemap.name).setOrigin(0, 0);
-                var frameData = getFrameOf(self, player.sprite, player.icon);
-                if (frameData.frame != null) {
-                    sprite.setFrame(frameData.frame);
-                    sprite.setTint("0x" + player.color);
-                }
-                sprite.playerId = player.playerId;
+                var playerSprite = new Sprite(player.sprite, player.icon, player.color);
+                var otherPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, player.energy, player.energyMax);
+                self.entities.push(otherPlayer);
 
-                self.otherPlayers.add(sprite);
+                self.otherPlayers.push(otherPlayer);
             }
         });
 
-        this.input.keyboard.on('keydown', function(event) {
-            if (!self.keysDown[event.code]) {
-                switch (event.code) {
-                    // Left
-                    case "KeyA":
-                    case "ArrowLeft":
-                    case "Numpad4":
-                        movePlayer(self, self.playerSprite, -1, 0);
-                        break;
-                    // Right
-                    case "KeyD":
-                    case "ArrowRight":
-                    case "Numpad6":
-                        movePlayer(self, self.playerSprite, 1, 0);
-                        break;
-                    // Up
-                    case "KeyW":
-                    case "ArrowUp":
-                    case "Numpad8":
-                        movePlayer(self, self.playerSprite, 0, -1);
-                        break;
-                    // Down
-                    case "KeyS":
-                    case "ArrowDown":
-                    case "Numpad2":
-                        movePlayer(self, self.playerSprite, 0, 1);
-                        break;
-                    // Northwest
-                    case "Numpad7":
-                        movePlayer(self, self.playerSprite, -1, -1);
-                        break;
-                    // Northeast
-                    case "Numpad9":
-                        movePlayer(self, self.playerSprite, 1, -1);
-                        break;
-                    // Southwest
-                    case "Numpad1":
-                        movePlayer(self, self.playerSprite, -1, 1);
-                        break;
-                    // Southeast
-                    case "Numpad3":
-                        movePlayer(self, self.playerSprite, 1, 1);
-                        break;
-                    // Wait
-                    case "Numpad5":
-                        movePlayer(self, self.playerSprite, 0, 0);
-                        break;
-                    default:
-                        break;
-                }
+        this.engine = new Engine(this.entities, this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
+        this.engine.createSprites(self);
+
+        if (self.player) {
+            var energyStyle = {font: "30px Arial", fill: "#ffff00" };
+            self.energy = self.add.text(30, 30, "Energy: " + self.player.energy, energyStyle);
+            self.energy.setScrollFactor(0,0);
+        }
+
+        self.eventHandler.on('action', function(action) {
+            if (self.player && self.player.energy > 0) {
+                action.perform(self, self.player);
+
+                self.player.energy -= 1;
+
+                self.energy.setText("Energy: " + self.player.energy);
+                self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
             }
-
-            self.keysDown[event.code] = 1;
         });
 
-        this.input.keyboard.on('keyup', function(event) {
-            self.keysDown[event.code] = 0;
-        });
+        var objectToFollow;
+        if (self.player) {
+            objectToFollow = self.player.sprite.spriteObjects[0]
+        } else {
+            objectToFollow = self.otherPlayers[0].sprite.spriteObjects[0];
+        }
+
+        self.cameras.main.setBounds(0, 0, self.displayWidth, self.displayHeight);
+        self.cameras.main.startFollow(objectToFollow);
 
         self.socket.on('playerMoved', function (playerInfo) {
-            self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            for (var i = 0; i < self.otherPlayers.length; i++) {
+                var otherPlayer = self.otherPlayers[i];
                 if (playerInfo.playerId === otherPlayer.playerId) {
-                    otherPlayer.x = playerInfo.x;
-                    otherPlayer.y = playerInfo.y;
+                    otherPlayer.moveTo(self.engine, playerInfo.x, playerInfo.y);
                 }
-            });
+            }
         });
 
         self.socket.on('updatePlayerData', function (players) {
@@ -169,6 +108,10 @@ export class SceneGame extends Phaser.Scene {
             }
         });
     }
+
+    update() {
+
+    }
 }
 
 var movePlayer = function(self, player, x, y) {
@@ -177,16 +120,8 @@ var movePlayer = function(self, player, x, y) {
         if (newXTile) {
             var newXYTile = newXTile[player.tileY + y];
             if (newXYTile && !newXYTile.blocked) {
-                player.tileX += x;
-                player.tileY += y;
 
-                player.x += (x * self.tilemap.frameWidth);
-                player.y += (y * self.tilemap.frameHeight);
 
-                self.player.energy -= 1;
-                self.energy.setText("Energy: " + self.player.energy);
-
-                self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: player.x, y: player.y, tileX: player.tileX, tileY: player.tileY });
             }
         }
     }
