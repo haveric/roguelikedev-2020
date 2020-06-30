@@ -19,6 +19,13 @@ export class RectangularRoom {
 
         return { x: centerX, y: centerY };
     }
+
+    intersects(rectangularRoom) {
+        return this.x1 <= rectangularRoom.x2
+            && this.x2 >= rectangularRoom.x1
+            && this.y1 <= rectangularRoom.y2
+            && this.y2 >= rectangularRoom.y1;
+    }
 }
 
 export function createTestMap(width, height, entities) {
@@ -41,38 +48,31 @@ export function createTestMap(width, height, entities) {
     return dungeon;
 }
 
-export function generateDungeon(rows, cols, entities) {
-    var dungeon = new GameMap(rows, cols, entities);
+export function generateDungeon(width, height, entities) {
+    var dungeon = new GameMap(width, height, entities);
 
     var room1 = new RectangularRoom(10, 5, 10, 15);
     var room2 = new RectangularRoom(25, 5, 10, 15);
 
-    for (var i = room1.x1; i < room1.x2; i++) {
-        for (var j = room1.y1; j < room1.y2; j++) {
-            var color;
-            if (i == room1.x1 || i == room1.x2 - 1 || j == room1.y1 || j == room1.y2 - 1) {
-                color = "333333";
+    var rooms = [];
+    rooms.push(room1);
+    rooms.push(room2);
 
-                dungeon.wallTiles[i][j] = new Tile(i, j, "wall", new Sprite("wall", "666666"), false, true);
-            } else {
-                color = "999999";
+    for (var i = 0; i < rooms.length; i++) {
+        var room = rooms[i];
+
+        for (var x = room.x1; x < room.x2; x++) {
+            for (var y = room.y1; y < room.y2; y++) {
+                var color;
+                if (x == room.x1 || x == room.x2 - 1 || y == room.y1 || y == room.y2 - 1) {
+                    color = "333333";
+
+                    dungeon.wallTiles[x][y] = new Tile(x, y, "wall", new Sprite("wall", "666666"), false, true);
+                } else {
+                    color = "999999";
+                }
+                dungeon.floorTiles[x][y] = new Tile(x, y, "floor", new Sprite("floor", color), true, false);
             }
-            dungeon.floorTiles[i][j] = new Tile(i, j, "floor", new Sprite("floor", color), true, false);
-        }
-    }
-
-    for (var i = room2.x1; i < room2.x2; i++) {
-        for (var j = room2.y1; j < room2.y2; j++) {
-            var color;
-            if (i == room2.x1 || i == room2.x2 - 1 || j == room2.y1 || j == room2.y2 - 1) {
-                color = "333333";
-
-                dungeon.wallTiles[i][j] = new Tile(i, j, "wall", new Sprite("wall", "666666"), false, true);
-            } else {
-                color = "999999";
-            }
-
-            dungeon.floorTiles[i][j] = new Tile(i, j, "floor", new Sprite("floor", color), true, false);
         }
     }
 
