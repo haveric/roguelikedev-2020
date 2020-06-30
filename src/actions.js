@@ -13,12 +13,19 @@ class MovementAction extends Action {
     }
 
     perform(engine, entity) {
+        var success = false;
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        if (engine.gameMap.tiles[destX][destY].walkable) {
+        var floorTile = engine.gameMap.floorTiles[destX][destY];
+        var wallTile = engine.gameMap.wallTiles[destX][destY];
+        if (floorTile.walkable && (!wallTile || wallTile.walkable)) {
             entity.move(engine, this.dx, this.dy);
+
+            success = true;
         }
+
+        return success;
     }
 }
 

@@ -1,45 +1,32 @@
 import { getFrameOf } from '../utils.js';
 
 export default class Sprite {
-    constructor(name, icon, color, bgIcon, bgColor) {
+    constructor(name, color) {
         this.name = name;
-        this.icon = icon;
         this.color = color;
-        this.bgIcon = bgIcon;
-        this.bgColor = bgColor;
-        this.spriteObjects = [];
+        this.spriteObject = null;
     }
 
     create(scene, x, y, tilemapName) {
-        var frameData = getFrameOf(scene, this.name, this.icon, this.bgIcon);
-        if (frameData.bgFrame != null) {
-            var bgSpriteObject = scene.add.sprite(x, y, tilemapName).setOrigin(0, 0);
-            bgSpriteObject.setFrame(frameData.bgFrame);
-            bgSpriteObject.setTint("0x" + this.bgColor);
-            this.spriteObjects.push(bgSpriteObject);
-        }
-
-        if (frameData.frame != null) {
-            var spriteObject = scene.add.sprite(x, y, tilemapName).setOrigin(0, 0);
-            spriteObject.setFrame(frameData.frame);
-            spriteObject.setTint("0x" + this.color);
-            this.spriteObjects.push(spriteObject);
+        var frame = getFrameOf(scene, this.name);
+        if (frame != null) {
+            this.spriteObject = scene.add.sprite(x, y, tilemapName).setOrigin(0, 0);
+            this.spriteObject.setFrame(frame);
+            this.spriteObject.setTint("0x" + this.color);
         }
     }
 
     move(dx, dy) {
-        for (var i = 0; i < this.spriteObjects.length; i++) {
-            var spriteObject = this.spriteObjects[i];
-            spriteObject.x += dx;
-            spriteObject.y += dy;
+        if (this.spriteObject) {
+            this.spriteObject.x += dx;
+            this.spriteObject.y += dy;
         }
     }
 
     moveTo(x, y) {
-        for (var i = 0; i < this.spriteObjects.length; i++) {
-            var spriteObject = this.spriteObjects[i];
-            spriteObject.x = x;
-            spriteObject.y = y;
+        if (this.spriteObject) {
+            this.spriteObject.x = x;
+            this.spriteObject.y = y;
         }
     }
 }

@@ -12,26 +12,15 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getFrameOf = (scene, sprite, iconFallback, bgIcon) => {
+const getFrameOf = (scene, sprite) => {
     var frame = null;
-    var bgFrame = null;
-    var drawBackground = true;
     if (scene.tilemap.tiles[sprite]) {
         frame = scene.tilemap.tiles[sprite];
-        drawBackground = false;
-    } else if (scene.tilemap.tiles[iconFallback]) {
-        frame = scene.tilemap.tiles[iconFallback];
+    } else {
+        console.log("Tilemap missing sprites! " + sprite);
     }
 
-    if (drawBackground && scene.tilemap.tiles[bgIcon]) {
-        bgFrame = scene.tilemap.tiles[bgIcon];
-    }
-
-    if (frame == null && bgFrame == null) {
-        console.log("Tilemap missing sprites! " + sprite + ", " + iconFallback + ", " + bgIcon);
-    }
-
-    return {frame: frame, bgFrame: bgFrame };
+    return frame;
 };
 
 const hexToRgb = (hex) => {

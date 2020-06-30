@@ -11,18 +11,29 @@ export default class GameMap {
         this.offsetWidth = 400;
         this.offsetHeight = 300;
 
-        this.tiles = create2dArray(this.rows);
+        this.floorTiles = create2dArray(this.rows);
+        this.wallTiles = create2dArray(this.rows);
     }
 
     createTestMap() {
         for (var i = 0; i < this.rows; i++) {
             for (var j = 0; j < this.cols; j++) {
+                var color;
                 if (i == 0 || i == this.rows - 1 || j == 0 || j == this.cols - 1) {
-                    var sprite = new Sprite("floor", "#", "666666", "█", "333333");
-                    this.tiles[i][j] = new Tile(i, j, "floor", sprite, false, false);
+                    color = "333333";
                 } else {
-                    var sprite = new Sprite("wall", null, null, "█", "999999");
-                    this.tiles[i][j] = new Tile(i, j, "wall", sprite, true, true);
+                    color = "999999";
+                }
+                var sprite = new Sprite("floor", color);
+                this.floorTiles[i][j] = new Tile(i, j, "floor", sprite, true, true);
+            }
+        }
+
+        for (var i = 0; i < this.rows; i++) {
+            for (var j = 0; j < this.cols; j++) {
+                if (i == 0 || i == this.rows - 1 || j == 0 || j == this.cols - 1) {
+                    var sprite = new Sprite("wall", "666666");
+                    this.wallTiles[i][j] = new Tile(i, j, "wall", sprite, false, false);
                 }
             }
         }

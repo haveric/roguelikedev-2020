@@ -319,7 +319,6 @@ function createNewPlayer(socket, playerName) {
         name: playerName,
         color: "000000",
         sprite: "player",
-        icon: "@",//64,
         ready: false,
         energy: 5,
         energyMax: 10

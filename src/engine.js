@@ -14,7 +14,16 @@ export default class Engine {
             for (var j = 0; j < this.gameMap.cols; j++) {
                 var x = this.gameMap.offsetWidth + (i * this.tilemap.frameWidth);
                 var y = this.gameMap.offsetHeight + (j * this.tilemap.frameHeight);
-                this.gameMap.tiles[i][j].sprite.create(scene, x, y, this.tilemap.name);
+
+                var floorTile = this.gameMap.floorTiles[i][j];
+                if (floorTile) {
+                    floorTile.sprite.create(scene, x, y, this.tilemap.name);
+                }
+
+                var wallTile = this.gameMap.wallTiles[i][j];
+                if (wallTile) {
+                    wallTile.sprite.create(scene, x, y, this.tilemap.name);
+                }
             }
         }
 

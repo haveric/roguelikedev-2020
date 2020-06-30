@@ -14,7 +14,8 @@ export class SceneSetup extends Phaser.Scene {
             frameWidth: 24,
             frameHeight: 24,
             tiles: {
-                "@": 64
+                "@": 64,
+                "player": 64
             }
         }
     }
@@ -194,7 +195,7 @@ var createPlayerSelector = function(scene, index, player) {
     }
 
 
-    var frame = getFrameOf(scene, player.sprite, player.icon).frame;
+    var frame = getFrameOf(scene, player.sprite);
     if (frame != null) {
         var playerSprite = scene.add.sprite(0, 0, scene.tilemap.name).setFrame(frame).setTint("0x" + player.color);
         playerSprite.displayWidth = 100;
