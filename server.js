@@ -37,8 +37,10 @@ io.on('connection', function (socket) {
     socket.on('createRoom', function(playerName) {
         var roomId = createRoomId();
         console.log("Room Created: " + roomId);
+
         rooms[roomId] = {
             roomId: roomId,
+            seed: generateRandomSeed(),
             gameState: "setup",
             players: [],
             spectators: []
@@ -152,6 +154,7 @@ io.on('connection', function (socket) {
         if (players[0].playerId == playerId) {
             room.gameState = "play";
 
+            // TODO: Remove to let client handle positioning?
             room.players.forEach(function(player) {
                 player.x = getRandomInt(1, 18);
                 player.y = getRandomInt(1, 18);
@@ -311,6 +314,11 @@ function generateRandomRoomId() {
    }
 
    return roomId;
+}
+
+function generateRandomSeed() {
+    // TODO: Make random
+    return 1111111111;
 }
 
 function createNewPlayer(socket, playerName) {

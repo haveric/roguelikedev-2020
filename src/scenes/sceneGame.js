@@ -1,3 +1,4 @@
+import Srand from 'seeded-rand';
 import Engine from '../engine.js';
 import { createTestMap, generateDungeonSimple, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
@@ -33,6 +34,8 @@ export class SceneGame extends Phaser.Scene {
         this.player;
         this.otherPlayers = [];
         this.entities = [];
+
+        Srand.seed(this.room.seed);
     }
 
     create() {

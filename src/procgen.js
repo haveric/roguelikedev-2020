@@ -1,7 +1,8 @@
+import Srand from 'seeded-rand';
 import GameMap from "./gameMap.js";
 import Sprite from './sprite.js';
 import Tile from './tile.js';
-import { create2dArray, getRandomInt } from '../utils.js';
+import { create2dArray } from '../utils.js';
 
 export class RectangularRoom {
     constructor(x, y, width, height) {
@@ -89,11 +90,11 @@ export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, heigh
     var rooms = [];
 
     for (var i = 0; i < maxRooms; i++) {
-        var roomWidth = getRandomInt(roomMinSize, roomMaxSize);
-        var roomHeight = getRandomInt(roomMinSize, roomMaxSize);
+        var roomWidth = Srand.intInRange(roomMinSize, roomMaxSize);
+        var roomHeight = Srand.intInRange(roomMinSize, roomMaxSize);
 
-        var x = getRandomInt(0, dungeon.width - roomWidth - 1);
-        var y = getRandomInt(0, dungeon.height - roomHeight - 1);
+        var x = Srand.intInRange(0, dungeon.width - roomWidth - 1);
+        var y = Srand.intInRange(0, dungeon.height - roomHeight - 1);
 
         var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
 
@@ -150,7 +151,7 @@ export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, heigh
 }
 
 function tunnelBetween(gameMap, x1, y1, x2, y2) {
-    if (getRandomInt(0, 1) == 1) {
+    if (Srand.intInRange(0, 1) == 1) {
         // horizontal first, then vertical
         createHorizontalTunnel(gameMap, x1, x2, y1);
         createVerticalTunnel(gameMap, y1, y2, x2);
