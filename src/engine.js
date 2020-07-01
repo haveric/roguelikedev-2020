@@ -1,3 +1,5 @@
+import { computeFovSimple } from './fov.js';
+
 export default class Engine {
     constructor(eventHandler, gameMap, tilemap, player, otherPlayers) {
         var self = this;
@@ -42,6 +44,18 @@ export default class Engine {
 
             entity.sprite.create(scene, x, y, this.tilemap.name);
         }
+
+        for (var i = 0; i < this.gameMap.width; i++) {
+            for (var j = 0; j < this.gameMap.height; j++) {
+                var x = this.gameMap.offsetWidth + (i * this.tilemap.frameWidth);
+                var y = this.gameMap.offsetHeight + (j * this.tilemap.frameHeight);
+
+                var shroudTile = this.gameMap.shroud[i][j];
+                if (shroudTile) {
+                    shroudTile.sprite.create(scene, x, y, this.tilemap.name);
+                }
+            }
+        }
     }
 
     handleEnemyTurns() {
@@ -70,5 +84,30 @@ export default class Engine {
         } else {
             this.enemyTurn = 0;
         }
+    }
+
+    updateFov() {
+        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
+            var tile = this.gameMap.lastExploredFovTiles[i];
+            tile.resetVisible();
+        }
+
+        var newExploredTiles = [];
+        for (var i = 0; i < this.players.length; i++) {
+            var player = this.players[i];
+            computeFovSimple(this.gameMap, newExploredTiles, player.x, player.y, player.lightRadius);
+        }
+
+        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
+            var tile = this.gameMap.lastExploredFovTiles[i];
+            tile.render();
+        }
+
+        for (var i = 0; i < newExploredTiles.length; i++) {
+            var tile = newExploredTiles[i];
+            tile.render();
+        }
+
+        this.gameMap.lastExploredFovTiles = newExploredTiles;
     }
 }

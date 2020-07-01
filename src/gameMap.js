@@ -1,4 +1,5 @@
 import { create2dArray } from '../utils.js';
+import FovTile from './fovTile.js';
 
 export default class GameMap {
     constructor(width, height, entities) {
@@ -12,6 +13,15 @@ export default class GameMap {
 
         this.floorTiles = create2dArray(this.width);
         this.wallTiles = create2dArray(this.width);
+
+        this.lastExploredFovTiles = [];
+        this.shroud = create2dArray(this.width);
+
+        for (var i = 0; i < this.width; i++) {
+            for (var j = 0; j < this.height; j++) {
+                this.shroud[i][j] = new FovTile(i, j, "shroud");
+            }
+        }
     }
 
     getBlockingEntityAtLocation(x, y) {

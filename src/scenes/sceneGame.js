@@ -19,6 +19,7 @@ export class SceneGame extends Phaser.Scene {
             frameWidth: 24,
             frameHeight: 24,
             tiles: {
+                "shroud": 219,
                 "player": 64,
                 "wall": 35,
                 "floor": 219,
@@ -68,6 +69,7 @@ export class SceneGame extends Phaser.Scene {
         this.gameMap = generateDungeon(30, 6, 10, 80, 50, 3, self.entities, self.players);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
+        this.engine.updateFov();
 
         if (self.player) {
             var energyStyle = {font: "30px Arial", fill: "#ffff00" };
@@ -83,6 +85,7 @@ export class SceneGame extends Phaser.Scene {
                     self.energy.setText("Energy: " + self.player.energy);
                     self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
 
+                    self.engine.updateFov();
                     self.engine.handleEnemyTurns();
                 }
             }
@@ -105,6 +108,8 @@ export class SceneGame extends Phaser.Scene {
                     otherPlayer.moveTo(self.engine, playerInfo.x, playerInfo.y);
                 }
             }
+
+            self.engine.updateFov();
         });
 
         self.socket.on('updatePlayerData', function (players) {
