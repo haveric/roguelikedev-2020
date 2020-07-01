@@ -6,6 +6,14 @@ export default class Engine {
         self.tilemap = tilemap;
         self.player = player;
         self.otherPlayers = otherPlayers;
+
+        self.players = [];
+        self.players.push(self.player);
+        for (var i = 0; i < self.otherPlayers.length; i++) {
+            self.players.push(self.otherPlayers[i]);
+        }
+
+        self.enemyTurn = 0;
     }
 
     createSprites(scene) {
@@ -33,6 +41,34 @@ export default class Engine {
             var y = this.gameMap.offsetHeight + (entity.y * this.tilemap.frameHeight);
 
             entity.sprite.create(scene, x, y, this.tilemap.name);
+        }
+    }
+
+    handleEnemyTurns() {
+        for (var i = 0; i < this.gameMap.entities.length; i++) {
+            var entity = this.gameMap.entities[i];
+
+            var isPlayer = false;
+            for (var j = 0; j < this.players.length; j++) {
+                var player = this.players[j];
+
+                if (entity === player) {
+                    isPlayer = true;
+                    break;
+                }
+            }
+
+            if (!isPlayer) {
+                if (i % this.enemyTurn == 0) {
+                    console.log("The " + entity.name + " wonders when it will get to take a real turn.");
+                }
+            }
+        }
+
+        if (this.enemyTurn == 0) {
+            this.enemyTurn = 1;
+        } else {
+            this.enemyTurn = 0;
         }
     }
 }

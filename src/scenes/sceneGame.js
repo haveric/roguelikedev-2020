@@ -19,12 +19,12 @@ export class SceneGame extends Phaser.Scene {
             frameWidth: 24,
             frameHeight: 24,
             tiles: {
-                "@": 64,
                 "player": 64,
-                "#": 35,
                 "wall": 35,
-                "█": 219,
-                "floor": 219
+                "floor": 219,
+                "spacePirate": 80,
+                "attackDog": 100,
+                "automatedTurret": 84
             }
         }
         this.mapOffsetWidth = 400;
@@ -65,7 +65,7 @@ export class SceneGame extends Phaser.Scene {
 
         //this.gameMap = createTestMap(20, 20, self.entities);
         //this.gameMap = generateDungeonSimple(80, 50, self.entities);
-        this.gameMap = generateDungeon(30, 6, 10, 80, 50, self.entities, self.players);
+        this.gameMap = generateDungeon(30, 6, 10, 80, 50, 3, self.entities, self.players);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
 
@@ -82,6 +82,8 @@ export class SceneGame extends Phaser.Scene {
 
                     self.energy.setText("Energy: " + self.player.energy);
                     self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
+
+                    self.engine.handleEnemyTurns();
                 }
             }
         });

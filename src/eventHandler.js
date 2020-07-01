@@ -16,53 +16,44 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
                     case "ArrowLeft":
                     case "Numpad4":
                         self.move(-1, 0);
-                        //movePlayer(self, self.playerSprite, -1, 0);
                         break;
                     // Right
                     case "KeyD":
                     case "ArrowRight":
                     case "Numpad6":
                         self.move(1, 0);
-                        //movePlayer(self, self.playerSprite, 1, 0);
                         break;
                     // Up
                     case "KeyW":
                     case "ArrowUp":
                     case "Numpad8":
                         self.move(0, -1);
-                        //movePlayer(self, self.playerSprite, 0, -1);
                         break;
                     // Down
                     case "KeyS":
                     case "ArrowDown":
                     case "Numpad2":
                         self.move(0, 1);
-                        //movePlayer(self, self.playerSprite, 0, 1);
                         break;
                     // Northwest
                     case "Numpad7":
                         self.move(-1, -1);
-                        //movePlayer(self, self.playerSprite, -1, -1);
                         break;
                     // Northeast
                     case "Numpad9":
                         self.move(1, -1);
-                        //movePlayer(self, self.playerSprite, 1, -1);
                         break;
                     // Southwest
                     case "Numpad1":
                         self.move(-1, 1);
-                        //movePlayer(self, self.playerSprite, -1, 1);
                         break;
                     // Southeast
                     case "Numpad3":
                         self.move(1, 1);
-                        //movePlayer(self, self.playerSprite, 1, 1);
                         break;
                     // Wait
                     case "Numpad5":
                         self.move(0, 0);
-                        //movePlayer(self, self.playerSprite, 0, 0);
                         break;
                     default:
                         break;

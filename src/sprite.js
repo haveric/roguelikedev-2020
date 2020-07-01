@@ -7,6 +7,10 @@ export default class Sprite {
         this.spriteObject = null;
     }
 
+    clone() {
+        return new Sprite(this.name, this.color, this.spriteObject);
+    }
+
     create(scene, x, y, tilemapName) {
         var frame = getFrameOf(scene, this.name);
         if (frame != null) {

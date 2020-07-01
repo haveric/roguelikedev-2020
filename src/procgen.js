@@ -3,6 +3,7 @@ import GameMap from "./gameMap.js";
 import Sprite from './sprite.js';
 import Tile from './tile.js';
 import { create2dArray } from '../utils.js';
+import EntityFactories from './entityFactories.js';
 
 export class RectangularRoom {
     constructor(x, y, width, height) {
@@ -84,7 +85,7 @@ export function generateDungeonSimple(width, height, entities) {
     return dungeon;
 }
 
-export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, height, entities, players) {
+export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, height, maxMonstersPerRoom, entities, players) {
     var dungeon = new GameMap(width, height, entities);
 
     var rooms = [];
@@ -144,6 +145,8 @@ export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, heigh
             var newRoomCenter = newRoom.center();
 
             tunnelBetween(dungeon, lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
+
+            placeEntities(newRoom, dungeon, maxMonstersPerRoom);
         }
 
         rooms.push(newRoom);
@@ -213,6 +216,28 @@ function createVerticalTunnel(gameMap, y1, y2, x) {
             var wallTileRight = gameMap.wallTiles[x+1][y];
             if (wallTileRight === undefined) {
                 gameMap.wallTiles[x+1][y] = new Tile(x+1, y, "wall", new Sprite("wall", "666666"), false, true);
+            }
+        }
+    }
+}
+
+function placeEntities(rectangularRoom, gameMap, maxMonstersPerRoom) {
+    var numToSpawn = Srand.intInRange(0, maxMonstersPerRoom);
+
+    for (var i = 0; i < numToSpawn; i++) {
+        var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
+        var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+
+        var entity = gameMap.getBlockingEntityAtLocation(x, y);
+        if (!entity) {
+            var random = Srand.random();
+
+            if (random < 0.7) {
+                EntityFactories.attackDog.spawn(gameMap, x, y);
+            } else if (random < 0.95) {
+                EntityFactories.spacePirate.spawn(gameMap, x, y);
+            } else {
+                EntityFactories.automatedTurret.spawn(gameMap, x, y);
             }
         }
     }

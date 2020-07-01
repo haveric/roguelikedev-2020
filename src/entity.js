@@ -20,4 +20,18 @@ export default class Entity {
 
         this.sprite.moveTo(engine.gameMap.offsetWidth + (x * engine.tilemap.frameWidth), engine.gameMap.offsetHeight + (y * engine.tilemap.frameHeight));
     }
+
+    clone() {
+        var clonedSprite = this.sprite.clone();
+        return new Entity(this.x, this.y, this.name, clonedSprite, this.blocksMovement);
+    }
+
+    spawn(gameMap, x, y) {
+        var clone = this.clone();
+        clone.x = x;
+        clone.y = y;
+        gameMap.entities.push(clone);
+
+        return clone;
+    }
 }
