@@ -7,5 +7,6 @@ export default class Player extends Entity {
         this.playerId = socketId;
         this.energy = energy;
         this.energyMax = energyMax;
+        this.hasSharedVision = true;
     }
 }

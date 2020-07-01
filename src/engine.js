@@ -93,9 +93,13 @@ export default class Engine {
         }
 
         var newExploredTiles = [];
-        for (var i = 0; i < this.players.length; i++) {
-            var player = this.players[i];
-            computeFovSimple(this.gameMap, newExploredTiles, player.x, player.y, player.lightRadius);
+        if (this.player.hasSharedVision) {
+            for (var i = 0; i < this.players.length; i++) {
+                var player = this.players[i];
+                computeFovSimple(this.gameMap, newExploredTiles, player.x, player.y, player.lightRadius);
+            }
+        } else {
+            computeFovSimple(this.gameMap, newExploredTiles, this.player.x, this.player.y, this.player.lightRadius);
         }
 
         for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
