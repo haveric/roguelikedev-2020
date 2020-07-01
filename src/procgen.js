@@ -84,7 +84,7 @@ export function generateDungeonSimple(width, height, entities) {
     return dungeon;
 }
 
-export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, height, entities, player, otherPlayers) {
+export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, height, entities, players) {
     var dungeon = new GameMap(width, height, entities);
 
     var rooms = [];
@@ -128,13 +128,10 @@ export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, heigh
 
         if (i == 0) {
             var newRoomCenter = newRoom.center();
-            player.x = newRoomCenter.x;
-            player.y = newRoomCenter.y;
-
-            for (var j = 0; j < otherPlayers.length; j++) {
-                var otherPlayer = otherPlayers[j];
-                otherPlayer.x = player.x + j + 1;
-                otherPlayer.y = player.y;
+            for (var j = 0; j < players.length; j++) {
+                var player = players[j];
+                player.x = newRoomCenter.x + j;
+                player.y = newRoomCenter.y;
             }
         } else {
             var lastRoom = rooms[rooms.length - 1];

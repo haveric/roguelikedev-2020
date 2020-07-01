@@ -33,6 +33,7 @@ export class SceneGame extends Phaser.Scene {
         this.keysDown = [];
         this.player;
         this.otherPlayers = [];
+        this.players = [];
         this.entities = [];
 
         Srand.seed(this.room.seed);
@@ -49,31 +50,24 @@ export class SceneGame extends Phaser.Scene {
                 var playerSprite = new Sprite(player.sprite, player.color);
                 self.player = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
                 self.entities.push(self.player);
+                self.players.push(self.player);
             } else {
                 var playerSprite = new Sprite(player.sprite, player.color);
                 var otherPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
                 self.entities.push(otherPlayer);
 
                 self.otherPlayers.push(otherPlayer);
+                self.players.push(otherPlayer);
             }
         });
 
-        var isHost = self.room.players[0].playerId == self.socket.id;
+        // var isHost = self.room.players[0].playerId == self.socket.id;
 
         //this.gameMap = createTestMap(20, 20, self.entities);
         //this.gameMap = generateDungeonSimple(80, 50, self.entities);
-        this.gameMap = generateDungeon(30, 6, 10, 80, 50, self.entities, self.player, self.otherPlayers);
+        this.gameMap = generateDungeon(30, 6, 10, 80, 50, self.entities, self.players);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
-
-        if (isHost) {
-            //self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
-
-            for (var i = 0; i < self.otherPlayers.length; i++) {
-                var otherPlayer = self.otherPlayers[i];
-                //self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: otherPlayer.playerId, x: otherPlayer.x, y: otherPlayer.y });
-            }
-        }
 
         if (self.player) {
             var energyStyle = {font: "30px Arial", fill: "#ffff00" };
