@@ -115,14 +115,19 @@ export function generateDungeon(maxRooms, roomMinSize, roomMaxSize, width, heigh
         for (var x = newRoom.x1; x < newRoom.x2; x++) {
             for (var y = newRoom.y1; y < newRoom.y2; y++) {
                 var color;
-                if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
-                    color = "333333";
+                var hasWallBefore = dungeon.wallTiles[x][y];
+                var hasFloorBefore = dungeon.floorTiles[x][y];
+                var hasPreexistingOpenSpace = hasFloorBefore && !hasWallBefore;
 
-                    dungeon.wallTiles[x][y] = new Tile(x, y, "wall", new Sprite("wall", "666666"), false, true);
+                if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
+                    if (!hasPreexistingOpenSpace) {
+                        dungeon.wallTiles[x][y] = new Tile(x, y, "wall", new Sprite("wall", "666666"), false, true);
+                        dungeon.floorTiles[x][y] = new Tile(x, y, "floor", new Sprite("floor", "333333"), true, false);
+                    }
                 } else {
-                    color = "999999";
+                    dungeon.wallTiles[x][y] = null;
+                    dungeon.floorTiles[x][y] = new Tile(x, y, "floor", new Sprite("floor", "999999"), true, false);
                 }
-                dungeon.floorTiles[x][y] = new Tile(x, y, "floor", new Sprite("floor", color), true, false);
             }
         }
 
