@@ -1,8 +1,8 @@
 import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
-import { create2dArray } from '../../utils.js';
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
+import {RoomConstants, BreachRoom, HoldRoom, RectangularRoom } from './roomTypes';
 
 export class GeneratorOptions {
 
@@ -13,6 +13,7 @@ export class GeneratorOptions {
         roomMaxSize,
         width,
         height,
+        holds,
         maxMonstersPerRoom)          
     {
         this.minRooms = minRooms;
@@ -21,32 +22,8 @@ export class GeneratorOptions {
         this.roomMaxSize = roomMaxSize;
         this.width = width;
         this.height = height;
+        this.holds = holds;
         this.maxMonstersPerRoom = maxMonstersPerRoom;
-    }
-}
-
-export class RectangularRoom {
-    constructor(x, y, width, height) {
-        this.x1 = x;
-        this.y1 = y;
-        this.x2 = x + width;
-        this.y2 = y + height;
-
-        this.tiles = create2dArray(width);
-    }
-
-    center() {
-        var centerX = Math.floor((this.x1 + this.x2) / 2);
-        var centerY = Math.floor((this.y1 + this.y2) / 2);
-
-        return { x: centerX, y: centerY };
-    }
-
-    intersects(rectangularRoom) {
-        return this.x1 <= rectangularRoom.x2
-            && this.x2 >= rectangularRoom.x1
-            && this.y1 <= rectangularRoom.y2
-            && this.y2 >= rectangularRoom.y1;
     }
 }
 
@@ -62,6 +39,11 @@ export class Ship {
     generateDungeon() {
         this.gameMap = new GameMap(this.shipOptions.width, this.shipOptions.height, this.gameMap.entities);
 
+        // create breach room near center left of map
+        var breachRoom = new BreachRoom(0, (this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2));
+        this._createRoom(breachRoom);
+        this.rooms.push(breachRoom);
+
         for (var i = 0; i < this.shipOptions.maxRooms; i++) {
             var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
             var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
@@ -70,7 +52,6 @@ export class Ship {
             var y = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
     
             var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
-    
             var validRoom = true;
             for (var j = 0; j < this.rooms.length; j++) {
                 var room = this.rooms[j];
@@ -79,44 +60,51 @@ export class Ship {
                     break;
                 }
             }
-    
+
             if (!validRoom) {
                 continue;
             }
+
+            this._createRoom(newRoom);
     
-            // Create Room in map
-            for (var x = newRoom.x1; x < newRoom.x2; x++) {
-                for (var y = newRoom.y1; y < newRoom.y2; y++) {
-                    var hasWallBefore = this.gameMap.wallTiles[x][y];
-                    var hasFloorBefore = this.gameMap.floorTiles[x][y];
-                    var hasPreexistingOpenSpace = hasFloorBefore && !hasWallBefore;
-    
-                    if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
-                        if (!hasPreexistingOpenSpace) {
-                            this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
-                            this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
-                        }
-                    } else {
-                        this.gameMap.wallTiles[x][y] = null;
-                        this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
-                    }
-                }
-            }
-    
-            if (i !== 0) {
-                var lastRoom = this.rooms[this.rooms.length - 1];
-                var lastRoomCenter = lastRoom.center();
-                var newRoomCenter = newRoom.center();
-    
-                this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
-    
-                this.placeEntitiesInRoom(newRoom);
-            }
+            var lastRoom = this.rooms[this.rooms.length - 1];
+            this._tunnelBetweenRooms(lastRoom, newRoom);
+
+            this.placeEntitiesInRoom(newRoom);
     
             this.rooms.push(newRoom);
         }
 
         return this.gameMap;
+    }
+
+    _createRoom(newRoom) {
+        // Create Room in map
+        for (var x = newRoom.x1; x < newRoom.x2; x++) {
+            for (var y = newRoom.y1; y < newRoom.y2; y++) {
+                var hasWallBefore = this.gameMap.wallTiles[x][y];
+                var hasFloorBefore = this.gameMap.floorTiles[x][y];
+                var hasPreexistingOpenSpace = hasFloorBefore && !hasWallBefore;
+
+                if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
+                    if (!hasPreexistingOpenSpace) {
+                        this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
+                        this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
+                    }
+                } else {
+                    this.gameMap.wallTiles[x][y] = null;
+                    this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
+                }
+            }
+        }
+
+        return newRoom;
+    }
+
+    _tunnelBetweenRooms(room1, room2) {
+        var lastRoomCenter = room1.center();
+        var newRoomCenter = room2.center();
+        this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
     }
 
     // Sets the player coordinates based on the first room.
