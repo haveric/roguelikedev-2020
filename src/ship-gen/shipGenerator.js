@@ -52,7 +52,7 @@ export class Ship {
         var holdGenerationXMin = 6;
         var holdGenerationXMax = holdGenerationXSegmentSize;
 
-        var previousRoom = breachRoom;
+        var previousMainRoom = breachRoom;
 
         for (var h = 1; h <= this.shipOptions.holds; h++) {
             // generate hold sections in the middle 3rd y-zone of the game area
@@ -69,13 +69,13 @@ export class Ship {
                 }
 
                 this._createRoom(hold);
-                this._tunnelBetweenRooms(previousRoom, hold);
+                this._tunnelBetweenRooms(previousMainRoom, hold);
                 holdGenerationXMin = holdGenerationXMax;
                 holdGenerationXMax += holdGenerationXSegmentSize;
                 this.rooms.push(hold);
 
                 // todo generate associated POI rooms with this hold
-                previousRoom = hold;
+                previousMainRoom = hold;
             }
         }
 
@@ -89,7 +89,7 @@ export class Ship {
                 continue;
             }
             this._createRoom(bridge);
-            this._tunnelBetweenRooms(previousRoom, bridge);
+            this._tunnelBetweenRooms(previousMainRoom, bridge);
             this.rooms.push(bridge);
         }
 
