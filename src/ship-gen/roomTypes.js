@@ -1,12 +1,5 @@
 import { create2dArray } from '../../utils.js';
 
-export const RoomConstants = {
-    baseHoldWidth: 10,
-    baseHoldHeight: 6,
-    baseBreachWidth: 5,
-    baseBreachHeight: 7
-}
-
 export class RectangularRoom {
     constructor(x, y, width, height) {
         this.x1 = x;
@@ -32,6 +25,15 @@ export class RectangularRoom {
     }
 }
 
+export const RoomConstants = {
+    baseHoldWidth: 10,
+    baseHoldHeight: 6,
+    baseBreachWidth: 5,
+    baseBreachHeight: 7,
+    bridgeWidth: 10,
+    bridgeHeight: 6
+}
+
 export class Hold extends RectangularRoom {
     constructor(x, y) {
         super(x, y, RoomConstants.baseHoldWidth, RoomConstants.baseHoldHeight)
@@ -41,5 +43,11 @@ export class Hold extends RectangularRoom {
 export class BreachRoom extends RectangularRoom {
     constructor(x, y) {
         super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight)
+    }
+}
+
+export class Bridge extends RectangularRoom {
+    constructor(x, y) {
+        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight);
     }
 }

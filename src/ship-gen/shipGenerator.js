@@ -2,7 +2,7 @@ import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
-import {RoomConstants, BreachRoom, HoldRoom, RectangularRoom } from './roomTypes';
+import {RoomConstants, BreachRoom, HoldRoom, RectangularRoom, Hold, Bridge } from './roomTypes';
 
 export class GeneratorOptions {
 
@@ -45,41 +45,101 @@ export class Ship {
         this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
-        
+        // split ship into vertical sections for hold areas
+        var holdGenerationYMin = Math.floor(this.shipOptions.height / 3)
+        var holdGenerationYMax = holdGenerationYMin * 2;
+        var holdGenerationXSegmentSize = Math.floor(this.shipOptions.width / this.shipOptions.holds); 
+        var holdGenerationXMin = 6;
+        var holdGenerationXMax = holdGenerationXSegmentSize;
 
-        // places random rooms around the ship
-        for (var i = 0; i < this.shipOptions.maxRooms; i++) {
-            var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
-            var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
-    
-            var x = Srand.intInRange(0, this.gameMap.width - roomWidth - 1);
-            var y = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
-    
-            var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
-            var validRoom = true;
-            for (var j = 0; j < this.rooms.length; j++) {
-                var room = this.rooms[j];
-                if (newRoom.intersects(room)) {
-                    validRoom = false;
-                    break;
+        var previousRoom = breachRoom;
+
+        for (var h = 1; h <= this.shipOptions.holds; h++) {
+            // generate hold sections in the middle 3rd y-zone of the game area
+            var validRoom = false;
+            while(!validRoom) {
+                // keep trying to generate a hold until it works!
+                var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationYMax);
+                var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
+                var hold = new Hold(xLoc, yLoc);
+
+                validRoom = !this._doesThisIntersectWithOtherRooms(hold);
+                if(!validRoom) {
+                    continue;
                 }
+
+                this._createRoom(hold);
+                this._tunnelBetweenRooms(previousRoom, hold);
+                holdGenerationXMin = holdGenerationXMax;
+                holdGenerationXMax += holdGenerationXSegmentSize;
+                this.rooms.push(hold);
+
+                // todo generate associated POI rooms with this hold
+                previousRoom = hold;
             }
-
-            if (!validRoom) {
-                continue;
-            }
-
-            this._createRoom(newRoom);
-    
-            var lastRoom = this.rooms[this.rooms.length - 1];
-            this._tunnelBetweenRooms(lastRoom, newRoom);
-
-            this.placeEntitiesInRoom(newRoom);
-    
-            this.rooms.push(newRoom);
         }
 
+        var validBridge = false;
+        while(!validBridge) {
+            var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationYMax);
+            var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
+            var bridge = new Bridge(xLoc, yLoc);
+            validBridge = !this._doesThisIntersectWithOtherRooms(bridge);
+            if(!validBridge) {
+                continue;
+            }
+            this._createRoom(bridge);
+            this._tunnelBetweenRooms(previousRoom, bridge);
+            this.rooms.push(bridge);
+        }
+
+
+        for (var i = 1; i < this.rooms.length; i++) {
+            this.placeEntitiesInRoom(this.rooms[i]);
+        }
+        // places random rooms around the ship
+        // for (var i = 0; i < this.shipOptions.maxRooms; i++) {
+        //     var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
+        //     var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
+    
+        //     var x = Srand.intInRange(0, this.gameMap.width - roomWidth - 1);
+        //     var y = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
+    
+        //     var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
+        //     var validRoom = true;
+        //     for (var j = 0; j < this.rooms.length; j++) {
+        //         var room = this.rooms[j];
+        //         if (newRoom.intersects(room)) {
+        //             validRoom = false;
+        //             break;
+        //         }
+        //     }
+
+        //     if (!validRoom) {
+        //         continue;
+        //     }
+
+        //     this._createRoom(newRoom);
+    
+        //     var lastRoom = this.rooms[this.rooms.length - 1];
+        //     this._tunnelBetweenRooms(lastRoom, newRoom);
+
+        //     this.placeEntitiesInRoom(newRoom);
+    
+        //     this.rooms.push(newRoom);
+        // }
+
         return this.gameMap;
+    }
+
+    _doesThisIntersectWithOtherRooms(roomToCheck) {
+        for (var j = 0; j < this.rooms.length; j++) {
+            var otherRoom = this.rooms[j];
+            if(roomToCheck.intersects(otherRoom)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     _createRoom(newRoom) {
@@ -102,6 +162,7 @@ export class Ship {
             }
         }
 
+        console.log('Created room: ' + newRoom);
         return newRoom;
     }
 
