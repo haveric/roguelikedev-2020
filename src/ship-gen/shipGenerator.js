@@ -45,6 +45,9 @@ export class Ship {
         this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
+        
+
+        // places random rooms around the ship
         for (var i = 0; i < this.shipOptions.maxRooms; i++) {
             var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
             var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
