@@ -173,11 +173,12 @@ export class Ship {
     }
 
     _tunnelAdjacent(x, y) {
-        // do  not place a wall if there is already an open floor here
+        // do not place a wall if there is already an open floor here
         var floorTileAdjacent = this.gameMap.floorTiles[x][y];
         var wallTileAdjacent = this.gameMap.wallTiles[x][y];
         if (!floorTileAdjacent && !wallTileAdjacent) {
             this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
+            this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
         }
     }
 }
