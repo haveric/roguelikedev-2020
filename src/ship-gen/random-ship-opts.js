@@ -1,18 +1,8 @@
 import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
-import Sprite from '../sprite.js';
-import Tile from '../tile.js';
 import { create2dArray } from '../../utils.js';
 import EntityFactories from '../entityFactories.js';
-
-
-export function generateWallTile(x, y) {
-    return new Tile(x, y, "wall", new Sprite("wall", "666666"), false, true);
-}
-
-export function generateFloorTile(x, y) {
-    return new Tile(x, y, "floor", new Sprite("floor", "999999"), true, false);
-}
+import Tiles from './tilefactories';
 
 export class GeneratorOptions {
 
@@ -103,12 +93,12 @@ export class Ship {
     
                     if (x == newRoom.x1 || x == newRoom.x2 - 1 || y == newRoom.y1 || y == newRoom.y2 - 1) {
                         if (!hasPreexistingOpenSpace) {
-                            this.gameMap.wallTiles[x][y] = generateWallTile(x, y);
-                            this.gameMap.floorTiles[x][y] = generateFloorTile(x, y);
+                            this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
+                            this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
                         }
                     } else {
                         this.gameMap.wallTiles[x][y] = null;
-                        this.gameMap.floorTiles[x][y] = generateFloorTile(x, y);
+                        this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
                     }
                 }
             }
@@ -175,12 +165,14 @@ export class Ship {
     }
 
     _createTunnel(axisStart, axisEnd, otherAxis, isHorizontal) {
-        for (var axisCoord = Math.min(axisStart, axisEnd); axisCoord < Math.max(axisStart, axisEnd); axisCoord++) {
+        const start = Math.min(axisStart, axisEnd);
+        const end =  Math.max(axisStart, axisEnd);
+        for (var axisCoord = start; axisCoord <= end; axisCoord++) {
             var x = isHorizontal ? axisCoord : otherAxis;
             var y = isHorizontal ? otherAxis : axisCoord;
 
-            this.gameMap.floorTiles[x][y] = generateFloorTile(x, y);
-            this.gameMap.wallTiles[x][y] = null;
+            this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
+            this.gameMap.wallTiles[x][y] = null; // remove any wall
     
             var xCheckTile1 = isHorizontal ? x : x - 1;
             var yCheckTile1 = isHorizontal ? y - 1 : y;
@@ -193,14 +185,11 @@ export class Ship {
     }
 
     _tunnelAdjacent(x, y) {
+        // do  not place a wall if there is already an open floor here
         var floorTileAdjacent = this.gameMap.floorTiles[x][y];
-        if (floorTileAdjacent === undefined) {
-            this.gameMap.floorTiles[x][x] = generateFloorTile(x, y);
-
-            var wallTileAdjacent = this.gameMap.wallTiles[x][y];
-            if (wallTileAdjacent === undefined) {
-                this.gameMap.wallTiles[x][y] = generateWallTile(x, y);
-            }
+        var wallTileAdjacent = this.gameMap.wallTiles[x][y];
+        if (!floorTileAdjacent && !wallTileAdjacent) {
+            this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
         }
     }
 }
