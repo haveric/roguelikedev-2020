@@ -3,8 +3,8 @@ import { create2dArray } from '../../utils.js';
 export const RoomConstants = {
     baseHoldWidth: 10,
     baseHoldHeight: 6,
-    baseBreachWidth: 3,
-    baseBreachHeight: 5
+    baseBreachWidth: 5,
+    baseBreachHeight: 7
 }
 
 export class RectangularRoom {

@@ -40,7 +40,8 @@ export class Ship {
         this.gameMap = new GameMap(this.shipOptions.width, this.shipOptions.height, this.gameMap.entities);
 
         // create breach room near center left of map
-        var breachRoom = new BreachRoom(0, (this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2));
+        var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
+        var breachRoom = new BreachRoom(0, breachX2);
         this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
