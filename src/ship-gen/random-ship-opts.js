@@ -120,7 +120,7 @@ export class Ship {
     
                 this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
     
-                placeEntitiesInRoom(newRoom);
+                this.placeEntitiesInRoom(newRoom);
             }
     
             this.rooms.push(newRoom);
@@ -166,27 +166,28 @@ export class Ship {
         if (Srand.intInRange(0, 1) == 1) {
             // horizontal first, then vertical
             this._createTunnel(x1, x2, y1, true);
-            this._createTunnel()
-            createHorizontalTunnel(this.gameMap, x1, x2, y1);
-            createVerticalTunnel(this.gameMap, y1, y2, x2);
+            this._createTunnel(y1, y2, x2, false);
         } else {
             // vertical first, then horizontal
-            createVerticalTunnel(this.gameMap, y1, y2, x1);
-            createHorizontalTunnel(this.gameMap, x1, x2, y2);
+            this._createTunnel(y1, y2, x1, false);
+            this._createTunnel(x1, x2, y2, true);
         }
     }
 
-    _createTunnel(x1, x2, y, isHorizontal) {
-        for (var x = Math.min(x1, x2); x < Math.max(x1, x2) + 1; x++) {
+    _createTunnel(axisStart, axisEnd, otherAxis, isHorizontal) {
+        for (var axisCoord = Math.min(axisStart, axisEnd); axisCoord < Math.max(axisStart, axisEnd); axisCoord++) {
+            var x = isHorizontal ? axisCoord : otherAxis;
+            var y = isHorizontal ? otherAxis : axisCoord;
+
             this.gameMap.floorTiles[x][y] = generateFloorTile(x, y);
             this.gameMap.wallTiles[x][y] = null;
     
-            xCheckTile1 = isHorizontal ? x : x - 1;
-            yCheckTile1 = isHorizontal ? y - 1 : y;
-            this._tunnelAdjacent(gameMap, xCheckTile1, xCheckTile2);
+            var xCheckTile1 = isHorizontal ? x : x - 1;
+            var yCheckTile1 = isHorizontal ? y - 1 : y;
+            this._tunnelAdjacent(xCheckTile1, yCheckTile1);
     
-            xCheckTile2 = isHorizontal ? x : x + 1;
-            yCheckTile2 = isHorizontal ? y + 1 : y;
+            var xCheckTile2 = isHorizontal ? x : x + 1;
+            var yCheckTile2 = isHorizontal ? y + 1 : y;
             this._tunnelAdjacent(xCheckTile2, yCheckTile2);
         }
     }
