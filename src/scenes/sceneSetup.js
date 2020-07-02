@@ -94,6 +94,7 @@ export class SceneSetup extends Phaser.Scene {
         });
 
         self.socket.on('startGame', function(room) {
+            self.scene.start('SceneGameUI');
             self.scene.start('SceneGame', {room: room, socket: this});
         });
     }

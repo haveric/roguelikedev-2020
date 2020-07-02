@@ -81,9 +81,8 @@ export class SceneGame extends Phaser.Scene {
         this.engine.updateFov();
 
         if (self.player) {
-            var energyStyle = {font: "30px Arial", fill: "#ffff00" };
-            self.energy = self.add.text(30, 30, "Energy: " + self.player.energy, energyStyle);
-            self.energy.setScrollFactor(0,0);
+            self.events.emit('ui-enable');
+            self.events.emit('ui-updateEnergy', self.player.energy);
         }
 
         self.eventHandler.on('action', function(action) {
@@ -91,7 +90,7 @@ export class SceneGame extends Phaser.Scene {
                 if (action.perform(self, self.player)) {
                     self.player.energy -= 1;
 
-                    self.energy.setText("Energy: " + self.player.energy);
+                    self.events.emit('ui-updateEnergy', self.player.energy);
                     self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
 
                     self.engine.updateFov();
@@ -148,7 +147,7 @@ export class SceneGame extends Phaser.Scene {
                 var player = players[i];
                 if (player.playerId == self.socket.id) {
                     self.player.energy = player.energy;
-                    self.energy.setText("Energy: " + self.player.energy);
+                    self.events.emit('ui-updateEnergy', self.player.energy);
                     break;
                 }
             }
