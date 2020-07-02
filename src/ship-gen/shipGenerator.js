@@ -2,7 +2,7 @@ import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
-import {RoomConstants, BreachRoom, HoldRoom, RectangularRoom, Hold, Bridge } from './roomTypes';
+import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories } from './roomTypes';
 
 export class GeneratorOptions {
 
@@ -56,15 +56,15 @@ export class Ship {
 
         for (var h = 1; h <= this.shipOptions.holds; h++) {
             // generate hold sections in the middle 3rd y-zone of the game area
-            var validRoom = false;
-            while(!validRoom) {
+            var validHold = false;
+            while(!validHold) {
                 // keep trying to generate a hold until it works!
                 var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationYMax);
                 var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
-                var hold = new Hold(xLoc, yLoc);
+                var hold = RoomTypeFactories.createHold(xLoc, yLoc);
 
-                validRoom = !this._doesThisIntersectWithOtherRooms(hold);
-                if(!validRoom) {
+                validHold = !this._doesThisIntersectWithOtherRooms(hold);
+                if(!validHold) {
                     continue;
                 }
 

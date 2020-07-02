@@ -1,4 +1,5 @@
 import { create2dArray } from '../../utils.js';
+import Srand from 'seeded-rand';
 
 export class RectangularRoom {
     constructor(x, y, width, height) {
@@ -26,17 +27,27 @@ export class RectangularRoom {
 }
 
 export const RoomConstants = {
-    baseHoldWidth: 10,
-    baseHoldHeight: 6,
+    holdWidth: 14,
+    holdHeight: 10,
     baseBreachWidth: 5,
     baseBreachHeight: 7,
     bridgeWidth: 10,
     bridgeHeight: 6
 }
 
+export class RoomTypeFactories { }
+
+RoomTypeFactories.createHold = (x, y) => {
+    if(Srand.choice([true, false])) {
+        return new RectangularRoom(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight);
+    } else {
+        return new RectangularRoom(x, y, RoomConstants.holdHeight, RoomConstants.holdWidth);
+    }
+    
+}
 export class Hold extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.baseHoldWidth, RoomConstants.baseHoldHeight)
+        super(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight)
     }
 }
 

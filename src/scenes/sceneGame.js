@@ -67,9 +67,9 @@ export class SceneGame extends Phaser.Scene {
 
         //this.gameMap = createTestMap(20, 20, self.entities);
         //this.gameMap = generateDungeonSimple(80, 50, self.entities);
-        var width = 80;
-        var height = 50;
-        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 3, 3);
+        var width = 100;
+        var height = 60;
+        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 5, 3);
         var initialGameMap = new GameMap(width, height, self.entities);
         var shipGenerator = new Ship(initialGameMap, genOptions);
         this.gameMap = shipGenerator.generateDungeon();
