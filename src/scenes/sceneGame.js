@@ -38,6 +38,7 @@ export class SceneGame extends Phaser.Scene {
         this.otherPlayers = [];
         this.players = [];
         this.entities = [];
+        this.zoomLevel = 1;
 
         Srand.seed(this.room.seed);
     }
@@ -97,6 +98,28 @@ export class SceneGame extends Phaser.Scene {
                     self.engine.handleEnemyTurns();
                 }
             }
+        });
+
+        self.eventHandler.on('zoom', function(zoomLevel) {
+            if (zoomLevel == 1) { // Zoom In
+                if (self.zoomLevel < 2) {
+                    self.zoomLevel ++;
+                }
+            } else if (zoomLevel == -1) { // Zoom Out
+                if (self.zoomLevel > -1) {
+                    self.zoomLevel --;
+                }
+            }
+
+            var zoom;
+            switch(self.zoomLevel) {
+                case 1: zoom = 1; break;
+                case 2: zoom = 2; break;
+                case 0: zoom = .5; break;
+                case -1: zoom = .25; break;
+                default: zoom = 1; break;
+            }
+            self.cameras.main.setZoom(zoom);
         });
 
         var objectToFollow;
