@@ -5,6 +5,8 @@ import Player from '../player.js';
 import Sprite from '../sprite.js';
 import EventHandler from '../eventHandler.js';
 import { create2dArray } from '../../utils.js';
+import { GeneratorOptions, Ship } from '../ship-gen/random-ship-opts.js';
+import GameMap from '../gameMap.js';
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -66,7 +68,13 @@ export class SceneGame extends Phaser.Scene {
 
         //this.gameMap = createTestMap(20, 20, self.entities);
         //this.gameMap = generateDungeonSimple(80, 50, self.entities);
-        this.gameMap = generateDungeon(30, 6, 10, 80, 50, 3, self.entities, self.players);
+        var width = 80;
+        var height = 50;
+        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 3);
+        var initialGameMap = new GameMap(width, height, self.entities);
+        var shipGenerator = new Ship(initialGameMap, genOptions);
+        this.gameMap = shipGenerator.generateDungeon();
+        shipGenerator.setPlayerCoordinates(self.players);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
         this.engine.updateFov();
