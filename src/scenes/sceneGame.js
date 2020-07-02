@@ -5,7 +5,7 @@ import Player from '../player.js';
 import Sprite from '../sprite.js';
 import EventHandler from '../eventHandler.js';
 import { create2dArray } from '../../utils.js';
-import { GeneratorOptions, Ship } from '../ship-gen/random-ship-opts.js';
+import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator.js';
 import GameMap from '../gameMap.js';
 
 export class SceneGame extends Phaser.Scene {
