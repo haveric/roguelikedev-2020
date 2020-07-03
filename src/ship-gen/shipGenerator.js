@@ -4,6 +4,7 @@ import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
 import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
 import { strategy } from 'webpack-merge';
+import { RoomTunneler } from './roomTunneler.js'
 
 export class GeneratorOptions {
 
@@ -129,6 +130,11 @@ export class Ship {
         }
 
         return this.gameMap;
+    }
+
+    _tunnelBetweenRooms(room1, room2) {
+        var tunneler = new RoomTunneler(this.gameMap, room1, room2);
+        tunneler.tunnelBetweenRooms();
     }
 
     _doesThisIntersectWithOtherRooms(roomToCheck) {

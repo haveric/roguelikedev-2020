@@ -1,6 +1,7 @@
+import Srand from 'seeded-rand';
 import Tiles from './tilefactories';
 
-export default class RoomTunneler {
+export class RoomTunneler {
 
     constructor(gameMap, room1, room2) {
         this.gameMap = gameMap;
