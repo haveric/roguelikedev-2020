@@ -82,11 +82,12 @@ Fov.exploreLight = (gameMap, exploredTiles, newLightSources, x, y, octant, origi
         var lightSource = gameMap.wallTiles[originX][originY].lightSource;
         if (lightSource) {
             if (!newLightSources.includes(lightSource)) {
+                newLightSources.push(lightSource);
+
                 for (var octant = 0; octant < 8; octant ++) {
                     FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, 1, originX, originY, lightSource.range, lightSource.range, new Slope(1, 1), new Slope(0, 1), lightSource);
                 }
 
-                newLightSources.push(lightSource);
             }
         }
     }

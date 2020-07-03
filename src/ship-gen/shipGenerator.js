@@ -45,6 +45,10 @@ export class Ship {
         this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
+        // add test lights
+        this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
+        this.gameMap.wallTiles[breachRoom.x2 - 2][breachRoom.y1 + 1] = Tiles.yellowTorch(breachRoom.x2 - 2, breachRoom.y1 + 1);
+
         // split ship into vertical sections for hold areas
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 3)
         var holdGenerationYMax = holdGenerationYMin * 2;
@@ -154,21 +158,6 @@ export class Ship {
                     this.gameMap.wallTiles[x][y] = null;
                     this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
                 }
-            }
-
-            if (i == 0) {
-                this.gameMap.wallTiles[newRoom.x1 + 1][newRoom.y1 + 1] = Tiles.redTorch(newRoom.x1 + 1, newRoom.y1 + 1);
-                this.gameMap.wallTiles[newRoom.x2 - 2][newRoom.y1 + 1] = Tiles.yellowTorch(newRoom.x2 - 2, newRoom.y1 + 1);
-            }
-
-            if (i !== 0) {
-                var lastRoom = this.rooms[this.rooms.length - 1];
-                var lastRoomCenter = lastRoom.center();
-                var newRoomCenter = newRoom.center();
-    
-                this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
-    
-                this.placeEntitiesInRoom(newRoom);
             }
     
             this.rooms.push(newRoom);
