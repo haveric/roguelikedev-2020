@@ -24,6 +24,13 @@ export class RectangularRoom {
             && this.y1 <= rectangularRoom.y2
             && this.y2 >= rectangularRoom.y1;
     }
+
+    toString() {
+        return 'Room: { x1: ' + this.x1 
+            + ', y1: ' + this.y1
+            + ', x2: ' + this.x2
+            + ', y2: ' + this.y2 + ' }'
+    }
 }
 
 export const RoomConstants = {

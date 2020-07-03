@@ -2,7 +2,7 @@ import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
-import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories } from './roomTypes';
+import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
 
 export class GeneratorOptions {
 
@@ -57,9 +57,10 @@ export class Ship {
         for (var h = 1; h <= this.shipOptions.holds; h++) {
             // generate hold sections in the middle 3rd y-zone of the game area
             var validHold = false;
+            console.log('Generating hold ' + h + '...');
             while(!validHold) {
                 // keep trying to generate a hold until it works!
-                var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationYMax);
+                var xLoc = Srand.intInRange(holdGenerationXMin, Math.min(this.gameMap.width - RoomConstants.holdWidth - 1, holdGenerationXMax));
                 var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
                 var hold = RoomTypeFactories.createHold(xLoc, yLoc);
 
@@ -70,19 +71,44 @@ export class Ship {
 
                 this._createRoom(hold);
                 this._tunnelBetweenRooms(previousMainRoom, hold);
-                holdGenerationXMin = holdGenerationXMax;
-                holdGenerationXMax += holdGenerationXSegmentSize;
                 this.rooms.push(hold);
 
-                // todo generate associated POI rooms with this hold
+                // generate 4 side rooms off of each hold
+                console.log('Generating rooms for hold ' + h + '...');
+                for (var r = 0; r < 4; r++) {
+                    var validRoom = false;
+                    while(!validRoom) {
+                        var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
+                        var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
+                
+                        xLoc = Srand.intInRange(holdGenerationXMin, Math.min(this.gameMap.width - roomWidth - 1, holdGenerationXMax));
+                        yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
+                
+                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight);
+
+                        validRoom = !this._doesThisIntersectWithOtherRooms(room);
+                        if(!validRoom) {
+                            continue;
+                        }
+
+                        this._createRoom(room);
+                        this._tunnelBetweenRooms(hold, room);
+                        this.rooms.push(room);
+                    } 
+                    
+                }
+
+                holdGenerationXMin = holdGenerationXMax;
+                holdGenerationXMax += holdGenerationXSegmentSize;
                 previousMainRoom = hold;
             }
         }
 
         var validBridge = false;
+        console.log('Creating bridge...')
         while(!validBridge) {
-            var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationYMax);
-            var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
+            var xLoc = Srand.intInRange(this.gameMap.width - holdGenerationXSegmentSize, this.gameMap.width - RoomConstants.bridgeWidth - 1);
+            var yLoc = Srand.intInRange(holdGenerationYMin, Math.min(holdGenerationYMax, this.gameMap.height - RoomConstants.bridgeHeight - 1));
             var bridge = new Bridge(xLoc, yLoc);
             validBridge = !this._doesThisIntersectWithOtherRooms(bridge);
             if(!validBridge) {
