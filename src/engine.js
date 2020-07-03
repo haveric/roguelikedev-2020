@@ -93,13 +93,14 @@ export default class Engine {
         }
 
         var newExploredTiles = [];
+        var newLightSources = [];
         if (this.player.hasSharedVision) {
             for (var i = 0; i < this.players.length; i++) {
                 var player = this.players[i];
-                FovAdamMillazo.compute(this.gameMap, newExploredTiles, player.x, player.y, player.lightRadius);
+                FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, player.x, player.y, player.lightRadius);
             }
         } else {
-            FovAdamMillazo.compute(this.gameMap, newExploredTiles, this.player.x, this.player.y, this.player.lightRadius);
+            FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, this.player.x, this.player.y, this.player.lightRadius);
         }
 
         for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
