@@ -123,37 +123,6 @@ export class Ship {
         for (var i = 1; i < this.rooms.length; i++) {
             this.placeEntitiesInRoom(this.rooms[i]);
         }
-        // places random rooms around the ship
-        // for (var i = 0; i < this.shipOptions.maxRooms; i++) {
-        //     var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
-        //     var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
-    
-        //     var x = Srand.intInRange(0, this.gameMap.width - roomWidth - 1);
-        //     var y = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
-    
-        //     var newRoom = new RectangularRoom(x, y, roomWidth, roomHeight);
-        //     var validRoom = true;
-        //     for (var j = 0; j < this.rooms.length; j++) {
-        //         var room = this.rooms[j];
-        //         if (newRoom.intersects(room)) {
-        //             validRoom = false;
-        //             break;
-        //         }
-        //     }
-
-        //     if (!validRoom) {
-        //         continue;
-        //     }
-
-        //     this._createRoom(newRoom);
-    
-        //     var lastRoom = this.rooms[this.rooms.length - 1];
-        //     this._tunnelBetweenRooms(lastRoom, newRoom);
-
-        //     this.placeEntitiesInRoom(newRoom);
-    
-        //     this.rooms.push(newRoom);
-        // }
 
         return this.gameMap;
     }
@@ -213,8 +182,8 @@ export class Ship {
         var numToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
     
         for (var i = 0; i < numToSpawn; i++) {
-            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 2);
+            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 2);
     
             var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
             if (!entity) {
