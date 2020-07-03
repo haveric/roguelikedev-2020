@@ -2,11 +2,12 @@ import { create2dArray } from '../../utils.js';
 import Srand from 'seeded-rand';
 
 export class RectangularRoom {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, name) {
         this.x1 = x;
         this.y1 = y;
         this.x2 = x + width;
         this.y2 = y + height;
+        this.name = name;
 
         this.tiles = create2dArray(width);
     }
@@ -31,7 +32,7 @@ export class RectangularRoom {
     }
 
     toString() {
-        return 'Room: { x1: ' + this.x1 
+        return 'Room: ' + this.name || 'unnamed' + ' { x1: ' + this.x1 
             + ', y1: ' + this.y1
             + ', x2: ' + this.x2
             + ', y2: ' + this.y2 + ' }'
@@ -51,26 +52,26 @@ export class RoomTypeFactories { }
 
 RoomTypeFactories.createHold = (x, y) => {
     if(Srand.choice([true, false])) {
-        return new RectangularRoom(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight);
+        return new RectangularRoom(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, 'Hold');
     } else {
-        return new RectangularRoom(x, y, RoomConstants.holdHeight, RoomConstants.holdWidth);
+        return new RectangularRoom(x, y, RoomConstants.holdHeight, RoomConstants.holdWidth, 'Hold');
     }
     
 }
 export class Hold extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight)
+        super(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, 'Hold')
     }
 }
 
 export class BreachRoom extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight)
+        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Hold')
     }
 }
 
 export class Bridge extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight);
+        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Hold');
     }
 }

@@ -3,6 +3,7 @@ import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
 import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
+import { strategy } from 'webpack-merge';
 
 export class GeneratorOptions {
 
@@ -45,6 +46,10 @@ export class Ship {
         this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
+        // add test lights
+        this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
+        this.gameMap.wallTiles[breachRoom.x2 - 2][breachRoom.y1 + 1] = Tiles.yellowTorch(breachRoom.x2 - 2, breachRoom.y1 + 1);
+
         // split ship into vertical sections for hold areas
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 3)
         var holdGenerationYMax = holdGenerationYMin * 2;
@@ -84,7 +89,7 @@ export class Ship {
                         xLoc = Srand.intInRange(holdGenerationXMin, Math.min(this.gameMap.width - roomWidth - 1, holdGenerationXMax));
                         yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
                 
-                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight);
+                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, 'POI' + h + '' + r);
 
                         validRoom = !this._doesThisIntersectWithOtherRooms(room);
                         if(!validRoom) {
@@ -154,8 +159,6 @@ export class Ship {
                     this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
                 }
             }
-    
-            this.rooms.push(newRoom);
         }
 
         console.log('Created room: ' + newRoom);
@@ -175,6 +178,7 @@ export class Ship {
 
     placeEntitiesInRoom(rectangularRoom) {
         var numToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
+        console.log('Spawning ' + numToSpawn + ' enemies in room: ' + rectangularRoom);
     
         for (var i = 0; i < numToSpawn; i++) {
             var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 2);
