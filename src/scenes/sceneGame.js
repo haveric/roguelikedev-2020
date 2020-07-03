@@ -1,5 +1,6 @@
 import Srand from 'seeded-rand';
 import Engine from '../engine.js';
+import { Fov } from '../fov.js';
 import { createTestMap, generateDungeonSimple, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
 import Sprite from '../sprite.js';
@@ -119,6 +120,14 @@ export class SceneGame extends Phaser.Scene {
                 default: zoom = 1; break;
             }
             self.cameras.main.setZoom(zoom);
+        });
+
+        self.eventHandler.on('debug', function() {
+            self.engine.clearFov();
+            self.player.energy = 5000;
+            self.eventHandler.debugEnabled = true;
+            self.events.emit('ui-updateEnergy', self.player.energy);
+            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
         });
 
         var objectToFollow;

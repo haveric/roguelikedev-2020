@@ -22,7 +22,10 @@ Fov.exploreTile = (gameMap, x, y, exploredTiles)  => {
     // Skip already explored tiles from other players
     if (gameMap.shroud[x] && gameMap.shroud[x][y] && !gameMap.shroud[x][y].visible) {
         gameMap.shroud[x][y].explore();
-        exploredTiles.push(gameMap.shroud[x][y]);
+
+        if (exploredTiles) {
+            exploredTiles.push(gameMap.shroud[x][y]);
+        }
     }
 }
 

@@ -114,4 +114,14 @@ export default class Engine {
 
         this.gameMap.lastExploredFovTiles = newExploredTiles;
     }
+
+    clearFov() {
+        this.gameMap.lastExploredFovTiles = [];
+        for (var i = 0; i < this.gameMap.width; i++) {
+            for (var j = 0; j < this.gameMap.height; j++) {
+                this.gameMap.shroud[i][j].explore();
+                this.gameMap.shroud[i][j].render();
+            }
+        }
+    }
 }

@@ -5,11 +5,12 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
         super();
         var self = this;
 
+        this.debugEnabled = false;
         this.keyboard = keyboard;
         this.keysDown = [];
 
         this.keyboard.on('keydown', function(event) {
-            if (!self.keysDown[event.code]) {
+            if (self.debugEnabled || !self.keysDown[event.code]) {
                 switch (event.code) {
                     // Left
                     case "KeyA":
@@ -61,6 +62,8 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
                     case "Equal":
                         self.zoom(1);
                         break;
+                    case "Home":
+                        self.debug();
                     default:
                         break;
                 }
@@ -80,5 +83,9 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     zoom(zoomLevel) {
         this.emit('zoom', zoomLevel);
+    }
+
+    debug() {
+        this.emit('debug', 1);
     }
 }

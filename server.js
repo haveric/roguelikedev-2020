@@ -183,7 +183,11 @@ io.on('connection', function (socket) {
                 player.y = y;
                 updatedPlayer = player;
 
-                player.energy -= 1;
+                if (data.energy) {
+                    player.energy = data.energy;
+                } else {
+                    player.energy -= 1;
+                }
             } else {
                 if (player.energy < player.energyMax) {
                     player.energy += 1;
