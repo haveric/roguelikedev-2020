@@ -5,6 +5,7 @@ export default class Entity {
         this.name = name;
         this.sprite = sprite;
         this.blocksMovement = blocksMovement;
+        this.lightRadius = 8;
     }
 
     move(engine, dx, dy) {

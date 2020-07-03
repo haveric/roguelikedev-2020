@@ -1,5 +1,6 @@
 import Srand from 'seeded-rand';
 import Engine from '../engine.js';
+import { Fov } from '../fov.js';
 import { createTestMap, generateDungeonSimple, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
 import Sprite from '../sprite.js';
@@ -21,6 +22,7 @@ export class SceneGame extends Phaser.Scene {
             frameWidth: 24,
             frameHeight: 24,
             tiles: {
+                "shroud": 219,
                 "player": 64,
                 "wall": 35,
                 "floor": 219,
@@ -37,6 +39,7 @@ export class SceneGame extends Phaser.Scene {
         this.otherPlayers = [];
         this.players = [];
         this.entities = [];
+        this.zoomLevel = 1;
 
         Srand.seed(this.room.seed);
     }
@@ -76,11 +79,11 @@ export class SceneGame extends Phaser.Scene {
         shipGenerator.setPlayerCoordinates(self.players);
         this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
+        this.engine.updateFov();
 
         if (self.player) {
-            var energyStyle = {font: "30px Arial", fill: "#ffff00" };
-            self.energy = self.add.text(30, 30, "Energy: " + self.player.energy, energyStyle);
-            self.energy.setScrollFactor(0,0);
+            self.events.emit('ui-enable');
+            self.events.emit('ui-updateEnergy', self.player.energy);
         }
 
         self.eventHandler.on('action', function(action) {
@@ -88,12 +91,43 @@ export class SceneGame extends Phaser.Scene {
                 if (action.perform(self, self.player)) {
                     self.player.energy -= 1;
 
-                    self.energy.setText("Energy: " + self.player.energy);
+                    self.events.emit('ui-updateEnergy', self.player.energy);
                     self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
 
+                    self.engine.updateFov();
                     self.engine.handleEnemyTurns();
                 }
             }
+        });
+
+        self.eventHandler.on('zoom', function(zoomLevel) {
+            if (zoomLevel == 1) { // Zoom In
+                if (self.zoomLevel < 2) {
+                    self.zoomLevel ++;
+                }
+            } else if (zoomLevel == -1) { // Zoom Out
+                if (self.zoomLevel > -1) {
+                    self.zoomLevel --;
+                }
+            }
+
+            var zoom;
+            switch(self.zoomLevel) {
+                case 1: zoom = 1; break;
+                case 2: zoom = 2; break;
+                case 0: zoom = .5; break;
+                case -1: zoom = .25; break;
+                default: zoom = 1; break;
+            }
+            self.cameras.main.setZoom(zoom);
+        });
+
+        self.eventHandler.on('debug', function() {
+            self.engine.clearFov();
+            self.player.energy = 5000;
+            self.eventHandler.debugEnabled = true;
+            self.events.emit('ui-updateEnergy', self.player.energy);
+            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
         });
 
         var objectToFollow;
@@ -113,6 +147,8 @@ export class SceneGame extends Phaser.Scene {
                     otherPlayer.moveTo(self.engine, playerInfo.x, playerInfo.y);
                 }
             }
+
+            self.engine.updateFov();
         });
 
         self.socket.on('updatePlayerData', function (players) {
@@ -120,7 +156,7 @@ export class SceneGame extends Phaser.Scene {
                 var player = players[i];
                 if (player.playerId == self.socket.id) {
                     self.player.energy = player.energy;
-                    self.energy.setText("Energy: " + self.player.energy);
+                    self.events.emit('ui-updateEnergy', self.player.energy);
                     break;
                 }
             }

@@ -3,6 +3,7 @@ import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
 import {SceneLobby} from "./scenes/sceneLobby";
 import {SceneSetup} from "./scenes/sceneSetup";
 import {SceneGame} from "./scenes/sceneGame";
+import {SceneGameUI} from "./scenes/sceneGameUI";
 
 var config = {
     type: Phaser.AUTO,
@@ -21,7 +22,7 @@ var config = {
     height: 600,
     pixelArt: true,
     backgroundColor: "#000000",
-    scene: [SceneLobby, SceneSetup, SceneGame]
+    scene: [SceneLobby, SceneSetup, SceneGame, SceneGameUI]
 };
 
 let game = new Phaser.Game(config);
