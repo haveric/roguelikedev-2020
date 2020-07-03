@@ -1,7 +1,6 @@
 import Srand from 'seeded-rand';
 import Engine from '../engine.js';
 import { Fov } from '../fov.js';
-import { createTestMap, generateDungeonSimple, generateDungeon } from '../procgen.js';
 import Player from '../player.js';
 import Sprite from '../sprite.js';
 import EventHandler from '../eventHandler.js';
@@ -69,8 +68,6 @@ export class SceneGame extends Phaser.Scene {
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
 
-        //this.gameMap = createTestMap(20, 20, self.entities);
-        //this.gameMap = generateDungeonSimple(80, 50, self.entities);
         var width = 100;
         var height = 60;
         var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3);

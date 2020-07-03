@@ -160,8 +160,6 @@ export class Ship {
                     this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
                 }
             }
-    
-            this.rooms.push(newRoom);
         }
 
         console.log('Created room: ' + newRoom);
