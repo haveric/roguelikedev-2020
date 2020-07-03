@@ -3,6 +3,7 @@ import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
 import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
+import { strategy } from 'webpack-merge';
 
 export class GeneratorOptions {
 
@@ -88,7 +89,7 @@ export class Ship {
                         xLoc = Srand.intInRange(holdGenerationXMin, Math.min(this.gameMap.width - roomWidth - 1, holdGenerationXMax));
                         yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
                 
-                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight);
+                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, 'POI' + h + '' + r);
 
                         validRoom = !this._doesThisIntersectWithOtherRooms(room);
                         if(!validRoom) {
@@ -186,6 +187,7 @@ export class Ship {
 
     placeEntitiesInRoom(rectangularRoom) {
         var numToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
+        console.log('Spawning ' + numToSpawn + ' enemies in room: ' + rectangularRoom);
     
         for (var i = 0; i < numToSpawn; i++) {
             var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 2);
