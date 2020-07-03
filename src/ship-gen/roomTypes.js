@@ -25,6 +25,11 @@ export class RectangularRoom {
             && this.y2 >= rectangularRoom.y1;
     }
 
+    isOnEdge(x, y) {
+        return (y >= this.y1 && y <= this.y2 && (x === this.x1 || x === this.x2))
+            || (x >= this.x1 && x <= this.x2 && (y === this.y1 || y === this.y2));
+    }
+
     toString() {
         return 'Room: { x1: ' + this.x1 
             + ', y1: ' + this.y1
