@@ -102,7 +102,12 @@ export class Ship {
                     }
                 }
             }
-    
+
+            if (i == 0) {
+                this.gameMap.wallTiles[newRoom.x1 + 1][newRoom.y1 + 1] = Tiles.redTorch(newRoom.x1 + 1, newRoom.y1 + 1);
+                this.gameMap.wallTiles[newRoom.x2 - 2][newRoom.y1 + 1] = Tiles.yellowTorch(newRoom.x2 - 2, newRoom.y1 + 1);
+            }
+
             if (i !== 0) {
                 var lastRoom = this.rooms[this.rooms.length - 1];
                 var lastRoomCenter = lastRoom.center();

@@ -28,7 +28,8 @@ export class SceneGame extends Phaser.Scene {
                 "floor": 219,
                 "spacePirate": 80,
                 "attackDog": 100,
-                "automatedTurret": 84
+                "automatedTurret": 84,
+                "torch": 105
             }
         }
         this.mapOffsetWidth = 400;
