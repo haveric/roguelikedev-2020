@@ -322,7 +322,7 @@ function generateRandomRoomId() {
 
 function generateRandomSeed() {
     // TODO: Make random
-    return 1111111111;
+    return 124123423;
 }
 
 function createNewPlayer(socket, playerName) {
