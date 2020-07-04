@@ -1,5 +1,6 @@
 import Tile from "../tile";
 import LightSource from "../components/lightSource";
+import Openable from "../components/openable";
 import Sprite from "../sprite";
 
 
@@ -28,6 +29,7 @@ Tiles.yellowTorch = (x, y) => {
 }
 
 Tiles.greenDoor = (x, y) => {
-    var tile = new Tile(x, y, "door", new Sprite("door", "009933"), true, true);
+    var tile = new Tile(x, y, "door", new Sprite("door", "009933"), false, true);
+    tile.openable = new Openable(tile, false, "door", "doorOpen");
     return tile;
 }

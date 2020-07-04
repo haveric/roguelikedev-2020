@@ -1,5 +1,5 @@
-var getFrameOf = require('../../utils.js').getFrameOf;
-var hexToRgb = require('../../utils.js').hexToRgb;
+import { getFrameOf, hexToRgb } from '../../utils.js';
+import Tilemaps from '../tilemaps.js';
 
 export class SceneSetup extends Phaser.Scene {
     constructor() {
@@ -9,15 +9,6 @@ export class SceneSetup extends Phaser.Scene {
     init(data) {
         this.room = data.room;
         this.socket = data.socket;
-        this.tilemap = {
-            name: "tilemap",
-            frameWidth: 24,
-            frameHeight: 24,
-            tiles: {
-                "@": 64,
-                "player": 64
-            }
-        }
     }
 
     preload() {
@@ -196,9 +187,9 @@ var createPlayerSelector = function(scene, index, player) {
     }
 
 
-    var frame = getFrameOf(scene, player.sprite);
+    var frame = getFrameOf(Tilemaps.getTileMap(), player.sprite);
     if (frame != null) {
-        var playerSprite = scene.add.sprite(0, 0, scene.tilemap.name).setFrame(frame).setTint("0x" + player.color);
+        var playerSprite = scene.add.sprite(0, 0, Tilemaps.getTileMap().name).setFrame(frame).setTint("0x" + player.color);
         playerSprite.displayWidth = 100;
         playerSprite.scaleY = playerSprite.scaleX; // scale evenly
         playerSelector.add(playerSprite, 0, 'center', { top: 28, bottom: 20, left: 10, right: 10 }, false);

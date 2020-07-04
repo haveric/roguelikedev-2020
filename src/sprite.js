@@ -1,4 +1,5 @@
 import { getFrameOf } from '../utils.js';
+import Tilemaps from './tilemaps.js';
 
 export default class Sprite {
     constructor(name, color) {
@@ -11,12 +12,20 @@ export default class Sprite {
         return new Sprite(this.name, this.color, this.spriteObject);
     }
 
-    create(scene, x, y, tilemapName) {
-        var frame = getFrameOf(scene, this.name);
+    create(scene, x, y) {
+        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
         if (frame != null) {
-            this.spriteObject = scene.add.sprite(x, y, tilemapName).setOrigin(0, 0);
+            this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
             this.spriteObject.setFrame(frame);
             this.spriteObject.setTint("0x" + this.color);
+        }
+    }
+
+    updateSprite(name) {
+        this.name = name;
+        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
+        if (frame != null) {
+            this.spriteObject.setFrame(frame);
         }
     }
 

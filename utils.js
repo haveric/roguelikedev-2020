@@ -12,10 +12,10 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getFrameOf = (scene, sprite) => {
+const getFrameOf = (tilemap, sprite) => {
     var frame = null;
-    if (scene.tilemap.tiles[sprite]) {
-        frame = scene.tilemap.tiles[sprite];
+    if (tilemap.tiles[sprite]) {
+        frame = tilemap.tiles[sprite];
     } else {
         console.log("Tilemap missing sprites! " + sprite);
     }

@@ -7,6 +7,7 @@ import EventHandler from '../eventHandler.js';
 import { create2dArray } from '../../utils.js';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator.js';
 import GameMap from '../gameMap.js';
+import { OpenAction } from '../actions.js';
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -16,22 +17,7 @@ export class SceneGame extends Phaser.Scene {
     init(data) {
         this.room = data.room;
         this.socket = data.socket;
-        this.tilemap = {
-            name: "tilemap",
-            frameWidth: 24,
-            frameHeight: 24,
-            tiles: {
-                "shroud": 219,
-                "player": 64,
-                "wall": 35,
-                "floor": 219,
-                "spacePirate": 80,
-                "attackDog": 100,
-                "automatedTurret": 84,
-                "torch": 105,
-                "door": 68
-            }
-        }
+
         this.mapOffsetWidth = 400;
         this.mapOffsetHeight = 300;
 
@@ -76,7 +62,7 @@ export class SceneGame extends Phaser.Scene {
         var shipGenerator = new Ship(initialGameMap, genOptions);
         this.gameMap = shipGenerator.generateDungeon();
         shipGenerator.setPlayerCoordinates(self.players);
-        this.engine = new Engine(this.eventHandler, this.gameMap, this.tilemap, self.player, self.otherPlayers);
+        this.engine = new Engine(this.eventHandler, this.gameMap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
         this.engine.updateFov();
 
@@ -87,11 +73,18 @@ export class SceneGame extends Phaser.Scene {
 
         self.eventHandler.on('action', function(action) {
             if (self.player && self.player.energy > 0) {
-                if (action.perform(self, self.player)) {
+                var actionResult = action.perform(self, self.player);
+
+                if (actionResult.success) {
                     self.player.energy -= 1;
 
                     self.events.emit('ui-updateEnergy', self.player.energy);
-                    self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
+                    self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id });
+                    if (actionResult.action instanceof OpenAction) {
+                        self.socket.emit('openDoor', { roomId: self.room.roomId, x: self.player.x + action.dx, y: self.player.y + action.dy });
+                    } else {
+                        self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
+                    }
 
                     self.engine.updateFov();
                     self.engine.handleEnemyTurns();
@@ -126,7 +119,7 @@ export class SceneGame extends Phaser.Scene {
             self.player.energy = 5000;
             self.eventHandler.debugEnabled = true;
             self.events.emit('ui-updateEnergy', self.player.energy);
-            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
+            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy });
         });
 
         var objectToFollow;
@@ -159,6 +152,13 @@ export class SceneGame extends Phaser.Scene {
                     break;
                 }
             }
+        });
+
+        self.socket.on('openDoor', function(data) {
+            var x = data.x;
+            var y = data.y;
+            self.engine.gameMap.wallTiles[x][y].openable.open();
+            self.engine.updateFov();
         });
     }
 }
