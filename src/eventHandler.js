@@ -64,6 +64,10 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
                         break;
                     case "Home":
                         self.debug();
+                        break;
+                    case "Insert":
+                        self.addEnergy();
+                        break;
                     default:
                         break;
                 }
@@ -87,5 +91,9 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     debug() {
         this.emit('debug', 1);
+    }
+
+    addEnergy() {
+        this.emit('addEnergy', 1);
     }
 }

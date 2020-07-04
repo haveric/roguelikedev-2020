@@ -128,6 +128,12 @@ export class SceneGame extends Phaser.Scene {
             self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
         });
 
+        self.eventHandler.on('addEnergy', function () {
+            self.player.energy = 5000;
+            self.events.emit('ui-updateEnergy', self.player.energy);
+            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
+        });
+
         var objectToFollow;
         if (self.player) {
             objectToFollow = self.player.sprite.spriteObject
