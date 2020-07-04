@@ -1,4 +1,4 @@
-import { BumpAction } from './actions.js';
+import { BumpAction, WarpAction } from './actions.js';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard) {
@@ -68,6 +68,9 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
                     case "Insert":
                         self.addEnergy();
                         break;
+                    case "PageDown":
+                        console.log('Entering Debug Room...');
+                        self.debugRoom();
                     default:
                         break;
                 }
@@ -85,6 +88,10 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
         this.emit('action', new BumpAction(dx, dy));
     }
 
+    warp(x, y) {
+        this.emit('action', new WarpAction(x, y));
+    }
+
     zoom(zoomLevel) {
         this.emit('zoom', zoomLevel);
     }
@@ -95,5 +102,9 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     addEnergy() {
         this.emit('addEnergy', 1);
+    }
+
+    debugRoom() {
+        this.emit('debugRoom', 1);
     }
 }

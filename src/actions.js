@@ -67,3 +67,23 @@ export class BumpAction extends ActionWithDirection {
         }
     }
 }
+
+export class WarpAction extends Action {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    perform(engine, entity) {
+        var success = false;
+        var floorTile = engine.gameMap.floorTiles[destX][destY];
+        var wallTile = engine.gameMap.wallTiles[destX][destY];
+        if (floorTile && floorTile.walkable && (!wallTile || wallTile.walkable)) {
+            entity.moveTo(engine, this.x, this.x);
+
+            success = true;
+        }
+
+        return success;
+    }
+}

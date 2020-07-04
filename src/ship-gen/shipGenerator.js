@@ -34,6 +34,9 @@ export class Ship {
         this.gameMap = gameMap;
         this.shipOptions = shipOptions;
         this.rooms = [];
+        this.breachRoom = null;
+        this.bridge = null;
+        this.debugRoom = null;
     }
 
     // Generates a game map with no players inside
@@ -43,7 +46,7 @@ export class Ship {
         // create breach room near center left of map
         var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
         var breachRoom = new BreachRoom(0, breachX2);
-        this._createRoom(breachRoom);
+        this.breachRoom = this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
         // add test lights
@@ -119,7 +122,7 @@ export class Ship {
             if(!validBridge) {
                 continue;
             }
-            this._createRoom(bridge);
+            this.bridge = this._createRoom(bridge);
             this._tunnelBetweenRooms(previousMainRoom, bridge);
             this.rooms.push(bridge);
         }
@@ -130,6 +133,16 @@ export class Ship {
         }
 
         return this.gameMap;
+    }
+
+    createDebugRoom() {
+        if(!this.debugRoom) {
+            var debug = new RectangularRoom(0, 0, 8, 8, 'BUG');
+            this.debugRoom = this._createRoom(debug);
+            return this.debugRoom;
+        } else {
+            console.log('Debug room already created, ya dummy!');
+        }
     }
 
     _doesThisIntersectWithOtherRooms(roomToCheck) {
