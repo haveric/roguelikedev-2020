@@ -26,3 +26,9 @@ Tiles.yellowTorch = (x, y) => {
     tile.lightSource = new LightSource("ffff00", 4, ".2");
     return tile;
 }
+
+Tiles.greenDoor = (x, y) => {
+    var tile = new Tile(x, y, "door", new Sprite("door", "009933"), false, false);
+    tile.lightSource = new LightSource("ffff00", 4, ".1");
+    return tile;
+}

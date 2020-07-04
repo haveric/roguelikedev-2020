@@ -34,8 +34,13 @@ export class RoomTunneler {
             var x = isHorizontal ? axisCoord : otherAxis;
             var y = isHorizontal ? otherAxis : axisCoord;
 
-            this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
             this.gameMap.wallTiles[x][y] = null; // remove any wall
+            if (this.room1.isOnEdge(x, y) || this.room2.isOnEdge(x, y)) {
+                console.log('Created door at ' + x + ',' + y)
+                this.gameMap.wallTiles[x][y] = Tiles.greenDoor(x, y);
+            }
+            this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
+            
     
             var xCheckTile1 = isHorizontal ? x : x - 1;
             var yCheckTile1 = isHorizontal ? y - 1 : y;

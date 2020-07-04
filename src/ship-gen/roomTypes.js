@@ -27,12 +27,12 @@ export class RectangularRoom {
     }
 
     isOnEdge(x, y) {
-        return (y >= this.y1 && y <= this.y2 && (x === this.x1 || x === this.x2))
-            || (x >= this.x1 && x <= this.x2 && (y === this.y1 || y === this.y2));
+        return (y >= this.y1 && y < this.y2 && (x === this.x1 || x === this.x2 - 1))
+            || (x >= this.x1 && x < this.x2 && (y === this.y1 || y === this.y2 - 1));
     }
 
     toString() {
-        return 'Room: ' + this.name || 'unnamed' + ' { x1: ' + this.x1 
+        return (this.name || 'unnamed') + ' { x1: ' + this.x1 
             + ', y1: ' + this.y1
             + ', x2: ' + this.x2
             + ', y2: ' + this.y2 + ' }'
@@ -66,12 +66,12 @@ export class Hold extends RectangularRoom {
 
 export class BreachRoom extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Hold')
+        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Breach Room')
     }
 }
 
 export class Bridge extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Hold');
+        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Bridge');
     }
 }
