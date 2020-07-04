@@ -5,8 +5,8 @@ export class RectangularRoom {
     constructor(x, y, width, height, name) {
         this.x1 = x;
         this.y1 = y;
-        this.x2 = x + width;
-        this.y2 = y + height;
+        this.x2 = x + width - 1;
+        this.y2 = y + height - 1;
         this.name = name;
 
         this.tiles = create2dArray(width);
@@ -27,8 +27,8 @@ export class RectangularRoom {
     }
 
     isOnEdge(x, y) {
-        return (y >= this.y1 && y < this.y2 && (x === this.x1 || x === this.x2 - 1))
-            || (x >= this.x1 && x < this.x2 && (y === this.y1 || y === this.y2 - 1));
+        return (y >= this.y1 && y <= this.y2 && (x === this.x1 || x === this.x2))
+            || (x >= this.x1 && x <= this.x2 && (y === this.y1 || y === this.y2));
     }
 
     toString() {
@@ -44,8 +44,8 @@ export const RoomConstants = {
     holdHeight: 10,
     baseBreachWidth: 5,
     baseBreachHeight: 7,
-    bridgeWidth: 10,
-    bridgeHeight: 6
+    bridgeWidth: 6,
+    bridgeHeight: 10
 }
 
 export class RoomTypeFactories { }
