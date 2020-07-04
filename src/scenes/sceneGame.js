@@ -130,21 +130,15 @@ export class SceneGame extends Phaser.Scene {
 
         self.eventHandler.on('debugRoom', function () {
             var debugRoomCenter = shipGenerator.createDebugRoom().center();
-            self.events.emit('warp', debugRoomCenter.x, debugRoomCenter.y)
+            self.engine.createSprites(self);
+            self.updateCameraView();
+
             self.player.moveTo(self.engine, debugRoomCenter.x, debugRoomCenter.y);
             self.engine.updateFov();
-            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y, energy: self.player.energy});
+            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y});
         });
 
-        var objectToFollow;
-        if (self.player) {
-            objectToFollow = self.player.sprite.spriteObject
-        } else {
-            objectToFollow = self.otherPlayers[0].sprite.spriteObject;
-        }
-
-        self.cameras.main.setBounds(0, 0, self.displayWidth, self.displayHeight);
-        self.cameras.main.startFollow(objectToFollow);
+        self.updateCameraView();
 
         self.socket.on('otherPlayerMoved', function (playerInfo) {
             for (var i = 0; i < self.otherPlayers.length; i++) {
@@ -174,5 +168,17 @@ export class SceneGame extends Phaser.Scene {
             self.engine.gameMap.wallTiles[x][y].openable.open();
             self.engine.updateFov();
         });
+    }
+
+    updateCameraView() {
+        var objectToFollow;
+        if (this.player) {
+            objectToFollow = this.player.sprite.spriteObject
+        } else {
+            objectToFollow = this.otherPlayers[0].sprite.spriteObject;
+        }
+
+        this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
+        this.cameras.main.startFollow(objectToFollow);
     }
 }
