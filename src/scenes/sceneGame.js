@@ -34,7 +34,7 @@ export class SceneGame extends Phaser.Scene {
     create() {
         var self = this;
 
-        this.eventHandler = new EventHandler(this.input.keyboard);
+        this.eventHandler = new EventHandler(this.input.keyboard, this.input.mouse);
 
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
@@ -54,7 +54,6 @@ export class SceneGame extends Phaser.Scene {
         });
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
-
         var width = 70;
         var height = 40;
         var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3);
@@ -69,6 +68,7 @@ export class SceneGame extends Phaser.Scene {
         if (self.player) {
             self.events.emit('ui-enable');
             self.events.emit('ui-updateEnergy', self.player.energy);
+            self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
         }
 
         self.eventHandler.on('action', function(action) {
@@ -85,7 +85,7 @@ export class SceneGame extends Phaser.Scene {
                     } else {
                         self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
                     }
-
+                    self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
                     self.engine.updateFov();
                     self.engine.handleEnemyTurns();
                 }
