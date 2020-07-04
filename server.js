@@ -182,6 +182,27 @@ io.on('connection', function (socket) {
                 player.x = x;
                 player.y = y;
                 updatedPlayer = player;
+                break;
+            }
+        }
+
+        // emit a message to all players about the player that moved
+        io.sockets.in("room-" + roomId).emit("otherPlayerMoved", updatedPlayer);
+    });
+
+    socket.on('updateEnergy', function(data) {
+        var roomId = data.roomId;
+        var playerId = data.playerId;
+
+        var room = rooms[roomId];
+        var players = room.players;
+
+        var updatedPlayer;
+        for (var i = 0; i < players.length; i++) {
+            var player = players[i];
+
+            if (player.playerId == playerId) {
+                updatedPlayer = player;
 
                 if (data.energy) {
                     player.energy = data.energy;
@@ -195,9 +216,13 @@ io.on('connection', function (socket) {
             }
         }
 
-        // emit a message to all players about the player that moved
-        io.sockets.in("room-" + roomId).emit("otherPlayerMoved", updatedPlayer);
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+    });
+
+    socket.on('openDoor', function(data) {
+        var roomId = data.roomId;
+
+        io.sockets.in("room-" + roomId).emit("openDoor", { x: data.x, y: data.y });
     });
 });
 

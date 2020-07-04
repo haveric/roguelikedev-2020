@@ -1,3 +1,5 @@
+import Tilemaps from './tilemaps.js';
+
 export default class Entity {
     constructor(x, y, name, sprite, blocksMovement) {
         this.x = x;
@@ -12,14 +14,14 @@ export default class Entity {
         this.x += dx;
         this.y += dy;
 
-        this.sprite.move(dx * engine.tilemap.frameWidth, dy * engine.tilemap.frameHeight);
+        this.sprite.move(dx * Tilemaps.getTileMap().frameWidth, dy * Tilemaps.getTileMap().frameHeight);
     }
 
     moveTo(engine, x, y) {
         this.x = x;
         this.y = y;
 
-        this.sprite.moveTo(engine.gameMap.offsetWidth + (x * engine.tilemap.frameWidth), engine.gameMap.offsetHeight + (y * engine.tilemap.frameHeight));
+        this.sprite.moveTo(engine.gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth), engine.gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight));
     }
 
     clone() {

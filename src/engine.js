@@ -1,11 +1,11 @@
 import { FovAdamMillazo } from './fov.js';
+import Tilemaps from './tilemaps.js';
 
 export default class Engine {
-    constructor(eventHandler, gameMap, tilemap, player, otherPlayers) {
+    constructor(eventHandler, gameMap, player, otherPlayers) {
         var self = this;
         self.eventHandler = eventHandler;
         self.gameMap = gameMap;
-        self.tilemap = tilemap;
         self.player = player;
         self.otherPlayers = otherPlayers;
 
@@ -23,17 +23,17 @@ export default class Engine {
     createSprites(scene) {
         for (var i = 0; i < this.gameMap.width; i++) {
             for (var j = 0; j < this.gameMap.height; j++) {
-                var x = this.gameMap.offsetWidth + (i * this.tilemap.frameWidth);
-                var y = this.gameMap.offsetHeight + (j * this.tilemap.frameHeight);
+                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
                 var floorTile = this.gameMap.floorTiles[i][j];
                 if (floorTile) {
-                    floorTile.sprite.create(scene, x, y, this.tilemap.name);
+                    floorTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
                 }
 
                 var wallTile = this.gameMap.wallTiles[i][j];
                 if (wallTile) {
-                    wallTile.sprite.create(scene, x, y, this.tilemap.name);
+                    wallTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
                 }
             }
         }
@@ -41,20 +41,20 @@ export default class Engine {
         for (var i = 0; i < this.gameMap.entities.length; i++) {
             var entity = this.gameMap.entities[i];
 
-            var x = this.gameMap.offsetWidth + (entity.x * this.tilemap.frameWidth);
-            var y = this.gameMap.offsetHeight + (entity.y * this.tilemap.frameHeight);
+            var x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
+            var y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
 
-            entity.sprite.create(scene, x, y, this.tilemap.name);
+            entity.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
         }
 
         for (var i = 0; i < this.gameMap.width; i++) {
             for (var j = 0; j < this.gameMap.height; j++) {
-                var x = this.gameMap.offsetWidth + (i * this.tilemap.frameWidth);
-                var y = this.gameMap.offsetHeight + (j * this.tilemap.frameHeight);
+                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
                 var shroudTile = this.gameMap.shroud[i][j];
                 if (shroudTile) {
-                    shroudTile.sprite.create(scene, x, y, this.tilemap.name);
+                    shroudTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
                 }
             }
         }
