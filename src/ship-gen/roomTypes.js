@@ -5,8 +5,8 @@ export class RectangularRoom {
     constructor(x, y, width, height, name) {
         this.x1 = x;
         this.y1 = y;
-        this.x2 = x + width;
-        this.y2 = y + height;
+        this.x2 = x + width - 1;
+        this.y2 = y + height - 1;
         this.name = name;
 
         this.tiles = create2dArray(width);
@@ -26,8 +26,13 @@ export class RectangularRoom {
             && this.y2 >= rectangularRoom.y1;
     }
 
+    isOnEdge(x, y) {
+        return (y >= this.y1 && y <= this.y2 && (x === this.x1 || x === this.x2))
+            || (x >= this.x1 && x <= this.x2 && (y === this.y1 || y === this.y2));
+    }
+
     toString() {
-        return 'Room: ' + this.name || 'unnamed' + ' { x1: ' + this.x1 
+        return (this.name || 'unnamed') + ' { x1: ' + this.x1 
             + ', y1: ' + this.y1
             + ', x2: ' + this.x2
             + ', y2: ' + this.y2 + ' }'
@@ -39,8 +44,8 @@ export const RoomConstants = {
     holdHeight: 10,
     baseBreachWidth: 5,
     baseBreachHeight: 7,
-    bridgeWidth: 10,
-    bridgeHeight: 6
+    bridgeWidth: 6,
+    bridgeHeight: 10
 }
 
 export class RoomTypeFactories { }
@@ -61,12 +66,12 @@ export class Hold extends RectangularRoom {
 
 export class BreachRoom extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Hold')
+        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Breach Room')
     }
 }
 
 export class Bridge extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Hold');
+        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Bridge');
     }
 }

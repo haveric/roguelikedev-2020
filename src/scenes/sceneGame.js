@@ -28,7 +28,8 @@ export class SceneGame extends Phaser.Scene {
                 "spacePirate": 80,
                 "attackDog": 100,
                 "automatedTurret": 84,
-                "torch": 105
+                "torch": 105,
+                "door": 68
             }
         }
         this.mapOffsetWidth = 400;
@@ -68,8 +69,8 @@ export class SceneGame extends Phaser.Scene {
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
 
-        var width = 100;
-        var height = 60;
+        var width = 70;
+        var height = 40;
         var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3);
         var initialGameMap = new GameMap(width, height, self.entities);
         var shipGenerator = new Ship(initialGameMap, genOptions);

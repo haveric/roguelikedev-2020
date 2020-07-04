@@ -86,7 +86,7 @@ io.on('connection', function (socket) {
             if (room.gameState == "setup") {
                 socket.emit("roomJoin", room);
             } else if (room.gameState == "play") {
-                socket.emit("startGame", room);
+                socket.emit("startSpectatingGame", room);
             }
 
             socket.join("room-" + roomId);
@@ -322,7 +322,7 @@ function generateRandomRoomId() {
 
 function generateRandomSeed() {
     // TODO: Make random
-    return 1111111111;
+    return 124123423;
 }
 
 function createNewPlayer(socket, playerName) {

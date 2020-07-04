@@ -8,7 +8,10 @@ export class SceneLobby extends Phaser.Scene {
     }
 
     preload() {
-
+        this.load.spritesheet('tilemap', "/src/assets/Curses_square_24.png", {
+            frameWidth: 24,
+            frameHeight: 24
+        });
     }
 
     create() {
@@ -65,9 +68,15 @@ export class SceneLobby extends Phaser.Scene {
             self.scene.start('SceneSetup', {room: room, socket: this});
         });
 
+        socket.on('startSpectatingGame', function(room) {
+            self.scene.start('SceneGameUI');
+            self.scene.start('SceneGame', {room: room, socket: this});
+        });
+
         self.events.on('shutdown', function() {
             socket.off('lobbyUpdate');
             socket.off('roomJoin');
+            socket.off('startSpectatingGame');
         });
     }
 
