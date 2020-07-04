@@ -52,8 +52,8 @@ export class Ship {
         // add test lights
         this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = 
             Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
-        this.gameMap.wallTiles[breachRoom.x2 - 2][breachRoom.y1 + 1] = 
-            Tiles.yellowTorch(breachRoom.x2 - 2, breachRoom.y1 + 1);
+        this.gameMap.wallTiles[breachRoom.x2 - 1][breachRoom.y1 + 1] =
+            Tiles.yellowTorch(breachRoom.x2 - 1, breachRoom.y1 + 1);
 
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 4);
         var holdGenerationYMax = holdGenerationYMin * 2;
