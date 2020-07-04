@@ -28,6 +28,12 @@ Tiles.yellowTorch = (x, y) => {
     return tile;
 }
 
+Tiles.blueTorch = (x, y) => {
+    var tile = new Tile(x, y, "torch", new Sprite("torch", "0000ff"), false, false);
+    tile.lightSource = new LightSource("0000ff", 3, ".2");
+    return tile;
+}
+
 Tiles.greenDoor = (x, y) => {
     var tile = new Tile(x, y, "door", new Sprite("door", "009933"), false, true);
     tile.openable = new Openable(tile, false, "door", "doorOpen");

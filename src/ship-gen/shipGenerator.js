@@ -49,12 +49,6 @@ export class Ship {
         this.breachRoom = this._createRoom(breachRoom);
         this.rooms.push(breachRoom);
 
-        // add test lights
-        this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = 
-            Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
-        this.gameMap.wallTiles[breachRoom.x2 - 1][breachRoom.y1 + 1] =
-            Tiles.yellowTorch(breachRoom.x2 - 1, breachRoom.y1 + 1);
-
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 4);
         var holdGenerationYMax = holdGenerationYMin * 2;
 
@@ -173,6 +167,11 @@ export class Ship {
         if(!this.debugRoom) {
             var debug = new RectangularRoom(0, 0, 8, 8, 'BUG');
             this.debugRoom = this._createRoom(debug);
+
+            // add test lights
+            this.gameMap.wallTiles[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1] = Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1);
+            this.gameMap.wallTiles[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1] = Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1);
+            this.gameMap.wallTiles[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1] = Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1);
             return this.debugRoom;
         } else {
             console.log('Debug room already created, ya dummy!');
