@@ -34,7 +34,7 @@ export class SceneGame extends Phaser.Scene {
     create() {
         var self = this;
 
-        this.eventHandler = new EventHandler(this.input.keyboard, this.input.mouse);
+        this.eventHandler = new EventHandler(this.input.keyboard);
 
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];

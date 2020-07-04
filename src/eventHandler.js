@@ -1,13 +1,12 @@
 import { BumpAction } from './actions.js';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
-    constructor(keyboard, mouse) {
+    constructor(keyboard) {
         super();
         var self = this;
 
         this.debugEnabled = false;
         this.keyboard = keyboard;
-        this.mouse = mouse;
         this.keysDown = [];
 
         this.keyboard.on('keydown', function(event) {
@@ -83,10 +82,6 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
         this.keyboard.on('keyup', function(event) {
             self.keysDown[event.code] = 0;
         });
-
-        // this.mouse.click(function(event) {
-        //     console.log('mouse was clicked!');
-        // });
     }
 
     move(dx, dy) {
