@@ -21,10 +21,7 @@ export class SceneSetup extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('tilemap', "/src/assets/Curses_square_24.png", {
-            frameWidth: 24,
-            frameHeight: 24
-        });
+
     }
 
     create() {
@@ -41,13 +38,10 @@ export class SceneSetup extends Phaser.Scene {
         }
 
         self.socket.on('roomAddPlayer', function(player) {
-            console.log("Add Player");
             createPlayerSelectorFromLoader(self, player);
         });
 
         self.socket.on('roomUpdatePlayer', function(data) {
-            console.log("Room Update Player");
-
             if (data.player && data.player.playerId != self.socket.id) {
                 var playerId = data.player.playerId;
 
@@ -96,6 +90,12 @@ export class SceneSetup extends Phaser.Scene {
         self.socket.on('startGame', function(room) {
             self.scene.start('SceneGameUI');
             self.scene.start('SceneGame', {room: room, socket: this});
+        });
+
+        self.events.on('shutdown', function() {
+            self.socket.off('roomAddPlayer');
+            self.socket.off('roomUpdatePlayer');
+            self.socket.off('startGame');
         });
     }
 }

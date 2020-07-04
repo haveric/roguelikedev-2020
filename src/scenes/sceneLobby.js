@@ -8,7 +8,10 @@ export class SceneLobby extends Phaser.Scene {
     }
 
     preload() {
-
+        this.load.spritesheet('tilemap', "/src/assets/Curses_square_24.png", {
+            frameWidth: 24,
+            frameHeight: 24
+        });
     }
 
     create() {
@@ -22,7 +25,6 @@ export class SceneLobby extends Phaser.Scene {
 
         // Logo
         this.add.text(400, 50, "Tethered", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
-
 
         var buttons = this.rexUI.add.buttons({
             x: 400,
@@ -63,8 +65,18 @@ export class SceneLobby extends Phaser.Scene {
         });
 
         socket.on('roomJoin', function(room) {
-            console.log("Room Join: ", room);
             self.scene.start('SceneSetup', {room: room, socket: this});
+        });
+
+        socket.on('startSpectatingGame', function(room) {
+            self.scene.start('SceneGameUI');
+            self.scene.start('SceneGame', {room: room, socket: this});
+        });
+
+        self.events.on('shutdown', function() {
+            socket.off('lobbyUpdate');
+            socket.off('roomJoin');
+            socket.off('startSpectatingGame');
         });
     }
 
