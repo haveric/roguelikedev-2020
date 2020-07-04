@@ -2,7 +2,7 @@ import Srand from 'seeded-rand';
 import GameMap from "../gameMap.js";
 import EntityFactories from '../entityFactories.js';
 import Tiles from './tilefactories';
-import {RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
+import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
 import { strategy } from 'webpack-merge';
 import { RoomTunneler } from './roomTunneler.js'
 
@@ -16,8 +16,7 @@ export class GeneratorOptions {
         width,
         height,
         holds,
-        maxMonstersPerRoom)          
-    {
+        maxMonstersPerRoom) {
         this.minRooms = minRooms;
         this.maxRooms = maxRooms;
         this.roomMinSize = roomMinSize;
@@ -51,15 +50,19 @@ export class Ship {
         this.rooms.push(breachRoom);
 
         // add test lights
-        this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
-        this.gameMap.wallTiles[breachRoom.x2 - 2][breachRoom.y1 + 1] = Tiles.yellowTorch(breachRoom.x2 - 2, breachRoom.y1 + 1);
+        this.gameMap.wallTiles[breachRoom.x1 + 1][breachRoom.y1 + 1] = 
+            Tiles.redTorch(breachRoom.x1 + 1, breachRoom.y1 + 1);
+        this.gameMap.wallTiles[breachRoom.x2 - 2][breachRoom.y1 + 1] = 
+            Tiles.yellowTorch(breachRoom.x2 - 2, breachRoom.y1 + 1);
 
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 4);
         var holdGenerationYMax = holdGenerationYMin * 2;
 
         // generate bridge somewhere on the right side of the map near the middle
         var validBridge = false;
-        console.log('Generating bridge between x: ' + holdGenerationXMin + ' - ' + this.gameMap.width + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
+        console.log('Generating bridge between x: ' + holdGenerationXMin + ' - ' 
+            + this.gameMap.width + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
+
         var tries = 0;
         while(!validBridge) {
             var xLoc = this.gameMap.width - RoomConstants.bridgeWidth - 1;
@@ -78,11 +81,10 @@ export class Ship {
             this.rooms.push(bridge);
         }
 
-
         // split ship into vertical sections for hold areas
         // main rooms are generated in the middle vertical half of the ship
-
-        var holdGenerationXSegmentSize = Math.floor((this.shipOptions.width - RoomConstants.baseBreachWidth - RoomConstants.bridgeWidth - 1) / this.shipOptions.holds); 
+        var usableWidth = this.shipOptions.width - RoomConstants.baseBreachWidth - RoomConstants.bridgeWidth - 1;
+        var holdGenerationXSegmentSize = Math.floor(usableWidth / this.shipOptions.holds); 
         var holdGenerationXMin = RoomConstants.baseBreachWidth + 1;
         var holdGenerationXMax = holdGenerationXSegmentSize + holdGenerationXMin;
 
@@ -91,7 +93,8 @@ export class Ship {
         for (var h = 1; h <= this.shipOptions.holds; h++) {
             // generate hold sections in the middle 3rd y-zone of the game area
             var validHold = false;
-            console.log('Generating hold ' + h + ' between x: ' + holdGenerationXMin + ' - ' + holdGenerationXMax + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
+            console.log('Generating hold ' + h + ' between x: ' + holdGenerationXMin 
+                + ' - ' + holdGenerationXMax + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
             var tries = 0;
             while(!validHold) {
                 // keep trying to generate a hold until it works!
@@ -122,7 +125,8 @@ export class Ship {
                         var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
                         var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
                 
-                        xLoc = Srand.intInRange(holdGenerationXMin, Math.min(this.gameMap.width - roomWidth, holdGenerationXMax));
+                        var xMax = Math.min(this.gameMap.width - roomWidth, holdGenerationXMax)
+                        xLoc = Srand.intInRange(holdGenerationXMin, xMax);
                         yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
                 
                         var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, 'POI' + h + '' + r);
@@ -135,7 +139,6 @@ export class Ship {
                                 break;
                             }
                             continue;
-                            
                         }
 
                         this._createRoom(room);
@@ -159,6 +162,11 @@ export class Ship {
         }
 
         return this.gameMap;
+    }
+
+    _tunnelBetweenRooms(room1, room2) {
+        var tunneler = new RoomTunneler(this.gameMap, room1, room2);
+        tunneler.tunnelBetweenRooms();
     }
 
     createDebugRoom() {
