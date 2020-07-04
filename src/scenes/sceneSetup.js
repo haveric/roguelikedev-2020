@@ -21,10 +21,7 @@ export class SceneSetup extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('tilemap', "/src/assets/Curses_square_24.png", {
-            frameWidth: 24,
-            frameHeight: 24
-        });
+
     }
 
     create() {

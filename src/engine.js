@@ -10,7 +10,9 @@ export default class Engine {
         self.otherPlayers = otherPlayers;
 
         self.players = [];
-        self.players.push(self.player);
+        if (self.player) {
+            self.players.push(self.player);
+        }
         for (var i = 0; i < self.otherPlayers.length; i++) {
             self.players.push(self.otherPlayers[i]);
         }
@@ -94,7 +96,7 @@ export default class Engine {
 
         var newExploredTiles = [];
         var newLightSources = [];
-        if (this.player.hasSharedVision) {
+        if (!this.player || this.player.hasSharedVision) {
             for (var i = 0; i < this.players.length; i++) {
                 var player = this.players[i];
                 FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, player.x, player.y, player.lightRadius);
