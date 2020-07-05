@@ -17,7 +17,14 @@ export class SceneSetup extends Phaser.Scene {
 
     create() {
         var self = this;
-        self.add.text(400, 50, "Setup", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
+        var title = self.add.text(0, 0, "Setup", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
+        this.rexUI.add.label({
+            anchor: {
+                centerX: 'center'
+            },
+            y: 50,
+            text: title
+        }).layout();
 
         self.roomText = self.add.text(20, 20, "Room Id: " + self.room.roomId, {font: "24px Arial", fill: "#fff"});
 
@@ -98,17 +105,25 @@ var createPlayerLoaders = function(scene, numPlayers) {
 }
 
 var createPlayerLoader = function(scene, index) {
-    var x = 100 * (index + 1) + (250 * index);
+    var x = 100 * (index + 1) + (250 * (index - 1));
     var y = 150;
     var width = 250;
     var height = 300;
+    var centerX = "center";
+    if (x > 0) {
+        centerX += "+" + x;
+    } else {
+        centerX += x;
+    }
 
     var background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x4e342e);
     var titleField = scene.add.text(0, 0, "Waiting on Player...");
 
     var playerLoader = scene.rexUI.add.sizer({
         orientation: 'y',
-        x: x,
+        anchor: {
+            centerX: centerX
+        },
         y: y,
         width: width,
         height: height
@@ -143,15 +158,23 @@ var createPlayerSelectorFromLoader = function(scene, player) {
 }
 
 var createPlayerSelector = function(scene, index, player) {
-    var x = 100 * (index + 1) + (250 * index);
+    var x = 100 * (index + 1) + (250 * (index - 1));
     var y = 150;
     var width = 250;
     var height = 300;
+    var centerX = "center";
+    if (x > 0) {
+        centerX += "+" + x;
+    } else {
+        centerX += x;
+    }
 
     var background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x4e342e);
     var playerSelector = scene.rexUI.add.sizer({
         orientation: 'y',
-        x: x,
+        anchor: {
+            centerX: centerX
+        },
         y: y,
         width: width,
         height: height
@@ -374,6 +397,7 @@ var createColorPickerDialog = function (scene, player) {
     updateFillColor();
 
     mainPanel.setPosition(400, 300);
+    mainPanel.setAnchor({centerX: "center"});
     mainPanel.layout();
     mainPanel.setDepth(1000);
     return mainPanel;

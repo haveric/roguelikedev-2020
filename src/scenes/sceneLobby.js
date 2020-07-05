@@ -24,10 +24,19 @@ export class SceneLobby extends Phaser.Scene {
         this.spectatorCount = this.add.text(20, 140, "- Spectators: 0", lobbyStatsStyle);
 
         // Logo
-        this.add.text(400, 50, "Tethered", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
+        var title = this.add.text(0, 0, "Tethered", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
+        this.rexUI.add.label({
+            anchor: {
+                centerX: 'center'
+            },
+            y: 50,
+            text: title
+        }).layout();
 
         var buttons = this.rexUI.add.buttons({
-            x: 400,
+            anchor: {
+                centerX: 'center'
+            },
             y: 200,
             width: 300,
             space: 20,
@@ -42,7 +51,6 @@ export class SceneLobby extends Phaser.Scene {
         self.joinDialog = undefined;
 
         buttons.on('button.click', function (button, index, pointer, event) {
-            console.log(`Click button-${button.text}`, index);
             if (index == 0) {
                 var playerName;
                 var initialPlayerName = localStorage.getItem("playerName");
@@ -170,7 +178,9 @@ var createJoinDialog = function (scene) {
         scene.joinDialogErrorField = scene.add.text(0, 0, " ");
         var joinDialog = scene.rexUI.add.sizer({
             orientation: 'y',
-            x: x,
+            anchor: {
+                centerX: 'center'
+            },
             y: y
         })
         .addBackground(background)
