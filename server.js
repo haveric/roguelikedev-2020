@@ -346,8 +346,11 @@ function generateRandomRoomId() {
 }
 
 function generateRandomSeed() {
-    // TODO: Make random
-    return 124123423;
+    var num = "";
+    for (var i = 0; i < 9; i++) {
+        num += getRandomInt(0, 9);
+    }
+    return num;
 }
 
 function createNewPlayer(socket, playerName) {
