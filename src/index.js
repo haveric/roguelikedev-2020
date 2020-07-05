@@ -24,20 +24,26 @@ var config = {
 };
 
 const game = new Phaser.Game(config);
-
 function resize() {
     var width = window.innerWidth;
     var height = window.innerHeight;
+    var xScale = width / 800;
+    var yScale = height / 600;
+    var scale = Math.min(xScale, yScale);
 
-    if (isOdd(width)) {
-        width += 1;
+    var x = Math.ceil(width / scale);
+    var y = Math.ceil(height / scale);
+    // Avoid odd numbers to prevent artifacts
+    if (isOdd(x)) {
+        x += 1;
     }
 
-    if (isOdd(height)) {
-        height += 1;
+    if (isOdd(y)) {
+        y += 1;
     }
 
-    game.scale.resize(width, height);
+    game.scale.resize(x, y);
+    game.scale.setZoom(scale);
 }
 
 function isOdd(num) {
