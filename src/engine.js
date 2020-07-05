@@ -1,5 +1,5 @@
-import { FovAdamMillazo } from './fov.js';
-import Tilemaps from './tilemaps.js';
+import { FovAdamMillazo } from './fov';
+import Tilemaps from './tilemaps';
 
 export default class Engine {
     constructor(eventHandler, gameMap, player, otherPlayers) {

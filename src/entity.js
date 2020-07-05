@@ -1,4 +1,4 @@
-import Tilemaps from './tilemaps.js';
+import Tilemaps from './tilemaps';
 
 export default class Entity {
     constructor(x, y, name, sprite, blocksMovement) {

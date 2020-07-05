@@ -1,13 +1,13 @@
 import Srand from 'seeded-rand';
-import Engine from '../engine.js';
-import { Fov } from '../fov.js';
-import Player from '../player.js';
-import Sprite from '../sprite.js';
-import EventHandler from '../eventHandler.js';
-import { create2dArray } from '../../utils.js';
-import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator.js';
-import GameMap from '../gameMap.js';
-import { OpenAction } from '../actions.js';
+import { create2dArray } from '../../utils';
+import Engine from '../engine';
+import { Fov } from '../fov';
+import Player from '../player';
+import Sprite from '../sprite';
+import EventHandler from '../eventHandler';
+import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
+import GameMap from '../gameMap';
+import { OpenAction } from '../actions';
 
 export class SceneGame extends Phaser.Scene {
     constructor() {

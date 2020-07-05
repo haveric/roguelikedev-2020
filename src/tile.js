@@ -1,4 +1,4 @@
-import Entity from './entity.js';
+import Entity from './entity';
 
 export default class Tile extends Entity {
     constructor(x, y, name, sprite, walkable, blockFOV) {

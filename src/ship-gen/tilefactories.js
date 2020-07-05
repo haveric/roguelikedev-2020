@@ -1,6 +1,6 @@
-import Tile from "../tile";
 import LightSource from "../components/lightSource";
 import Openable from "../components/openable";
+import Tile from "../tile";
 import Sprite from "../sprite";
 
 

@@ -1,5 +1,5 @@
-import { create2dArray } from '../utils.js';
-import FovTile from './fovTile.js';
+import { create2dArray } from '../utils';
+import FovTile from './fovTile';
 
 export default class GameMap {
     constructor(width, height, entities) {

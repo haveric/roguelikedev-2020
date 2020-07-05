@@ -1,5 +1,5 @@
-import { getFrameOf } from '../utils.js';
-import Tilemaps from './tilemaps.js';
+import { getFrameOf } from '../utils';
+import Tilemaps from './tilemaps';
 
 export default class Sprite {
     constructor(name, color) {

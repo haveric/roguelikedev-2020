@@ -1,5 +1,5 @@
-import Entity from './entity.js';
-import Sprite from './sprite.js';
+import Entity from './entity';
+import Sprite from './sprite';
 
 export default class FovTile extends Entity {
     constructor(x, y, name) {

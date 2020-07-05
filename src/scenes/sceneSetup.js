@@ -1,5 +1,5 @@
-import { getFrameOf, hexToRgb } from '../../utils.js';
-import Tilemaps from '../tilemaps.js';
+import { getFrameOf, hexToRgb } from '../../utils';
+import Tilemaps from '../tilemaps';
 
 export class SceneSetup extends Phaser.Scene {
     constructor() {

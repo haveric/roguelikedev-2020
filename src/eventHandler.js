@@ -1,4 +1,4 @@
-import { BumpAction } from './actions.js';
+import { BumpAction } from './actions';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard) {

@@ -1,9 +1,8 @@
 import Srand from 'seeded-rand';
-import GameMap from "../gameMap.js";
-import EntityFactories from '../entityFactories.js';
+import GameMap from "../gameMap";
+import EntityFactories from '../entityFactories';
 import Tiles from './tilefactories';
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
-import { strategy } from 'webpack-merge';
 import { RoomTunneler } from './roomTunneler.js'
 
 export class GeneratorOptions {
