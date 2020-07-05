@@ -14,10 +14,6 @@ export class SceneGame extends Phaser.Scene {
         super('SceneGame');
     }
 
-    resize(data) {
-        console.log("Resize: ", data);
-    }
-
     init(data) {
         this.room = data.room;
         this.socket = data.socket;
