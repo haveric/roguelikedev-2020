@@ -7,14 +7,9 @@ import {SceneGameUI} from "./scenes/sceneGameUI";
 
 var config = {
     type: Phaser.AUTO,
+    parent: 'tethered',
     dom: {
         createContainer: true
-    },
-    scale: {
-        mode: Phaser.Scale.RESIZE,
-        parent: 'tethered',
-        width: '100%',
-        height: '100%'
     },
     plugins: {
         scene: [{
@@ -23,11 +18,36 @@ var config = {
             mapping: 'rexUI'
         }]
     },
-    width: 800,
-    height: 600,
     pixelArt: true,
     backgroundColor: "#000000",
     scene: [SceneLobby, SceneSetup, SceneGame, SceneGameUI]
 };
 
-let game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+function resize() {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+
+    if (isOdd(width)) {
+        width += 1;
+    }
+
+    if (isOdd(height)) {
+        height += 1;
+    }
+
+    game.scale.resize(width, height);
+}
+
+function isOdd(num) {
+    return num % 2 === 1;
+}
+
+window.addEventListener('load', () => {
+    window.addEventListener('resize', () => {
+        resize();
+    });
+
+    resize();
+});
