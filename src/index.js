@@ -7,9 +7,14 @@ import {SceneGameUI} from "./scenes/sceneGameUI";
 
 var config = {
     type: Phaser.AUTO,
-    parent: 'tethered',
     dom: {
         createContainer: true
+    },
+    scale: {
+        mode: Phaser.Scale.RESIZE,
+        parent: 'tethered',
+        width: '100%',
+        height: '100%'
     },
     plugins: {
         scene: [{
