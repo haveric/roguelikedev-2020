@@ -44,9 +44,7 @@ export class MovementAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        var floorTile = engine.gameMap.floorTiles[destX][destY];
-        var wallTile = engine.gameMap.wallTiles[destX][destY];
-        if (floorTile && floorTile.walkable && (!wallTile || wallTile.walkable)) {
+        if (engine.gameMap.tiles[destX][destY].isTileWalkable()) {
             entity.move(engine, this.dx, this.dy);
 
             success = true;
@@ -66,13 +64,7 @@ export class OpenAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        var floorTile = engine.gameMap.floorTiles[destX][destY];
-        var wallTile = engine.gameMap.wallTiles[destX][destY];
-        if (floorTile && floorTile.walkable && wallTile && wallTile.openable) {
-            wallTile.openable.open();
-
-            success = true;
-        }
+        var success = engine.gameMap.tiles[destX][destY].tileComponentRun("openable", "open");
 
         return new ActionResult(this, success);
     }
@@ -87,16 +79,27 @@ export class BumpAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
+        var tiles = engine.gameMap.tiles[destX][destY].tiles;
         var target = engine.gameMap.getBlockingEntityAtLocation(destX, destY);
-        var wallTile = engine.gameMap.wallTiles[destX][destY];
         if (target) {
             return new MeleeAction(this.dx, this.dy, target).perform(engine, entity);
-        } else if (wallTile && wallTile.openable && !wallTile.openable.isOpen) {
+        } else if (_isClosedOpenable(tiles)) {
             return new OpenAction(this.dx, this.dy).perform(engine, entity);
         } else {
             return new MovementAction(this.dx, this.dy).perform(engine, entity);
         }
     }
+}
+
+function _isClosedOpenable(tiles) {
+    for (var i = 0; i < tiles.length; i++) {
+        var tile = tiles[i];
+        if (tile.openable && !tile.openable.isOpen) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 export class WarpAction extends Action {
@@ -107,9 +110,8 @@ export class WarpAction extends Action {
 
     perform(engine, entity) {
         var success = false;
-        var floorTile = engine.gameMap.floorTiles[destX][destY];
-        var wallTile = engine.gameMap.wallTiles[destX][destY];
-        if (floorTile && floorTile.walkable && (!wallTile || wallTile.walkable)) {
+
+        if (engine.gameMap.tiles[destX][destY].isTileWalkable()) {
             entity.moveTo(engine, this.x, this.x);
 
             success = true;

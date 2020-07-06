@@ -1,14 +1,17 @@
 import Entity from './entity';
 import Sprite from './sprite';
+import RenderOrder from './renderOrder';
 
 export default class FovTile extends Entity {
     constructor(x, y, name) {
         super(x, y, name);
 
-        this.sprite = new Sprite("shroud", "000000");
         this.explored = false;
         this.visible = false;
         this.lightSources = [];
+        this.renderOrder = RenderOrder.FOV;
+
+        this.setSprite(new Sprite("shroud", "000000"));
     }
 
     _getBlendedLight() {
@@ -67,10 +70,17 @@ export default class FovTile extends Entity {
 
                     this.sprite.spriteObject.setAlpha(data.intensity);
                     this.sprite.spriteObject.setTint("0x" + data.color);
+
+                    this.renderOrder = RenderOrder.FLOOR_LIGHTING;
+                    this.sprite.spriteObject.setDepth(this.renderOrder);
+
                 }
             } else {
                 this.sprite.spriteObject.setAlpha(.5);
                 this.sprite.spriteObject.setTint(null);
+
+                this.renderOrder = RenderOrder.FOV;
+                this.sprite.spriteObject.setDepth(this.renderOrder);
             }
         }
     }

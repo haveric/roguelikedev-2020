@@ -34,12 +34,12 @@ export class RoomTunneler {
             var x = isHorizontal ? axisCoord : otherAxis;
             var y = isHorizontal ? otherAxis : axisCoord;
 
-            this.gameMap.wallTiles[x][y] = null; // remove any wall
+            this.gameMap.tiles[x][y].clearTiles(); // remove any wall
             if (this.room1.isOnEdge(x, y) || this.room2.isOnEdge(x, y)) {
                 console.log('Created door at ' + x + ',' + y)
-                this.gameMap.wallTiles[x][y] = Tiles.greenDoor(x, y);
+                this.gameMap.tiles[x][y].addTile(Tiles.greenDoor(x, y));
             }
-            this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
+            this.gameMap.tiles[x][y].addTile(Tiles.lightFloor(x, y));
             
     
             var xCheckTile1 = isHorizontal ? x : x - 1;
@@ -53,12 +53,10 @@ export class RoomTunneler {
     }
 
     _tunnelAdjacent(x, y) {
-        // do not place a wall if there is already an open floor here
-        var floorTileAdjacent = this.gameMap.floorTiles[x][y];
-        var wallTileAdjacent = this.gameMap.wallTiles[x][y];
-        if (!floorTileAdjacent && !wallTileAdjacent) {
-            this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
-            this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
+        // do not place a wall if there is already a tile here
+        if (this.gameMap.tiles[x][y].tiles.length == 0) {
+            this.gameMap.tiles[x][y].addTile(Tiles.wall(x, y));
+            this.gameMap.tiles[x][y].addTile(Tiles.darkFloor(x, y));
         }
     }
 }

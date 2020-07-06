@@ -3,6 +3,7 @@ import Tilemaps from './tilemaps';
 
 export default class Sprite {
     constructor(name, color) {
+        this.entity = null;
         this.name = name;
         this.color = color;
         this.spriteObject = null;
@@ -15,9 +16,15 @@ export default class Sprite {
     create(scene, x, y) {
         var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
         if (frame != null) {
+            if (this.spriteObject) {
+                this.spriteObject.destroy();
+            }
             this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
             this.spriteObject.setFrame(frame);
             this.spriteObject.setTint("0x" + this.color);
+            if (this.entity) {
+                this.spriteObject.setDepth(this.entity.renderOrder);
+            }
         }
     }
 

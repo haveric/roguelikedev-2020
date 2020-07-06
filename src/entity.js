@@ -1,13 +1,22 @@
 import Tilemaps from './tilemaps';
 
 export default class Entity {
-    constructor(x, y, name, sprite, blocksMovement) {
+    constructor(x, y, name, sprite, blocksMovement, renderOrder) {
         this.x = x;
         this.y = y;
         this.name = name;
-        this.sprite = sprite;
         this.blocksMovement = blocksMovement;
+        this.renderOrder = renderOrder;
         this.lightRadius = 8;
+
+        this.setSprite(sprite);
+    }
+
+    setSprite(sprite) {
+        if (sprite) {
+            this.sprite = sprite;
+            this.sprite.entity = this;
+        }
     }
 
     move(engine, dx, dy) {
@@ -26,7 +35,7 @@ export default class Entity {
 
     clone() {
         var clonedSprite = this.sprite.clone();
-        return new Entity(this.x, this.y, this.name, clonedSprite, this.blocksMovement);
+        return new Entity(this.x, this.y, this.name, clonedSprite, this.blocksMovement, this.renderOrder);
     }
 
     spawn(gameMap, x, y) {

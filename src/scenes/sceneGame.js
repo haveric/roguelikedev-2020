@@ -130,7 +130,7 @@ export class SceneGame extends Phaser.Scene {
 
         self.eventHandler.on('debugRoom', function () {
             var debugRoomCenter = shipGenerator.createDebugRoom().center();
-            self.engine.createSprites(self);
+            self.engine.createSprites(self, 0, 0, 8, 8);
             self.updateCameraView();
 
             self.player.moveTo(self.engine, debugRoomCenter.x, debugRoomCenter.y);
@@ -165,7 +165,8 @@ export class SceneGame extends Phaser.Scene {
         self.socket.on('openDoor', function(data) {
             var x = data.x;
             var y = data.y;
-            self.engine.gameMap.wallTiles[x][y].openable.open();
+
+            self.engine.gameMap.tiles[x][y].tileComponentRun("openable", "open")
             self.engine.updateFov();
         });
     }

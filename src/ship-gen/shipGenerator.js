@@ -168,9 +168,9 @@ export class Ship {
             this.debugRoom = this._createRoom(debug);
 
             // add test lights
-            this.gameMap.wallTiles[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1] = Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1);
-            this.gameMap.wallTiles[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1] = Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1);
-            this.gameMap.wallTiles[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1] = Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1);
+            this.gameMap.tiles[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1].addTile(Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1));
+            this.gameMap.tiles[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1].addTile(Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1));
+            this.gameMap.tiles[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1].addTile(Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1));
             return this.debugRoom;
         } else {
             console.log('Debug room already created, ya dummy!');
@@ -191,18 +191,14 @@ export class Ship {
         // Create Room in map
         for (var x = newRoom.x1; x <= newRoom.x2; x++) {
             for (var y = newRoom.y1; y <= newRoom.y2; y++) {
-                var hasWallBefore = this.gameMap.wallTiles[x][y];
-                var hasFloorBefore = this.gameMap.floorTiles[x][y];
-                var hasPreexistingOpenSpace = hasFloorBefore && !hasWallBefore;
-
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
-                    if (!hasPreexistingOpenSpace) {
-                        this.gameMap.wallTiles[x][y] = Tiles.wall(x, y);
-                        this.gameMap.floorTiles[x][y] = Tiles.darkFloor(x, y);
+                    if (this.gameMap.tiles[x][y].tiles.length === 0) {
+                        this.gameMap.tiles[x][y].addTile(Tiles.wall(x, y));
+                        this.gameMap.tiles[x][y].addTile(Tiles.darkFloor(x, y));
                     }
                 } else {
-                    this.gameMap.wallTiles[x][y] = null;
-                    this.gameMap.floorTiles[x][y] = Tiles.lightFloor(x, y);
+                    this.gameMap.tiles[x][y].clearTiles();
+                    this.gameMap.tiles[x][y].addTile(Tiles.lightFloor(x, y));
                 }
             }
         }

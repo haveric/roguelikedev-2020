@@ -32,10 +32,11 @@ Fov.exploreTile = (gameMap, x, y, exploredTiles, lightSource) => {
         if (lightSource) {
             gameMap.shroud[x][y].addLightSource(lightSource);
         } else {
-            var wallTile = gameMap.wallTiles[x][y];
-            if (wallTile) {
-                if (wallTile.lightSource) {
-                    gameMap.shroud[x][y].addLightSource(wallTile.lightSource);
+            var tiles = gameMap.tiles[x][y].tiles;
+            for (var i = 0; i < tiles.length; i++) {
+                var tile = tiles[i];
+                if (tile.lightSource) {
+                    gameMap.shroud[x][y].addLightSource(tile.lightSource);
                 }
             }
         }
@@ -78,16 +79,21 @@ Fov.exploreLight = (gameMap, exploredTiles, newLightSources, x, y, octant, origi
             break;
     }
 
-    if (gameMap.wallTiles[originX] && gameMap.wallTiles[originX][originY]) {
-        var lightSource = gameMap.wallTiles[originX][originY].lightSource;
-        if (lightSource) {
-            if (!newLightSources.includes(lightSource)) {
-                newLightSources.push(lightSource);
+    if (gameMap.tiles[originX] && gameMap.tiles[originX][originY]) {
+        var tiles = gameMap.tiles[originX][originY].tiles;
+        for (var i = 0; i < tiles.length; i++) {
+            var tile = tiles[i];
+            var lightSource = tile.lightSource;
 
-                for (var octant = 0; octant < 8; octant ++) {
-                    FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, 1, originX, originY, lightSource.range, lightSource.range, new Slope(1, 1), new Slope(0, 1), lightSource);
+            if (lightSource) {
+                if (!newLightSources.includes(lightSource)) {
+                    newLightSources.push(lightSource);
+
+                    for (var octant = 0; octant < 8; octant ++) {
+                        FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, 1, originX, originY, lightSource.range, lightSource.range, new Slope(1, 1), new Slope(0, 1), lightSource);
+                    }
+
                 }
-
             }
         }
     }
@@ -130,9 +136,9 @@ Fov.blocksLight = (gameMap, x, y, octant, originX, originY)  => {
     }
 
     var blocksLight = false;
-    if (gameMap.wallTiles[originX]) {
-        var wallTile = gameMap.wallTiles[originX][originY];
-        if (wallTile && wallTile.blockFOV) {
+    if (gameMap.tiles[originX]) {
+        var tiles = gameMap.tiles[originX][originY];
+        if (tiles && tiles.isTileBlockingFOV()) {
             blocksLight = true;
         }
     }

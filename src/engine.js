@@ -20,20 +20,20 @@ export default class Engine {
         self.enemyTurn = 0;
     }
 
-    createSprites(scene) {
-        for (var i = 0; i < this.gameMap.width; i++) {
-            for (var j = 0; j < this.gameMap.height; j++) {
+    createSprites(scene, startX, startY, endX, endY) {
+        startX = startX || 0;
+        startY = startY || 0;
+        endX = endX || this.gameMap.width;
+        endY = endY || this.gameMap.height;
+        for (var i = startX; i < endX; i++) {
+            for (var j = startY; j < endY; j++) {
                 var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
                 var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
-                var floorTile = this.gameMap.floorTiles[i][j];
-                if (floorTile) {
-                    floorTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
-                }
-
-                var wallTile = this.gameMap.wallTiles[i][j];
-                if (wallTile) {
-                    wallTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+                var tiles = this.gameMap.tiles[i][j].tiles;
+                for (var k = 0; k < tiles.length; k++) {
+                    var tile = tiles[k];
+                    tile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
                 }
             }
         }
@@ -47,8 +47,8 @@ export default class Engine {
             entity.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
         }
 
-        for (var i = 0; i < this.gameMap.width; i++) {
-            for (var j = 0; j < this.gameMap.height; j++) {
+        for (var i = startX; i < endX; i++) {
+            for (var j = startY; j < endY; j++) {
                 var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
                 var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
