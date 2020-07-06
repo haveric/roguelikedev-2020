@@ -166,7 +166,7 @@ export class SceneGame extends Phaser.Scene {
             var x = data.x;
             var y = data.y;
 
-            self.engine.gameMap.tiles[x][y].tileComponentRun("openable", "open")
+            self.engine.gameMap.locations[x][y].tileComponentRun("openable", "open")
             self.engine.updateFov();
         });
     }

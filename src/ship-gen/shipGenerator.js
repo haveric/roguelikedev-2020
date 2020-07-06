@@ -168,9 +168,9 @@ export class Ship {
             this.debugRoom = this._createRoom(debug);
 
             // add test lights
-            this.gameMap.tiles[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1].addTile(Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1));
-            this.gameMap.tiles[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1].addTile(Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1));
-            this.gameMap.tiles[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1].addTile(Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1));
+            this.gameMap.locations[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1].addTile(Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1));
+            this.gameMap.locations[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1].addTile(Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1));
+            this.gameMap.locations[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1].addTile(Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1));
             return this.debugRoom;
         } else {
             console.log('Debug room already created, ya dummy!');
@@ -192,13 +192,13 @@ export class Ship {
         for (var x = newRoom.x1; x <= newRoom.x2; x++) {
             for (var y = newRoom.y1; y <= newRoom.y2; y++) {
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
-                    if (this.gameMap.tiles[x][y].tiles.length === 0) {
-                        this.gameMap.tiles[x][y].addTile(Tiles.wall(x, y));
-                        this.gameMap.tiles[x][y].addTile(Tiles.darkFloor(x, y));
+                    if (this.gameMap.locations[x][y].tiles.length === 0) {
+                        this.gameMap.locations[x][y].addTile(Tiles.wall(x, y));
+                        this.gameMap.locations[x][y].addTile(Tiles.darkFloor(x, y));
                     }
                 } else {
-                    this.gameMap.tiles[x][y].clearTiles();
-                    this.gameMap.tiles[x][y].addTile(Tiles.lightFloor(x, y));
+                    this.gameMap.locations[x][y].clearTiles();
+                    this.gameMap.locations[x][y].addTile(Tiles.lightFloor(x, y));
                 }
             }
         }

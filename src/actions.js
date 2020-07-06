@@ -44,7 +44,7 @@ export class MovementAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        if (engine.gameMap.tiles[destX][destY].isTileWalkable()) {
+        if (engine.gameMap.locations[destX][destY].isTileWalkable()) {
             entity.move(engine, this.dx, this.dy);
 
             success = true;
@@ -64,7 +64,7 @@ export class OpenAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        var success = engine.gameMap.tiles[destX][destY].tileComponentRun("openable", "open");
+        var success = engine.gameMap.locations[destX][destY].tileComponentRun("openable", "open");
 
         return new ActionResult(this, success);
     }
@@ -79,7 +79,7 @@ export class BumpAction extends ActionWithDirection {
         var destX = entity.x + this.dx;
         var destY = entity.y + this.dy;
 
-        var tiles = engine.gameMap.tiles[destX][destY].tiles;
+        var tiles = engine.gameMap.locations[destX][destY].tiles;
         var target = engine.gameMap.getBlockingEntityAtLocation(destX, destY);
         if (target) {
             return new MeleeAction(this.dx, this.dy, target).perform(engine, entity);
@@ -111,7 +111,7 @@ export class WarpAction extends Action {
     perform(engine, entity) {
         var success = false;
 
-        if (engine.gameMap.tiles[destX][destY].isTileWalkable()) {
+        if (engine.gameMap.locations[destX][destY].isTileWalkable()) {
             entity.moveTo(engine, this.x, this.x);
 
             success = true;

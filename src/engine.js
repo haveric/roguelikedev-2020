@@ -30,7 +30,7 @@ export default class Engine {
                 var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
                 var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
-                var tiles = this.gameMap.tiles[i][j].tiles;
+                var tiles = this.gameMap.locations[i][j].tiles;
                 for (var k = 0; k < tiles.length; k++) {
                     var tile = tiles[k];
                     tile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);

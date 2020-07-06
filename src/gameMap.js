@@ -11,10 +11,10 @@ export default class GameMap {
         this.offsetWidth = 400;
         this.offsetHeight = 300;
 
-        this.tiles = create2dArray(this.width);
+        this.locations = create2dArray(this.width);
         for (var i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
-                this.tiles[i][j] = new GameMapLocation();
+                this.locations[i][j] = new GameMapLocation();
             }
         }
 

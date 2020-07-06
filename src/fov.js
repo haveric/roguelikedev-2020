@@ -32,7 +32,7 @@ Fov.exploreTile = (gameMap, x, y, exploredTiles, lightSource) => {
         if (lightSource) {
             gameMap.shroud[x][y].addLightSource(lightSource);
         } else {
-            var tiles = gameMap.tiles[x][y].tiles;
+            var tiles = gameMap.locations[x][y].tiles;
             for (var i = 0; i < tiles.length; i++) {
                 var tile = tiles[i];
                 if (tile.lightSource) {
@@ -79,8 +79,8 @@ Fov.exploreLight = (gameMap, exploredTiles, newLightSources, x, y, octant, origi
             break;
     }
 
-    if (gameMap.tiles[originX] && gameMap.tiles[originX][originY]) {
-        var tiles = gameMap.tiles[originX][originY].tiles;
+    if (gameMap.locations[originX] && gameMap.locations[originX][originY]) {
+        var tiles = gameMap.locations[originX][originY].tiles;
         for (var i = 0; i < tiles.length; i++) {
             var tile = tiles[i];
             var lightSource = tile.lightSource;
@@ -136,9 +136,9 @@ Fov.blocksLight = (gameMap, x, y, octant, originX, originY)  => {
     }
 
     var blocksLight = false;
-    if (gameMap.tiles[originX]) {
-        var tiles = gameMap.tiles[originX][originY];
-        if (tiles && tiles.isTileBlockingFOV()) {
+    if (gameMap.locations[originX]) {
+        var location = gameMap.locations[originX][originY];
+        if (location && location.isTileBlockingFOV()) {
             blocksLight = true;
         }
     }
