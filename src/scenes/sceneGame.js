@@ -8,6 +8,7 @@ import EventHandler from '../eventHandler';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import { OpenAction } from '../actions';
+import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -34,18 +35,18 @@ export class SceneGame extends Phaser.Scene {
     create() {
         var self = this;
 
-        this.eventHandler = new EventHandler(this.input.keyboard);
-
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
+            var playerSprite = new Sprite(player.sprite, player.color);
+            var newPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
+            newPlayer.setFighter(new Fighter(30, 2, 5));
+
             if (player.playerId == self.socket.id) {
-                var playerSprite = new Sprite(player.sprite, player.color);
-                self.player = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
+                self.player = newPlayer;
                 self.entities.push(self.player);
                 self.players.push(self.player);
             } else {
-                var playerSprite = new Sprite(player.sprite, player.color);
-                var otherPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
+                var otherPlayer = newPlayer;
                 self.entities.push(otherPlayer);
 
                 self.otherPlayers.push(otherPlayer);
@@ -54,14 +55,16 @@ export class SceneGame extends Phaser.Scene {
         });
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
+        this.engine = new Engine(self.player, self.otherPlayers);
+
+        this.eventHandler = new EventHandler(this.input.keyboard, this.engine);
+
         var width = 70;
         var height = 40;
         var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3);
-        var initialGameMap = new GameMap(width, height, self.entities);
-        var shipGenerator = new Ship(initialGameMap, genOptions);
-        this.gameMap = shipGenerator.generateDungeon();
+        var shipGenerator = new Ship(this.engine, self.entities, genOptions);
+        this.engine.gameMap = shipGenerator.generateDungeon();
         shipGenerator.setPlayerCoordinates(self.players);
-        this.engine = new Engine(this.eventHandler, this.gameMap, self.player, self.otherPlayers);
         this.engine.createSprites(self);
         this.engine.updateFov();
 
@@ -74,7 +77,6 @@ export class SceneGame extends Phaser.Scene {
         self.eventHandler.on('action', function(action) {
             if (self.player && self.player.energy > 0) {
                 var actionResult = action.perform(self, self.player);
-
                 if (actionResult.success) {
                     self.player.energy -= 1;
 
@@ -86,8 +88,8 @@ export class SceneGame extends Phaser.Scene {
                         self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
                     }
                     self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
-                    self.engine.updateFov();
                     self.engine.handleEnemyTurns();
+                    self.engine.updateFov();
                 }
             }
         });

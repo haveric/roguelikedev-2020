@@ -15,7 +15,8 @@ Tilemaps.getTileMap = () => {
             "automatedTurret": 84,
             "torch": 105,
             "door": 68,
-            "doorOpen": 92
+            "doorOpen": 92,
+            "corpse": 37
         }
     }
 

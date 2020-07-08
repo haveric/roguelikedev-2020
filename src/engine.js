@@ -2,10 +2,10 @@ import { FovAdamMillazo } from './fov';
 import Tilemaps from './tilemaps';
 
 export default class Engine {
-    constructor(eventHandler, gameMap, player, otherPlayers) {
+    constructor(player, otherPlayers) {
         var self = this;
-        self.eventHandler = eventHandler;
-        self.gameMap = gameMap;
+
+        self.gameMap = null;
         self.player = player;
         self.otherPlayers = otherPlayers;
 
@@ -76,7 +76,9 @@ export default class Engine {
 
             if (!isPlayer) {
                 if (i % this.enemyTurn == 0) {
-                    console.log("The " + entity.name + " wonders when it will get to take a real turn.");
+                    if (entity.ai) {
+                        entity.ai.perform();
+                    }
                 }
             }
         }

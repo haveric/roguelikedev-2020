@@ -2,7 +2,8 @@ import { create2dArray } from '../utils';
 import FovTile from './fovTile';
 
 export default class GameMap {
-    constructor(width, height, entities) {
+    constructor(engine, width, height, entities) {
+        this.engineRef = engine;
         this.width = width;
         this.height = height;
         this.entities = entities || [];

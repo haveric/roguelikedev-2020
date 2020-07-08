@@ -1,8 +1,9 @@
 import { BumpAction } from './actions';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
-    constructor(keyboard) {
+    constructor(keyboard, engine) {
         super();
+        this.engineRef = engine;
         var self = this;
 
         this.debugEnabled = false;
@@ -85,7 +86,7 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
     }
 
     move(dx, dy) {
-        this.emit('action', new BumpAction(dx, dy));
+        this.emit('action', new BumpAction(this.engineRef.player, dx, dy));
     }
 
     zoom(zoomLevel) {

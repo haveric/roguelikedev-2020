@@ -6,7 +6,6 @@ import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom }
 import { RoomTunneler } from './roomTunneler.js'
 
 export class GeneratorOptions {
-
     constructor(
         minRooms,
         maxRooms, 
@@ -28,9 +27,9 @@ export class GeneratorOptions {
 }
 
 export class Ship {
-
-    constructor(gameMap, shipOptions) {
-        this.gameMap = gameMap;
+    constructor(engine, entities, shipOptions) {
+        this.engineRef = engine;
+        this.entities = entities;
         this.shipOptions = shipOptions;
         this.rooms = [];
         this.breachRoom = null;
@@ -40,7 +39,7 @@ export class Ship {
 
     // Generates a game map with no players inside
     generateDungeon() {
-        this.gameMap = new GameMap(this.shipOptions.width, this.shipOptions.height, this.gameMap.entities);
+        this.gameMap = new GameMap(this.engineRef, this.shipOptions.width, this.shipOptions.height, this.entities);
 
         // create breach room near center left of map
         var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
@@ -212,8 +211,7 @@ export class Ship {
         var firstRoomCenter = this.rooms[0].center();
         for (var j = 0; j < players.length; j++) {
             var player = players[j];
-            player.x = firstRoomCenter.x + j;
-            player.y = firstRoomCenter.y;
+            player.place(this.gameMap, firstRoomCenter.x + j, firstRoomCenter.y);
         }
         return players;
     }
@@ -231,11 +229,11 @@ export class Ship {
                 var random = Srand.random();
     
                 if (random < 0.7) {
-                    EntityFactories.attackDog.spawn(this.gameMap, x, y);
+                    new EntityFactories.attackDog(x, y).place(this.gameMap);
                 } else if (random < 0.95) {
-                    EntityFactories.spacePirate.spawn(this.gameMap, x, y);
+                    new EntityFactories.spacePirate(x, y).place(this.gameMap);
                 } else {
-                    EntityFactories.automatedTurret.spawn(this.gameMap, x, y);
+                    new EntityFactories.automatedTurret(x, y).place(this.gameMap);
                 }
             }
         }

@@ -10,12 +10,30 @@ export default class Entity {
         this.lightRadius = 8;
 
         this.setSprite(sprite);
+
+        // Components
+        this.fighter = null;
+        this.ai = null;
     }
 
     setSprite(sprite) {
         if (sprite) {
             this.sprite = sprite;
-            this.sprite.entity = this;
+            this.sprite.owner = this;
+        }
+    }
+
+    setFighter(fighter) {
+        if (fighter) {
+            this.fighter = fighter;
+            this.fighter.owner = this;
+        }
+    }
+
+    setAI(ai) {
+        if (ai) {
+            this.ai = ai;
+            this.ai.owner = this;
         }
     }
 
@@ -33,17 +51,31 @@ export default class Entity {
         this.sprite.moveTo(engine.gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth), engine.gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight));
     }
 
-    clone() {
-        var clonedSprite = this.sprite.clone();
-        return new Entity(this.x, this.y, this.name, clonedSprite, this.blocksMovement, this.renderOrder);
+    moveTowards(engine, targetX, targetY) {
+
     }
 
-    spawn(gameMap, x, y) {
-        var clone = this.clone();
-        clone.x = x;
-        clone.y = y;
-        gameMap.entities.push(clone);
+    distanceTo(otherEntity) {
+        var dx = otherEntity.x - this.x;
+        var dy = otherEntity.y - this.y;
 
-        return clone;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    place(gameMap, x, y) {
+        if (this.gameMap) {
+            this.gameMap.remove(this);
+        }
+
+        if (x !== undefined) {
+            this.x = x;
+        }
+
+        if (y !== undefined) {
+            this.y = y;
+        }
+
+        this.gameMap = gameMap;
+        gameMap.entities.push(this);
     }
 }

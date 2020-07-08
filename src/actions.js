@@ -1,9 +1,3 @@
-export class Action {
-    perform(engine, entity) {
-        console.err("Not Implemented");
-    }
-}
-
 export class ActionResult {
     constructor(action, success) {
         this.action = action;
@@ -11,41 +5,81 @@ export class ActionResult {
     }
 }
 
+export class Action {
+    constructor(entity) {
+        this.entityRef = entity;
+    }
+
+    getEngine() {
+        return this.entityRef.gameMap.engineRef;
+    }
+
+    getGameMap() {
+        return this.entityRef.gameMap;
+    }
+
+    perform() {
+        console.err("Not Implemented");
+    }
+}
+
+export class WaitAction extends Action {
+    constructor(entity) {
+        super(entity);
+    }
+}
+
 export class ActionWithDirection extends Action {
-    constructor(dx, dy) {
-        super();
+    constructor(entity, dx, dy) {
+        super(entity);
 
         this.dx = dx;
         this.dy = dy;
     }
+
+    _getDestXY() {
+        return { x: this.entityRef.x + this.dx, y: this.entityRef.y + this.dy };
+    }
+
+    _getBlockingEntity() {
+        var destXY = this._getDestXY();
+        return this.getGameMap().getBlockingEntityAtLocation(destXY.x, destXY.y);
+    }
+
+    perform() {
+        console.err("Not Implemented");
+    }
 }
 
 export class MeleeAction extends ActionWithDirection {
-    constructor(dx, dy, target) {
-        super(dx, dy);
-
-        this.target = target;
+    constructor(entity, dx, dy) {
+        super(entity, dx, dy);
     }
 
-    perform(engine, entity) {
-        console.log("You kick the " + this.target.name + ", much to its annoyance!");
+    perform() {
+        var target = this._getBlockingEntity();
+        var success = false;
+        if (target) {
+            console.log("You kick the " + this.target.name + ", much to its annoyance!");
+            success = true;
+        }
 
-        return new ActionResult(this, true);
+        return new ActionResult(this, success);
     }
 }
 
 export class MovementAction extends ActionWithDirection {
-    constructor(dx, dy) {
-        super(dx, dy);
+    constructor(entity, dx, dy) {
+        super(entity, dx, dy);
     }
 
-    perform(engine, entity) {
+    perform() {
         var success = false;
-        var destX = entity.x + this.dx;
-        var destY = entity.y + this.dy;
-
-        if (engine.gameMap.locations[destX][destY].isTileWalkable()) {
-            entity.move(engine, this.dx, this.dy);
+        var destXY = this._getDestXY();
+        var destX = destXY.x;
+        var destY = destXY.y;
+        if (this.getGameMap().locations[destX][destY].isTileWalkable() && !this._getBlockingEntity()) {
+            this.entityRef.move(this.getEngine(), this.dx, this.dy);
 
             success = true;
         }
@@ -55,38 +89,40 @@ export class MovementAction extends ActionWithDirection {
 }
 
 export class OpenAction extends ActionWithDirection {
-    constructor(dx, dy) {
-        super(dx, dy);
+    constructor(entity, dx, dy) {
+        super(entity, dx, dy);
     }
 
-    perform(engine, entity) {
+    perform() {
         var success = false;
-        var destX = entity.x + this.dx;
-        var destY = entity.y + this.dy;
+        var destXY = this._getDestXY();
+        var destX = destXY.x;
+        var destY = destXY.y;
 
-        var success = engine.gameMap.locations[destX][destY].tileComponentRun("openable", "open");
+        var success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
 
         return new ActionResult(this, success);
     }
 }
 
 export class BumpAction extends ActionWithDirection {
-    constructor(dx, dy) {
-        super(dx, dy);
+    constructor(entity, dx, dy) {
+        super(entity, dx, dy);
     }
 
-    perform(engine, entity) {
-        var destX = entity.x + this.dx;
-        var destY = entity.y + this.dy;
+    perform() {
+        var destXY = this._getDestXY();
+        var destX = destXY.x;
+        var destY = destXY.y;
 
-        var tiles = engine.gameMap.locations[destX][destY].tiles;
-        var target = engine.gameMap.getBlockingEntityAtLocation(destX, destY);
+        var tiles = this.getGameMap().locations[destX][destY].tiles;
+        var target = this._getBlockingEntity(destX, destY);
         if (target) {
-            return new MeleeAction(this.dx, this.dy, target).perform(engine, entity);
+            return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform();
         } else if (_isClosedOpenable(tiles)) {
-            return new OpenAction(this.dx, this.dy).perform(engine, entity);
+            return new OpenAction(this.entityRef, this.dx, this.dy).perform();
         } else {
-            return new MovementAction(this.dx, this.dy).perform(engine, entity);
+            return new MovementAction(this.entityRef, this.dx, this.dy).perform();
         }
     }
 }
@@ -103,16 +139,17 @@ function _isClosedOpenable(tiles) {
 }
 
 export class WarpAction extends Action {
-    constructor(x, y) {
+    constructor(entity, x, y) {
+        super(entity);
         this.x = x;
         this.y = y;
     }
 
-    perform(engine, entity) {
+    perform() {
         var success = false;
 
-        if (engine.gameMap.locations[destX][destY].isTileWalkable()) {
-            entity.moveTo(engine, this.x, this.x);
+        if (this.getGameMap().locations[destX][destY].isTileWalkable()) {
+            entity.moveTo(this.getEngine(), this.x, this.x);
 
             success = true;
         }
