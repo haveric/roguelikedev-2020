@@ -2,22 +2,14 @@ import { FovAdamMillazo } from './fov';
 import Tilemaps from './tilemaps';
 
 export default class Engine {
-    constructor(player, otherPlayers) {
+    constructor(player, players) {
         var self = this;
 
         self.gameMap = null;
         self.player = player;
-        self.otherPlayers = otherPlayers;
+        self.players = players;
 
-        self.players = [];
-        if (self.player) {
-            self.players.push(self.player);
-        }
-        for (var i = 0; i < self.otherPlayers.length; i++) {
-            self.players.push(self.otherPlayers[i]);
-        }
-
-        self.enemyTurn = 0;
+        self.enemyTurn = 1;
     }
 
     createSprites(scene, startX, startY, endX, endY) {
@@ -83,10 +75,10 @@ export default class Engine {
             }
         }
 
-        if (this.enemyTurn == 0) {
-            this.enemyTurn = 1;
+        if (this.enemyTurn == 1) {
+            this.enemyTurn = 2;
         } else {
-            this.enemyTurn = 0;
+            this.enemyTurn = 1;
         }
     }
 

@@ -54,7 +54,7 @@ export class SceneGame extends Phaser.Scene {
         });
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
-        this.engine = new Engine(self.player, self.otherPlayers);
+        this.engine = new Engine(self.player, self.players);
 
         this.eventHandler = new EventHandler(this.input.keyboard, this.engine);
 
@@ -87,8 +87,6 @@ export class SceneGame extends Phaser.Scene {
                         self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
                     }
                     self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
-                    self.engine.handleEnemyTurns();
-                    self.engine.updateFov();
                 }
             }
         });
@@ -149,6 +147,7 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
+            self.engine.handleEnemyTurns();
             self.engine.updateFov();
         });
 
@@ -167,7 +166,8 @@ export class SceneGame extends Phaser.Scene {
             var x = data.x;
             var y = data.y;
 
-            self.engine.gameMap.locations[x][y].tileComponentRun("openable", "open")
+            self.engine.gameMap.locations[x][y].tileComponentRun("openable", "open");
+            self.engine.handleEnemyTurns();
             self.engine.updateFov();
         });
     }
