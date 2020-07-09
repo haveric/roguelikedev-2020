@@ -18,7 +18,7 @@ export class Action {
         return this.entityRef.gameMap;
     }
 
-    perform() {
+    perform(doAction) {
         console.err("Not Implemented");
     }
 }
@@ -28,8 +28,12 @@ export class WaitAction extends Action {
         super(entity);
     }
 
-    perform() {
+    perform(doAction) {
         return new ActionResult(this, true);
+    }
+
+    toString() {
+        return { action: "WaitAction" };
     }
 }
 
@@ -50,7 +54,7 @@ export class ActionWithDirection extends Action {
         return this.getGameMap().getBlockingEntityAtLocation(destXY.x, destXY.y);
     }
 
-    perform() {
+    perform(doAction) {
         console.err("Not Implemented");
     }
 }
@@ -60,15 +64,21 @@ export class MeleeAction extends ActionWithDirection {
         super(entity, dx, dy);
     }
 
-    perform() {
+    perform(doAction) {
         var target = this._getBlockingEntity();
         var success = false;
         if (target) {
-            console.log("You kick the " + target.name + ", much to its annoyance!");
+            if (doAction) {
+                console.log("You kick the " + target.name + ", much to its annoyance!");
+            }
             success = true;
         }
 
         return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "MeleeAction", args: { dx: this.dx, dy: this.dy } };
     }
 }
 
@@ -77,18 +87,24 @@ export class MovementAction extends ActionWithDirection {
         super(entity, dx, dy);
     }
 
-    perform() {
+    perform(doAction) {
         var success = false;
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
         if (this.getGameMap().locations[destX][destY].isTileWalkable() && !this._getBlockingEntity()) {
-            this.entityRef.move(this.getEngine(), this.dx, this.dy);
+            if (doAction) {
+                this.entityRef.move(this.getEngine(), this.dx, this.dy);
+            }
 
             success = true;
         }
 
         return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "MovementAction", args: { dx: this.dx, dy: this.dy } };
     }
 }
 
@@ -97,15 +113,24 @@ export class OpenAction extends ActionWithDirection {
         super(entity, dx, dy);
     }
 
-    perform() {
+    perform(doAction) {
         var success = false;
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
 
-        var success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
+        var success;
+        if (doAction) {
+            success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
+        } else {
+            success = !this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
+        }
 
         return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "OpenAction", args: { dx: this.dx, dy: this.dy } };
     }
 }
 
@@ -122,11 +147,11 @@ export class BumpAction extends ActionWithDirection {
         var tiles = this.getGameMap().locations[destX][destY].tiles;
         var target = this._getBlockingEntity(destX, destY);
         if (target) {
-            return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform();
+            return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(false);
         } else if (_isClosedOpenable(tiles)) {
-            return new OpenAction(this.entityRef, this.dx, this.dy).perform();
+            return new OpenAction(this.entityRef, this.dx, this.dy).perform(false);
         } else {
-            return new MovementAction(this.entityRef, this.dx, this.dy).perform();
+            return new MovementAction(this.entityRef, this.dx, this.dy).perform(false);
         }
     }
 }
@@ -149,15 +174,21 @@ export class WarpAction extends Action {
         this.y = y;
     }
 
-    perform() {
+    perform(doAction) {
         var success = false;
 
-        if (this.getGameMap().locations[destX][destY].isTileWalkable()) {
-            entity.moveTo(this.getEngine(), this.x, this.x);
+        if (this.getGameMap().locations[this.x][this.y].isTileWalkable()) {
+            if (doAction) {
+                this.entityRef.moveTo(this.getEngine(), this.x, this.x);
+            }
 
             success = true;
         }
 
-        return success;
+        return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "WarpAction", args: { x: this.x, y: this.y } };
     }
 }

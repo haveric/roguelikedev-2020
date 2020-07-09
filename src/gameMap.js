@@ -86,6 +86,16 @@ export class GameMapLocation {
         return numTiles > 0 && anyBlocking;
     }
 
+    tileComponentCheck(component, toRun) {
+        for (var i = 0; i < this.tiles.length; i++) {
+            if (this.tiles[i][component]) {
+                return this.tiles[i][component][toRun]();
+            }
+        }
+
+        return false;
+    }
+
     tileComponentRun(component, toRun) {
         for (var i = 0; i < this.tiles.length; i++) {
             if (this.tiles[i][component]) {

@@ -70,7 +70,7 @@ export class HostileEnemy extends BaseAI {
 
         if (this.getEngine().gameMap.shroud[this.entityRef.x][this.entityRef.y].visible) {
             if (distance <= 1) {
-                return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform();
+                return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform(true);
             }
 
             this.path = this.getPathTo(closestPlayer.x, closestPlayer.y);
@@ -79,9 +79,9 @@ export class HostileEnemy extends BaseAI {
         if (this.path.length > 0) {
             var next = this.path.shift();
 
-            return new MovementAction(this.entityRef, next.x - this.entityRef.x, next.y - this.entityRef.y).perform();
+            return new MovementAction(this.entityRef, next.x - this.entityRef.x, next.y - this.entityRef.y).perform(true);
         }
 
-        return new WaitAction(this.entityRef).perform();
+        return new WaitAction(this.entityRef).perform(true);
     }
 }

@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction } from './actions';
+import { BumpAction, WaitAction, WarpAction } from './actions';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard, engine) {
@@ -87,6 +87,11 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     move(dx, dy) {
         this.emit('action', new BumpAction(this.engineRef.player, dx, dy));
+    }
+
+    warp(x, y, entity) {
+        entity = entity || this.engineRef.player;
+        this.emit('action', new WarpAction(entity, x, y));
     }
 
     wait() {

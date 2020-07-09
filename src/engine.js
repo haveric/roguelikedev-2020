@@ -69,7 +69,7 @@ export default class Engine {
             if (!isPlayer) {
                 if (i % this.enemyTurn == 0) {
                     if (entity.ai) {
-                        entity.ai.perform();
+                        entity.ai.perform(true);
                     }
                 }
             }

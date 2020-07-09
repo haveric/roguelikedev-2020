@@ -8,7 +8,7 @@ import EventHandler from '../eventHandler';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
-import { OpenAction } from '../actions';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -61,9 +61,9 @@ export class SceneGame extends Phaser.Scene {
         var width = 70;
         var height = 40;
         var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3);
-        var shipGenerator = new Ship(this.engine, self.entities, genOptions);
-        this.engine.gameMap = shipGenerator.generateDungeon();
-        shipGenerator.setPlayerCoordinates(self.players);
+        this.shipGenerator = new Ship(this.engine, self.entities, genOptions);
+        this.engine.gameMap = this.shipGenerator.generateDungeon();
+        this.shipGenerator.setPlayerCoordinates(self.players);
         this.engine.createSprites(self);
         this.engine.updateFov();
 
@@ -74,19 +74,10 @@ export class SceneGame extends Phaser.Scene {
         }
 
         self.eventHandler.on('action', function(action) {
-            if (self.player && self.player.energy > 0) {
-                var actionResult = action.perform(self, self.player);
+            if (self.player) {
+                var actionResult = action.perform(false);
                 if (actionResult.success) {
-                    self.player.energy -= 1;
-
-                    self.events.emit('ui-updateEnergy', self.player.energy);
-                    self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id });
-                    if (actionResult.action instanceof OpenAction) {
-                        self.socket.emit('openDoor', { roomId: self.room.roomId, x: self.player.x + action.dx, y: self.player.y + action.dy });
-                    } else {
-                        self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y });
-                    }
-                    self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
+                    self.socket.emit('s-performAction', {roomId: self.room.roomId, playerId: self.socket.id, actionData: actionResult.action.toString()});
                 }
             }
         });
@@ -128,24 +119,52 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.eventHandler.on('debugRoom', function () {
-            var debugRoomCenter = shipGenerator.createDebugRoom().center();
+            self.socket.emit('s-createDebugRoom', { roomId: self.room.roomId, playerId: self.socket.id });
+        });
+
+        self.socket.on('c-createDebugRoom', function (data) {
+            var playerId = data.playerId;
+            var debugRoomCenter = self.shipGenerator.createDebugRoom().center();
             self.engine.createSprites(self, 0, 0, 8, 8);
             self.updateCameraView();
 
-            self.player.moveTo(self.engine, debugRoomCenter.x, debugRoomCenter.y);
-            self.engine.updateFov();
-            self.socket.emit('playerMovement', { roomId: self.room.roomId, playerId: self.socket.id, x: self.player.x, y: self.player.y});
+            if (self.player.playerId === playerId) {
+                self.eventHandler.warp(debugRoomCenter.x, debugRoomCenter.y);
+            }
         });
 
-        self.updateCameraView();
+        self.socket.on('c-performAction', function (data) {
+            var playerId = data.playerId;
+            var actionData = data.actionData;
+            var args = actionData.args;
 
-        self.socket.on('otherPlayerMoved', function (playerInfo) {
-            for (var i = 0; i < self.otherPlayers.length; i++) {
-                var otherPlayer = self.otherPlayers[i];
-                if (playerInfo.playerId === otherPlayer.playerId) {
-                    otherPlayer.moveTo(self.engine, playerInfo.x, playerInfo.y);
+            for (var i = 0; i < self.players.length; i++) {
+                var player = self.players[i];
+                if (playerId === player.playerId) {
+                    switch (actionData.action) {
+                        case "WaitAction":
+                            new WaitAction(player).perform(true);
+                            break;
+                        case "MeleeAction":
+                            new MeleeAction(player, args.dx, args.dy).perform(true);
+                            break;
+                        case "MovementAction":
+                            new MovementAction(player, args.dx, args.dy).perform(true);
+                            break;
+                        case "OpenAction":
+                            new OpenAction(player, args.dx, args.dy).perform(true);
+                            break;
+                        case "WarpAction":
+                            new WarpAction(player, args.x, args.y).perform(true);
+                            break;
+                        default:
+                            console.err("Unrecognized action: " + actionData.action);
+                            break;
+                    }
                 }
             }
+
+            self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
 
             self.engine.handleEnemyTurns();
             self.engine.updateFov();
@@ -162,14 +181,7 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
-        self.socket.on('openDoor', function(data) {
-            var x = data.x;
-            var y = data.y;
-
-            self.engine.gameMap.locations[x][y].tileComponentRun("openable", "open");
-            self.engine.handleEnemyTurns();
-            self.engine.updateFov();
-        });
+        self.updateCameraView();
     }
 
     updateCameraView() {

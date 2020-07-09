@@ -6,6 +6,10 @@ export default class Openable {
         this.spriteOpenName = spriteOpenName
     }
 
+    getIsOpen() {
+        return this.isOpen;
+    }
+
     open() {
         if (!this.isOpen) {
             this.isOpen = true;

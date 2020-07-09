@@ -164,30 +164,49 @@ io.on('connection', function (socket) {
         }
     });
 
-    // when a player moves, update the player data
-    socket.on('playerMovement', function (data) {
+    socket.on('s-performAction', function(data) {
         var roomId = data.roomId;
         var playerId = data.playerId;
-        var x = data.x;
-        var y = data.y;
+        var actionData = data.actionData;
 
         var room = rooms[roomId];
         var players = room.players;
 
-        var updatedPlayer;
+        var playerHasEnergy = false;
         for (var i = 0; i < players.length; i++) {
             var player = players[i];
 
             if (player.playerId == playerId) {
-                player.x = x;
-                player.y = y;
-                updatedPlayer = player;
-                break;
+                if (player.energy > 0) {
+                    playerHasEnergy = true;
+                    break;
+                }
             }
         }
 
-        // emit a message to all players about the player that moved
-        io.sockets.in("room-" + roomId).emit("otherPlayerMoved", updatedPlayer);
+        if (playerHasEnergy) {
+            for (var i = 0; i < players.length; i++) {
+                var player = players[i];
+
+                if (player.playerId == playerId) {
+                    player.energy -= 1;
+                } else {
+                    if (player.energy < player.energyMax) {
+                        player.energy += 1;
+                    }
+                }
+            }
+
+            io.sockets.in("room-" + roomId).emit("c-performAction", { playerId: playerId, actionData: actionData });
+            io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+        }
+    });
+
+    socket.on('s-createDebugRoom', function(data) {
+        var roomId = data.roomId;
+        var playerId = data.playerId;
+
+        io.sockets.in("room-" + roomId).emit("c-createDebugRoom", { playerId: playerId });
     });
 
     socket.on('updateEnergy', function(data) {
@@ -217,12 +236,6 @@ io.on('connection', function (socket) {
         }
 
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
-    });
-
-    socket.on('openDoor', function(data) {
-        var roomId = data.roomId;
-
-        io.sockets.in("room-" + roomId).emit("openDoor", { x: data.x, y: data.y });
     });
 });
 
