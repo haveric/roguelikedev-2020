@@ -12,7 +12,7 @@ export default class Engine {
         self.player = player;
         self.players = players;
 
-        self.enemyTurn = 1;
+        self.enemyTurn = 0;
     }
 
     createSprites(scene, startX, startY, endX, endY) {
@@ -70,7 +70,7 @@ export default class Engine {
             }
 
             if (!isPlayer) {
-                if (i % this.enemyTurn == 0) {
+                if (i % 2 === this.enemyTurn) {
                     if (entity.ai) {
                         entity.ai.perform(true);
                     }
@@ -78,10 +78,10 @@ export default class Engine {
             }
         }
 
-        if (this.enemyTurn == 1) {
-            this.enemyTurn = 2;
-        } else {
+        if (this.enemyTurn == 0) {
             this.enemyTurn = 1;
+        } else {
+            this.enemyTurn = 0;
         }
     }
 
