@@ -4,7 +4,6 @@ import Engine from '../engine';
 import { Fov } from '../fov';
 import Player from '../player';
 import Sprite from '../sprite';
-import EventHandler from '../eventHandler';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
@@ -54,9 +53,7 @@ export class SceneGame extends Phaser.Scene {
         });
 
         // var isHost = self.room.players[0].playerId == self.socket.id;
-        this.engine = new Engine(self.player, self.players);
-
-        this.eventHandler = new EventHandler(this.input.keyboard, this.engine);
+        this.engine = new Engine(this, self.player, self.players);
 
         var width = 70;
         var height = 40;
@@ -74,7 +71,7 @@ export class SceneGame extends Phaser.Scene {
             self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
         }
 
-        self.eventHandler.on('action', function(action) {
+        self.engine.eventHandler.on('action', function(action) {
             if (self.player) {
                 var actionResult = action.perform(false);
                 if (actionResult.success) {
@@ -83,7 +80,7 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
-        self.eventHandler.on('zoom', function(zoomLevel) {
+        self.engine.eventHandler.on('zoom', function(zoomLevel) {
             if (zoomLevel == 1) { // Zoom In
                 if (self.zoomLevel < 2) {
                     self.zoomLevel ++;
@@ -105,21 +102,21 @@ export class SceneGame extends Phaser.Scene {
             self.cameras.main.setZoom(zoom);
         });
 
-        self.eventHandler.on('debug', function() {
+        self.engine.eventHandler.on('debug', function() {
             self.engine.clearFov();
             self.player.energy = 5000;
-            self.eventHandler.debugEnabled = true;
+            self.engine.eventHandler.debugEnabled = true;
             self.events.emit('ui-updateEnergy', self.player.energy);
             self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy });
         });
 
-        self.eventHandler.on('addEnergy', function () {
+        self.engine.eventHandler.on('addEnergy', function () {
             self.player.energy = 5000;
             self.events.emit('ui-updateEnergy', self.player.energy);
             self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy});
         });
 
-        self.eventHandler.on('debugRoom', function () {
+        self.engine.eventHandler.on('debugRoom', function () {
             self.socket.emit('s-createDebugRoom', { roomId: self.room.roomId, playerId: self.socket.id });
         });
 
@@ -130,7 +127,7 @@ export class SceneGame extends Phaser.Scene {
             self.updateCameraView();
 
             if (self.player.playerId === playerId) {
-                self.eventHandler.warp(debugRoomCenter.x, debugRoomCenter.y);
+                self.engine.eventHandler.warp(debugRoomCenter.x, debugRoomCenter.y);
             }
         });
 

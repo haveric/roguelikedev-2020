@@ -1,5 +1,6 @@
 import RenderOrder from '../renderOrder';
 import Sprite from '../sprite';
+import { PlayerDeadEventHandler } from '../eventHandler';
 import BaseComponent from './baseComponent';
 
 export default class Fighter extends BaseComponent {
@@ -30,6 +31,12 @@ export default class Fighter extends BaseComponent {
     }
 
     die() {
+        var engine = this.getEngine();
+        if (this.entityRef === engine.player) {
+            engine.eventHandler.killEvents();
+            engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input.keyboard, engine);
+        }
+
         var deathMessage = this.entityRef.name + " has died!";
         this.entityRef.renderOrder = RenderOrder.CORPSE;
 

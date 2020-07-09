@@ -1,6 +1,6 @@
 import { BumpAction, WaitAction, WarpAction } from './actions';
 
-export default class EventHandler extends Phaser.Events.EventEmitter {
+export class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard, engine) {
         super();
         this.engineRef = engine;
@@ -12,69 +12,7 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
         this.keyboard.on('keydown', function(event) {
             if (self.debugEnabled || !self.keysDown[event.code]) {
-                switch (event.code) {
-                    // Left
-                    case "KeyA":
-                    case "ArrowLeft":
-                    case "Numpad4":
-                        self.move(-1, 0);
-                        break;
-                    // Right
-                    case "KeyD":
-                    case "ArrowRight":
-                    case "Numpad6":
-                        self.move(1, 0);
-                        break;
-                    // Up
-                    case "KeyW":
-                    case "ArrowUp":
-                    case "Numpad8":
-                        self.move(0, -1);
-                        break;
-                    // Down
-                    case "KeyS":
-                    case "ArrowDown":
-                    case "Numpad2":
-                        self.move(0, 1);
-                        break;
-                    // Northwest
-                    case "Numpad7":
-                        self.move(-1, -1);
-                        break;
-                    // Northeast
-                    case "Numpad9":
-                        self.move(1, -1);
-                        break;
-                    // Southwest
-                    case "Numpad1":
-                        self.move(-1, 1);
-                        break;
-                    // Southeast
-                    case "Numpad3":
-                        self.move(1, 1);
-                        break;
-                    // Wait
-                    case "Numpad5":
-                        self.wait();
-                        break;
-                    case "Minus":
-                        self.zoom(-1);
-                        break;
-                    case "Equal":
-                        self.zoom(1);
-                        break;
-                    case "Home":
-                        self.debug();
-                        break;
-                    case "Insert":
-                        self.addEnergy();
-                        break;
-                    case "PageDown":
-                        console.log('Entering Debug Room...');
-                        self.debugRoom();
-                    default:
-                        break;
-                }
+                self.pressKey(event.code);
             }
 
             self.keysDown[event.code] = 1;
@@ -83,6 +21,15 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
         this.keyboard.on('keyup', function(event) {
             self.keysDown[event.code] = 0;
         });
+    }
+
+    killEvents() {
+        this.keyboard.off('keydown');
+        this.keyboard.off('keyup');
+    }
+
+    pressKey(eventCode) {
+        // Do nothing for base Event Handler
     }
 
     move(dx, dy) {
@@ -112,5 +59,89 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     debugRoom() {
         this.emit('debugRoom', 1);
+    }
+}
+
+export class MainGameEventHandler extends EventHandler {
+    constructor(keyboard, engine) {
+        super(keyboard, engine);
+    }
+
+    pressKey(eventCode) {
+        var self = this;
+
+        switch (eventCode) {
+            // Left
+            case "KeyA":
+            case "ArrowLeft":
+            case "Numpad4":
+                self.move(-1, 0);
+                break;
+            // Right
+            case "KeyD":
+            case "ArrowRight":
+            case "Numpad6":
+                self.move(1, 0);
+                break;
+            // Up
+            case "KeyW":
+            case "ArrowUp":
+            case "Numpad8":
+                self.move(0, -1);
+                break;
+            // Down
+            case "KeyS":
+            case "ArrowDown":
+            case "Numpad2":
+                self.move(0, 1);
+                break;
+            // Northwest
+            case "Numpad7":
+                self.move(-1, -1);
+                break;
+            // Northeast
+            case "Numpad9":
+                self.move(1, -1);
+                break;
+            // Southwest
+            case "Numpad1":
+                self.move(-1, 1);
+                break;
+            // Southeast
+            case "Numpad3":
+                self.move(1, 1);
+                break;
+            // Wait
+            case "Numpad5":
+                self.wait();
+                break;
+            case "Minus":
+                self.zoom(-1);
+                break;
+            case "Equal":
+                self.zoom(1);
+                break;
+            case "Home":
+                self.debug();
+                break;
+            case "Insert":
+                self.addEnergy();
+                break;
+            case "PageDown":
+                console.log('Entering Debug Room...');
+                self.debugRoom();
+            default:
+                break;
+        }
+    }
+}
+
+export class PlayerDeadEventHandler extends EventHandler {
+    constructor(keyboard, engine) {
+        super(keyboard, engine);
+    }
+
+    pressKey(eventCode) {
+
     }
 }

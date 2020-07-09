@@ -1,10 +1,13 @@
+import { MainGameEventHandler } from './eventHandler';
 import { FovAdamMillazo } from './fov';
 import Tilemaps from './tilemaps';
 
 export default class Engine {
-    constructor(player, players) {
+    constructor(scene, player, players) {
         var self = this;
 
+        self.scene = scene;
+        self.eventHandler = new MainGameEventHandler(scene.input.keyboard, this);
         self.gameMap = null;
         self.player = player;
         self.players = players;

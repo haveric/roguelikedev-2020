@@ -58,28 +58,33 @@ export class HostileEnemy extends BaseAI {
         var closestDistance = null;
         for (var i = 0; i < players.length; i++) {
             var target = players[i];
-            var dx = target.x - this.entityRef.x;
-            var dy = target.y - this.entityRef.y;
+            if (target.isAlive()) {
+                var dx = target.x - this.entityRef.x;
+                var dy = target.y - this.entityRef.y;
 
-            var distance = Math.max(Math.abs(dx), Math.abs(dy));
-            if (closestDistance == null || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
-                closestPlayer = target;
-                closestDistance = distance;
+                var distance = Math.max(Math.abs(dx), Math.abs(dy));
+                if (closestDistance == null || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
+                    closestPlayer = target;
+                    closestDistance = distance;
+                }
             }
         }
 
-        if (this.getEngine().gameMap.shroud[this.entityRef.x][this.entityRef.y].visible) {
-            if (closestDistance <= 1) {
-                return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform(true);
+        // Only take action if a player exists
+        if (closestPlayer) {
+            if (this.getEngine().gameMap.shroud[this.entityRef.x][this.entityRef.y].visible) {
+                if (closestDistance <= 1) {
+                    return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform(true);
+                }
+
+                this.path = this.getPathTo(closestPlayer.x, closestPlayer.y);
             }
 
-            this.path = this.getPathTo(closestPlayer.x, closestPlayer.y);
-        }
+            if (this.path.length > 0) {
+                var next = this.path.shift();
 
-        if (this.path.length > 0) {
-            var next = this.path.shift();
-
-            return new MovementAction(this.entityRef, next.x - this.entityRef.x, next.y - this.entityRef.y).perform(true);
+                return new MovementAction(this.entityRef, next.x - this.entityRef.x, next.y - this.entityRef.y).perform(true);
+            }
         }
 
         return new WaitAction(this.entityRef).perform(true);
