@@ -55,21 +55,21 @@ export class HostileEnemy extends BaseAI {
         var players = this.getEngine().players;
 
         var closestPlayer;
-        var closestDistance;
+        var closestDistance = null;
         for (var i = 0; i < players.length; i++) {
             var target = players[i];
             var dx = target.x - this.entityRef.x;
             var dy = target.y - this.entityRef.y;
 
             var distance = Math.max(Math.abs(dx), Math.abs(dy));
-            if (!closestDistance || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
+            if (closestDistance == null || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
                 closestPlayer = target;
                 closestDistance = distance;
             }
         }
 
         if (this.getEngine().gameMap.shroud[this.entityRef.x][this.entityRef.y].visible) {
-            if (distance <= 1) {
+            if (closestDistance <= 1) {
                 return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform(true);
             }
 
