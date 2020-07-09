@@ -35,7 +35,7 @@ export class BaseAI extends BaseComponent {
             }
         }
 
-        var costGraph = new Graph(cost);
+        var costGraph = new Graph(cost, { diagonal: true });
 
         var start = costGraph.grid[this.entityRef.x][this.entityRef.y];
         var end = costGraph.grid[destX][destY];
