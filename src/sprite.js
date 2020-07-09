@@ -28,12 +28,19 @@ export default class Sprite {
         }
     }
 
-    updateSprite(name) {
+    updateSprite(name, color) {
         this.name = name;
         var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
         if (frame != null) {
             this.spriteObject.setFrame(frame);
         }
+
+        if (color) {
+            this.color = color;
+            this.spriteObject.setTint("0x" + this.color);
+        }
+
+        this.spriteObject.setDepth(this.owner.renderOrder);
     }
 
     move(dx, dy) {

@@ -86,4 +86,8 @@ export class Actor extends Entity {
     constructor(x, y, name, sprite, blocksMovement) {
         super(x, y, name, sprite, true, RenderOrder.ACTOR)
     }
+
+    isAlive() {
+        return this.ai != null;
+    }
 }

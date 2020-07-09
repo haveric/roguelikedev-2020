@@ -1,5 +1,6 @@
 import { create2dArray } from '../utils';
 import FovTile from './fovTile';
+import { Actor } from './entity';
 
 export default class GameMap {
     constructor(engine, width, height, entities) {
@@ -40,6 +41,30 @@ export default class GameMap {
         }
 
         return foundEntity;
+    }
+
+    getActors() {
+        var actors = [];
+        for (var i = 0; i < this.entities.length; i++) {
+            var entity = this.entities[i];
+            if (entity instanceof Actor && entity.isAlive()) {
+                actors.push(entity);
+            }
+        }
+
+        return actors;
+    }
+
+    getActorAtLocation(x, y) {
+        var actors = this.getActors();
+        for (var i = 0; i < actors.length; i++) {
+            var actor = actors[i];
+            if (actor.x == x && actor.y == y) {
+                return actor;
+            }
+        }
+
+        return null;
     }
 }
 

@@ -54,6 +54,11 @@ export class ActionWithDirection extends Action {
         return this.getGameMap().getBlockingEntityAtLocation(destXY.x, destXY.y);
     }
 
+    _targetActor() {
+        var destXY = this._getDestXY();
+        return this.getGameMap().getActorAtLocation(destXY.x, destXY.y);
+    }
+
     perform(doAction) {
         console.err("Not Implemented");
     }
@@ -65,11 +70,19 @@ export class MeleeAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var target = this._getBlockingEntity();
+        var target = this._targetActor();
         var success = false;
         if (target) {
             if (doAction) {
-                console.log("You kick the " + target.name + ", much to its annoyance!");
+                var damage = this.entityRef.fighter.power - target.fighter.defense;
+                var attackDesc = this.entityRef.name + " attacks " + target.name;
+
+                if (damage > 0) {
+                    console.log(attackDesc + " for " + damage + " hit points.");
+                    target.fighter.takeDamage(damage);
+                } else {
+                    console.log(attackDesc + " but does no damage.");
+                }
             }
             success = true;
         }
@@ -145,7 +158,7 @@ export class BumpAction extends ActionWithDirection {
         var destY = destXY.y;
 
         var tiles = this.getGameMap().locations[destX][destY].tiles;
-        var target = this._getBlockingEntity(destX, destY);
+        var target = this._targetActor(destX, destY);
         if (target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(false);
         } else if (_isClosedOpenable(tiles)) {

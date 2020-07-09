@@ -19,22 +19,26 @@ export default class Fighter extends BaseComponent {
 
     setHp(hp) {
         this._hp = Math.max(0, Math.min(hp, this.maxHp));
+
+        if (this._hp == 0 && this.entityRef.ai) {
+            this.die();
+        }
+    }
+
+    takeDamage(damage) {
+        this.setHp(this._hp - damage);
     }
 
     die() {
-        var deathMessage = this.entity.name + " has died!";
-        this.entity.renderOrder = RenderOrder.CORPSE;
+        var deathMessage = this.entityRef.name + " has died!";
+        this.entityRef.renderOrder = RenderOrder.CORPSE;
 
-        this.entity.setSprite(new Sprite("corpse", "BF0000"));
-        this.entity.blocksMovement = false;
-        this.entity.ai = null;
-        this.entity.originalName = this.entity.name; // Save just in case we need to resurrect the entity
-        this.entity.name = this.entity.name + "'s corpse";
+        this.entityRef.sprite.updateSprite("corpse", "BF0000");
+        this.entityRef.blocksMovement = false;
+        this.entityRef.ai = null;
+        this.entityRef.originalName = this.entityRef.name; // Save just in case we need to resurrect the entity
+        this.entityRef.name = this.entityRef.name + "'s corpse";
 
         console.log(deathMessage);
-    }
-
-    isAlive() {
-        return this.entity.ai != null;
     }
 }
