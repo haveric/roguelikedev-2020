@@ -7,6 +7,7 @@ import Sprite from '../sprite';
 import EventHandler from '../eventHandler';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
+import EntityFactories from '../entityFactories';
 import { OpenAction } from '../actions';
 import Fighter from '../components/fighter';
 
@@ -37,10 +38,8 @@ export class SceneGame extends Phaser.Scene {
 
         Object.keys(self.room.players).forEach(function(index) {
             var player = self.room.players[index];
-            var playerSprite = new Sprite(player.sprite, player.color);
-            var newPlayer = new Player(player.playerId, player.x, player.y, player.name, playerSprite, true, player.energy, player.energyMax);
-            newPlayer.setFighter(new Fighter(30, 2, 5));
 
+            var newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
             if (player.playerId == self.socket.id) {
                 self.player = newPlayer;
                 self.entities.push(self.player);

@@ -1,4 +1,5 @@
 import Tilemaps from './tilemaps';
+import RenderOrder from './renderOrder';
 
 export default class Entity {
     constructor(x, y, name, sprite, blocksMovement, renderOrder) {
@@ -8,6 +9,7 @@ export default class Entity {
         this.blocksMovement = blocksMovement;
         this.renderOrder = renderOrder;
         this.lightRadius = 8;
+        this.gameMap = null;
 
         this.setSprite(sprite);
 
@@ -77,5 +79,11 @@ export default class Entity {
 
         this.gameMap = gameMap;
         gameMap.entities.push(this);
+    }
+}
+
+export class Actor extends Entity {
+    constructor(x, y, name, sprite, blocksMovement) {
+        super(x, y, name, sprite, true, RenderOrder.ACTOR)
     }
 }

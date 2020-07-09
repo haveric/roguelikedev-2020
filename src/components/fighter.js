@@ -28,8 +28,13 @@ export default class Fighter extends BaseComponent {
         this.entity.setSprite(new Sprite("corpse", "BF0000"));
         this.entity.blocksMovement = false;
         this.entity.ai = null;
+        this.entity.originalName = this.entity.name; // Save just in case we need to resurrect the entity
         this.entity.name = this.entity.name + "'s corpse";
 
         console.log(deathMessage);
+    }
+
+    isAlive() {
+        return this.entity.ai != null;
     }
 }

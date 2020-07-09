@@ -27,6 +27,10 @@ export class WaitAction extends Action {
     constructor(entity) {
         super(entity);
     }
+
+    perform() {
+        return new ActionResult(this, true);
+    }
 }
 
 export class ActionWithDirection extends Action {
@@ -60,7 +64,7 @@ export class MeleeAction extends ActionWithDirection {
         var target = this._getBlockingEntity();
         var success = false;
         if (target) {
-            console.log("You kick the " + this.target.name + ", much to its annoyance!");
+            console.log("You kick the " + target.name + ", much to its annoyance!");
             success = true;
         }
 

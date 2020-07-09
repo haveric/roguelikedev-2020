@@ -1,4 +1,4 @@
-import { BumpAction } from './actions';
+import { BumpAction, WaitAction } from './actions';
 
 export default class EventHandler extends Phaser.Events.EventEmitter {
     constructor(keyboard, engine) {
@@ -55,7 +55,7 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
                         break;
                     // Wait
                     case "Numpad5":
-                        self.move(0, 0);
+                        self.wait();
                         break;
                     case "Minus":
                         self.zoom(-1);
@@ -87,6 +87,10 @@ export default class EventHandler extends Phaser.Events.EventEmitter {
 
     move(dx, dy) {
         this.emit('action', new BumpAction(this.engineRef.player, dx, dy));
+    }
+
+    wait() {
+        this.emit('action', new WaitAction(this.engineRef.player));
     }
 
     zoom(zoomLevel) {

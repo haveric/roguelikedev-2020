@@ -4,6 +4,6 @@ export default class BaseComponent {
     }
 
     getEngine() {
-        return this.entityRef.gameMap.engine;
+        return this.entityRef.gameMap.engineRef;
     }
 }
