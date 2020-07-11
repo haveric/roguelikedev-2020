@@ -66,8 +66,8 @@ export class SceneGame extends Phaser.Scene {
 
         if (self.player) {
             self.events.emit('ui-enable');
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), maxHp: self.player.fighter.maxHp });
-            self.events.emit('ui-updateEnergy', self.player.energy);
+            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
             self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
         }
 
@@ -105,15 +105,17 @@ export class SceneGame extends Phaser.Scene {
         self.engine.eventHandler.on('debug', function() {
             self.engine.clearFov();
             self.player.energy = 5000;
+            self.player.energyMax = 5000;
             self.engine.eventHandler.debugEnabled = true;
-            self.events.emit('ui-updateEnergy', self.player.energy);
-            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy });
+            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy, energyMax: self.player.energyMax });
         });
 
         self.engine.eventHandler.on('addEnergy', function () {
             self.player.energy = 5000;
-            self.events.emit('ui-updateEnergy', self.player.energy);
-            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy});
+            self.player.energyMax = 5000;
+            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy, energyMax: self.player.energyMax});
         });
 
         self.engine.eventHandler.on('debugRoom', function () {
@@ -162,7 +164,7 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), maxHp: self.player.fighter.maxHp });
+            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
             self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
 
             self.engine.handleEnemyTurns();
@@ -174,7 +176,7 @@ export class SceneGame extends Phaser.Scene {
                 var player = players[i];
                 if (player.playerId == self.socket.id) {
                     self.player.energy = player.energy;
-                    self.events.emit('ui-updateEnergy', self.player.energy);
+                    self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
                     break;
                 }
             }

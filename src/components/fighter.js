@@ -9,7 +9,7 @@ export default class Fighter extends BaseComponent {
 
         this._hp = hp;
 
-        this.maxHp = hp;
+        this.hpMax = hp;
         this.defense = defense;
         this.power = power;
     }
@@ -19,7 +19,7 @@ export default class Fighter extends BaseComponent {
     }
 
     setHp(hp) {
-        this._hp = Math.max(0, Math.min(hp, this.maxHp));
+        this._hp = Math.max(0, Math.min(hp, this.hpMax));
 
         if (this._hp == 0 && this.entityRef.ai) {
             this.die();

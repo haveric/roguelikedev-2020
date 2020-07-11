@@ -223,6 +223,10 @@ io.on('connection', function (socket) {
             if (player.playerId == playerId) {
                 updatedPlayer = player;
 
+                if (data.energyMax) {
+                    player.energyMax = data.energyMax;
+                }
+
                 if (data.energy) {
                     player.energy = data.energy;
                 } else {
