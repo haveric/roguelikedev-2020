@@ -65,7 +65,7 @@ export class SceneGame extends Phaser.Scene {
         this.engine.updateFov();
 
         if (self.player) {
-            self.events.emit('ui-enable');
+            self.events.emit('ui-enable', self.engine);
             self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
             self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
             self.events.emit('ui-updateCoordinates', { x: self.player.x, y: self.player.y })
@@ -183,6 +183,7 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.updateCameraView();
+        self.engine.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
     }
 
     updateCameraView() {

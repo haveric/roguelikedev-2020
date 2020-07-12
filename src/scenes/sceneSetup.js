@@ -386,6 +386,12 @@ var createColorPickerDialog = function (scene, player) {
             self.playerSprite.setTint(newColor);
 
             var hexColor = Phaser.Display.Color.ComponentToHex(newColor);
+
+            // ComponentToHex trims starting zeros for some reason, add them back
+            while (hexColor.length < 6) {
+                hexColor = "0" + hexColor;
+            }
+
             scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, color: hexColor });
         } else {
             objectPanel.setFillStyle(Phaser.Display.Color.GetColor(0, 0, 0));

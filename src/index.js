@@ -27,9 +27,9 @@ const game = new Phaser.Game(config);
 function resize() {
     var width = window.innerWidth;
     var height = window.innerHeight;
-    var xScale = width / 800;
-    var yScale = height / 600;
-    var scale = Math.min(xScale, yScale);
+    game.xScale = width / 800;
+    game.yScale = height / 600;
+    var scale = Math.min(game.xScale, game.yScale);
 
     var x = Math.ceil(width / scale);
     var y = Math.ceil(height / scale);
