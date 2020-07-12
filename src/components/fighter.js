@@ -40,12 +40,13 @@ export default class Fighter extends BaseComponent {
         var deathMessage = this.entityRef.name + " has died!";
         this.entityRef.renderOrder = RenderOrder.CORPSE;
 
+        this.getEngine().messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" has died!").build();
+
         this.entityRef.sprite.updateSprite("corpse", "BF0000");
         this.entityRef.blocksMovement = false;
         this.entityRef.ai = null;
         this.entityRef.originalName = this.entityRef.name; // Save just in case we need to resurrect the entity
         this.entityRef.name = this.entityRef.name + "'s corpse";
 
-        console.log(deathMessage);
     }
 }

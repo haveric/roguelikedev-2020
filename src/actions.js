@@ -75,13 +75,14 @@ export class MeleeAction extends ActionWithDirection {
         if (target) {
             if (doAction) {
                 var damage = this.entityRef.fighter.power - target.fighter.defense;
+                this.getEngine().messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
                 var attackDesc = this.entityRef.name + " attacks " + target.name;
 
                 if (damage > 0) {
-                    console.log(attackDesc + " for " + damage + " hit points.");
+                    this.getEngine().messageLog.text(" for " + damage + " hit points.").build();
                     target.fighter.takeDamage(damage);
                 } else {
-                    console.log(attackDesc + " but does no damage.");
+                    this.getEngine().messageLog.text(" but does no damage.").build();
                 }
             }
             success = true;
