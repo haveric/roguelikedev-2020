@@ -37,7 +37,6 @@ export default class Fighter extends BaseComponent {
             engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input.keyboard, engine);
         }
 
-        var deathMessage = this.entityRef.name + " has died!";
         this.entityRef.renderOrder = RenderOrder.CORPSE;
 
         this.getEngine().messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" has died!").build();
