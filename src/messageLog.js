@@ -64,7 +64,8 @@ export class MessageLog {
         this.builder = [];
     }
 
-    text(text, color) {
+    text(text, color="#333333") {
+
         this.builder.push(new SubMessage(text, color));
         return this; // Allow chaining
     }
@@ -97,6 +98,7 @@ export class MessageLog {
         }
 
         this.messageLog.setText(fullLog);
+        this.messageLog.scrollToBottom();
     }
 
     createScrollablePanel(scene) {
