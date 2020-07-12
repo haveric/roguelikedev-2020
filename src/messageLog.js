@@ -11,20 +11,6 @@ export class Message {
         this.count = 1;
     }
 
-    getFullText() {
-        var fullText = "";
-        for (var i = 0; i < this.subMessages.length; i++) {
-            var subMessage = this.subMessages[i];
-            fullText += subMessage.text;
-        }
-
-        if (this.count > 1) {
-            fullText += " (x" + this.count + ")";
-        }
-
-        return fullText;
-    }
-
     getBBCodeFullText() {
         var fullText = "";
         for (var i = 0; i < this.subMessages.length; i++) {
@@ -65,7 +51,6 @@ export class MessageLog {
     }
 
     text(text, color="#333333") {
-
         this.builder.push(new SubMessage(text, color));
         return this; // Allow chaining
     }
