@@ -34,7 +34,7 @@ export default class Fighter extends BaseComponent {
         var engine = this.getEngine();
         if (this.entityRef === engine.player) {
             engine.eventHandler.killEvents();
-            engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input.keyboard, engine);
+            engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
         }
 
         this.entityRef.renderOrder = RenderOrder.CORPSE;

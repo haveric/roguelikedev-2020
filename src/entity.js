@@ -2,10 +2,11 @@ import Tilemaps from './tilemaps';
 import RenderOrder from './renderOrder';
 
 export default class Entity {
-    constructor(x, y, name, sprite, blocksMovement, renderOrder) {
+    constructor(x, y, name, description, sprite, blocksMovement, renderOrder) {
         this.x = x;
         this.y = y;
         this.name = name;
+        this.description = description;
         this.blocksMovement = blocksMovement;
         this.renderOrder = renderOrder;
         this.lightRadius = 8;
@@ -83,8 +84,8 @@ export default class Entity {
 }
 
 export class Actor extends Entity {
-    constructor(x, y, name, sprite, blocksMovement) {
-        super(x, y, name, sprite, true, RenderOrder.ACTOR)
+    constructor(x, y, name, description, sprite, blocksMovement) {
+        super(x, y, name, description, sprite, true, RenderOrder.ACTOR)
     }
 
     isAlive() {

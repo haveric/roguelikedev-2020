@@ -47,19 +47,19 @@ export class SidePanel {
             width: 180,
             height: 200,
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, 0xeeeeee),
-            text: scene.rexUI.add.BBCodeText(),
+            text: scene.rexUI.add.BBCodeText(0, 0, "", {fontSize: "12px"}),
             slider: {
                 track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x260e04),
                 thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0x7b5e57),
             },
-             space: {
-                 left: 10,
-                 right: 10,
-                 top: 10,
-                 bottom: 10,
+            space: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
 
-                 panel: 10,
-             }
+                panel: 10,
+            }
         });
     }
 }

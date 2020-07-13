@@ -1,6 +1,7 @@
 import { create2dArray } from '../utils';
 import FovTile from './fovTile';
 import { Actor } from './entity';
+import Tilemaps from './tilemaps';
 
 export default class GameMap {
     constructor(engine, width, height, entities) {
@@ -9,9 +10,9 @@ export default class GameMap {
         this.height = height;
         this.entities = entities || [];
 
-        // Offsets to center the map on screen
-        this.offsetWidth = 400;
-        this.offsetHeight = 300;
+        // Add a full map offset to allow for top and left sides to have blank space and zoom to be centered
+        this.offsetWidth = this.width * Tilemaps.getTileMap().frameWidth;
+        this.offsetHeight = this.height * Tilemaps.getTileMap().frameHeight;
 
         this.locations = create2dArray(this.width);
         for (var i = 0; i < this.width; i++) {

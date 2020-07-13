@@ -24,7 +24,6 @@ export class SceneGameUI extends Phaser.Scene {
 
             self.hpText = self.add.text(35, 22, "HP: 0 / 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true } });
             self.energyText = self.add.text(35, 62, "Energy: 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true  } });
-            self.coordinateText = self.add.text(30, 100, 'Position: ', {font: "30px Arial", fill: "#ffff00" });
 
             engine.messageLog.createScrollablePanel(self);
             engine.sidePanel.createSidePanel(self);
@@ -47,14 +46,6 @@ export class SceneGameUI extends Phaser.Scene {
 
                 self.healthBar.width = self.hp / self.hpMax * self.healthBarMax.width;
                 self.hpText.setText("HP: " + self.hp + " / " + self.hpMax);
-            }
-        }, this);
-
-        game.events.on('ui-updateCoordinates', function(coordinateText) {
-            if (self.enabled) {
-                self.coordinates = coordinateText;
-
-                self.coordinateText.setText("Position: " + self.coordinates.x + ', ' + self.coordinates.y);
             }
         }, this);
     }

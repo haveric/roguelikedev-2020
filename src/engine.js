@@ -9,7 +9,7 @@ export default class Engine {
         var self = this;
 
         self.scene = scene;
-        self.eventHandler = new MainGameEventHandler(scene.input.keyboard, this);
+        self.eventHandler = new MainGameEventHandler(scene.input, this);
         self.messageLog = new MessageLog();
         self.sidePanel = new SidePanel();
         self.gameMap = null;

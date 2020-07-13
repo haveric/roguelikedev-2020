@@ -1,16 +1,17 @@
 import { BumpAction, WaitAction, WarpAction } from './actions';
+import Tilemaps from './tilemaps';
 
 export class EventHandler extends Phaser.Events.EventEmitter {
-    constructor(keyboard, engine) {
+    constructor(input, engine) {
         super();
         this.engineRef = engine;
         var self = this;
 
         this.debugEnabled = false;
-        this.keyboard = keyboard;
+        this.input = input;
         this.keysDown = [];
 
-        this.keyboard.on('keydown', function(event) {
+        this.input.keyboard.on('keydown', function(event) {
             if (self.debugEnabled || !self.keysDown[event.code]) {
                 self.pressKey(event.code);
             }
@@ -18,14 +19,42 @@ export class EventHandler extends Phaser.Events.EventEmitter {
             self.keysDown[event.code] = 1;
         });
 
-        this.keyboard.on('keyup', function(event) {
+        this.input.keyboard.on('keyup', function(event) {
             self.keysDown[event.code] = 0;
+        });
+
+        this.input.on('pointermove', function(event) {
+            var gameMap = self.engineRef.gameMap;
+            var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
+            var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
+
+            var sidePanel = self.engineRef.sidePanel;
+            if (gameMap.locations[x] && gameMap.locations[x][y]) {
+                sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
+                var entity = gameMap.getBlockingEntityAtLocation(x, y);
+
+                if (entity) {
+                    sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                    sidePanel.text(entity.description + "\n\n");
+                }
+
+                var tiles = gameMap.locations[x][y].tiles;
+                for (var i = 0; i < tiles.length; i++) {
+                    var tile = tiles[i];
+                    sidePanel.text(tile.name + "\n");
+                    sidePanel.text(tile.description + "\n\n");
+                }
+
+                sidePanel.build();
+            } else {
+                sidePanel.text("").build();
+            }
         });
     }
 
     killEvents() {
-        this.keyboard.off('keydown');
-        this.keyboard.off('keyup');
+        this.input.keyboard.off('keydown');
+        this.input.keyboard.off('keyup');
     }
 
     pressKey(eventCode) {
@@ -63,8 +92,8 @@ export class EventHandler extends Phaser.Events.EventEmitter {
 }
 
 export class MainGameEventHandler extends EventHandler {
-    constructor(keyboard, engine) {
-        super(keyboard, engine);
+    constructor(input, engine) {
+        super(input, engine);
     }
 
     pressKey(eventCode) {
@@ -137,8 +166,8 @@ export class MainGameEventHandler extends EventHandler {
 }
 
 export class PlayerDeadEventHandler extends EventHandler {
-    constructor(keyboard, engine) {
-        super(keyboard, engine);
+    constructor(input, engine) {
+        super(input, engine);
     }
 
     pressKey(eventCode) {
