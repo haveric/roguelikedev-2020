@@ -1,6 +1,7 @@
 import { MainGameEventHandler } from './eventHandler';
 import { FovAdamMillazo } from './fov';
 import { MessageLog } from './messageLog';
+import { SidePanel } from './sidePanel';
 import Tilemaps from './tilemaps';
 
 export default class Engine {
@@ -10,6 +11,7 @@ export default class Engine {
         self.scene = scene;
         self.eventHandler = new MainGameEventHandler(scene.input.keyboard, this);
         self.messageLog = new MessageLog();
+        self.sidePanel = new SidePanel();
         self.gameMap = null;
         self.player = player;
         self.players = players;

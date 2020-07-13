@@ -27,6 +27,7 @@ export class SceneGameUI extends Phaser.Scene {
             self.coordinateText = self.add.text(30, 100, 'Position: ', {font: "30px Arial", fill: "#ffff00" });
 
             engine.messageLog.createScrollablePanel(self);
+            engine.sidePanel.createSidePanel(self);
         }, this);
 
         game.events.on('ui-updateEnergy', function(data) {
