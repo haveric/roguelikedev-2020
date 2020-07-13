@@ -40,6 +40,13 @@ export default class Entity {
         }
     }
 
+    setConsumable(consumable) {
+        if (consumable) {
+            this.consumable = consumable;
+            this.consumable.owner = this;
+        }
+    }
+
     move(engine, dx, dy) {
         this.x += dx;
         this.y += dy;
@@ -84,11 +91,17 @@ export default class Entity {
 }
 
 export class Actor extends Entity {
-    constructor(x, y, name, description, sprite, blocksMovement) {
-        super(x, y, name, description, sprite, true, RenderOrder.ACTOR)
+    constructor(x, y, name, description, sprite) {
+        super(x, y, name, description, sprite, true, RenderOrder.ACTOR);
     }
 
     isAlive() {
         return this.ai != null;
+    }
+}
+
+export class Item extends Entity {
+    constructor(x, y, name, description, sprite) {
+        super(x, y, name, description, sprite, false, RenderOrder.ITEM);
     }
 }

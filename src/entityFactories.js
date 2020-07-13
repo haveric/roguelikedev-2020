@@ -1,9 +1,10 @@
-import { Actor } from './entity';
+import { Actor, Item } from './entity';
 import Player from './player';
 import Sprite from './sprite';
 import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
+import { HealingConsumable } from './components/consumable';
 
 export default class EntityFactories {}
 
@@ -33,3 +34,8 @@ EntityFactories.automatedTurret = (x, y) => {
     return entity;
 }
 
+EntityFactories.medkit = (x, y) => {
+    var entity = new Item(x, y, "Medkit", "Can be used to heal a small amount of health.", new Sprite("medkit", "7f00ff"));
+    entity.setConsumable(new HealingConsumable(entity, 4, "use"));
+    return entity;
+}

@@ -14,7 +14,8 @@ export class GeneratorOptions {
         width,
         height,
         holds,
-        maxMonstersPerRoom) {
+        maxMonstersPerRoom,
+        maxItemsPerRoom) {
         this.minRooms = minRooms;
         this.maxRooms = maxRooms;
         this.roomMinSize = roomMinSize;
@@ -23,6 +24,7 @@ export class GeneratorOptions {
         this.height = height;
         this.holds = holds;
         this.maxMonstersPerRoom = maxMonstersPerRoom;
+        this.maxItemsPerRoom = maxItemsPerRoom;
     }
 }
 
@@ -217,10 +219,10 @@ export class Ship {
     }
 
     placeEntitiesInRoom(rectangularRoom) {
-        var numToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
-        console.log('Spawning ' + numToSpawn + ' enemies in room: ' + rectangularRoom);
+        var numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
+        console.log('Spawning ' + numMonstersToSpawn + ' enemies in room: ' + rectangularRoom);
     
-        for (var i = 0; i < numToSpawn; i++) {
+        for (var i = 0; i < numMonstersToSpawn; i++) {
             var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
             var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
     
@@ -235,6 +237,19 @@ export class Ship {
                 } else {
                     new EntityFactories.automatedTurret(x, y).place(this.gameMap);
                 }
+            }
+        }
+
+        var numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
+        console.log('Spawning ' + numItemsToSpawn + ' items in room: ' + rectangularRoom);
+
+        for (var i = 0; i < numItemsToSpawn; i++) {
+            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
+            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+
+            var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+            if (!entity) {
+                new EntityFactories.medkit(x, y).place(this.gameMap);
             }
         }
     }

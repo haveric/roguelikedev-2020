@@ -30,6 +30,22 @@ export default class Fighter extends BaseComponent {
         this.setHp(this._hp - damage);
     }
 
+    heal(amount) {
+        if (this._hp == this.hpMax) {
+            return 0;
+        }
+
+        var newHp = this._hp + amount;
+        if (newHp > this.hpMax) {
+            newHp = this.hpMax;
+        }
+
+        var amountRecovered = newHp - this._hp;
+        this._hp = newHp;
+
+        return amountRecovered;
+    }
+
     die() {
         var engine = this.getEngine();
         if (this.entityRef === engine.player) {
