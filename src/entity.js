@@ -47,6 +47,13 @@ export default class Entity {
         }
     }
 
+    setInventory(inventory) {
+        if (inventory) {
+            this.inventory = inventory;
+            this.inventory.owner = this;
+        }
+    }
+
     move(engine, dx, dy) {
         this.x += dx;
         this.y += dy;

@@ -206,3 +206,67 @@ export class WarpAction extends Action {
         return { action: "WarpAction", args: { x: this.x, y: this.y } };
     }
 }
+
+export class PickupAction extends Action {
+    constructor(entity, actor) {
+        super(entity);
+        this.actor = actor;
+    }
+
+    perform(doAction) {
+        var actorX = this.entityRef.x;
+        var actorY = this.entityRef.y;
+
+        var inventory = this.entityRef.inventory;
+
+        var isCurrentPlayer = this.entityRef == this.getEngine().player;
+
+        var items = this.getGameMap().getItems();
+        if (items.length == 0) {
+            if (isCurrentPlayer) {
+                this.getEngine().messageLog.text("There is nothing here to pick up.").build();
+            }
+            return new ActionResult(this, false);
+        } else {
+            var success = false;
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+
+                if (actorX == item.x && actorY == item.y) {
+                    if (inventory.items.length >= inventory.capacity) {
+                        if (isCurrentPlayer) {
+                            this.getEngine().messageLog.text("Your inventory is full.").build();
+                        }
+                        break;
+                    }
+
+                    var index = this.getGameMap().entities.indexOf(item);
+                    if (index != -1) {
+                        if (doAction) {
+                            this.getGameMap().entities.splice(index, 1);
+                            item.parent = inventory;
+                            item.sprite.destroy();
+                            inventory.items.push(item);
+
+                            var playerString;
+                            if (isCurrentPlayer) {
+                                playerString = "You";
+                            } else {
+                                playerString = this.entityRef.name;
+                            }
+                            this.getEngine().messageLog.text(playerString + " picked up the " + item.name + "!").build();
+                        }
+
+                        success = true;
+                    }
+                }
+            }
+
+            return new ActionResult(this, success);
+        }
+    }
+
+    toString() {
+        return { action: "PickupAction" };
+    }
+}

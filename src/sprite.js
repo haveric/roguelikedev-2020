@@ -16,15 +16,19 @@ export default class Sprite {
     create(scene, x, y) {
         var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
         if (frame != null) {
-            if (this.spriteObject) {
-                this.spriteObject.destroy();
-            }
+            this.destroy();
             this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
             this.spriteObject.setFrame(frame);
             this.spriteObject.setTint("0x" + this.color);
             if (this.owner) {
                 this.spriteObject.setDepth(this.owner.renderOrder);
             }
+        }
+    }
+
+    destroy() {
+        if (this.spriteObject) {
+            this.spriteObject.destroy();
         }
     }
 

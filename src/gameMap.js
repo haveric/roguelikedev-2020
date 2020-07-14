@@ -1,6 +1,6 @@
 import { create2dArray } from '../utils';
 import FovTile from './fovTile';
-import { Actor } from './entity';
+import { Actor, Item } from './entity';
 import Tilemaps from './tilemaps';
 
 export default class GameMap {
@@ -54,6 +54,18 @@ export default class GameMap {
         }
 
         return actors;
+    }
+
+    getItems() {
+        var items = [];
+        for (var i = 0; i < this.entities.length; i++) {
+            var entity = this.entities[i];
+            if (entity instanceof Item) {
+                items.push(entity);
+            }
+        }
+
+        return items;
     }
 
     getActorAtLocation(x, y) {

@@ -7,7 +7,7 @@ import Sprite from '../sprite';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction } from '../actions';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -155,6 +155,9 @@ export class SceneGame extends Phaser.Scene {
                             break;
                         case "WarpAction":
                             new WarpAction(player, args.x, args.y).perform(true);
+                            break;
+                        case "PickupAction":
+                            new PickupAction(player).perform(true);
                             break;
                         default:
                             console.err("Unrecognized action: " + actionData.action);

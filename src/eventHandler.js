@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, WarpAction } from './actions';
+import { BumpAction, WaitAction, PickupAction, WarpAction } from './actions';
 import Tilemaps from './tilemaps';
 
 export class EventHandler extends Phaser.Events.EventEmitter {
@@ -74,6 +74,10 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         this.emit('action', new WaitAction(this.engineRef.player));
     }
 
+    pickup() {
+        this.emit('action', new PickupAction(this.engineRef.player));
+    }
+
     zoom(zoomLevel) {
         this.emit('zoom', zoomLevel);
     }
@@ -143,6 +147,9 @@ export class MainGameEventHandler extends EventHandler {
             // Wait
             case "Numpad5":
                 self.wait();
+                break;
+            case "KeyG":
+                self.pickup();
                 break;
             case "Minus":
                 self.zoom(-1);

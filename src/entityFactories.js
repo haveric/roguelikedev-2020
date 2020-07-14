@@ -5,6 +5,7 @@ import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
 import { HealingConsumable } from './components/consumable';
+import { Inventory } from './components/inventory';
 
 export default class EntityFactories {}
 
@@ -12,6 +13,7 @@ EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
     var entity = new Player(socketId, x, y, name, "This is you or your companion, tethered together.", new Sprite("player", color), energy, energyMax);
     entity.setFighter(new Fighter(entity, 30, 2, 5));
     entity.setAI(new BaseAI(entity));
+    entity.setInventory(new Inventory(entity, 26));
     return entity;
 }
 
