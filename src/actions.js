@@ -276,13 +276,27 @@ export class PickupAction extends Action {
 }
 
 export class ItemAction extends Action {
-    constructor(entity, item) {
+    constructor(entity, item, targetXY) {
         super(entity);
 
         this.item = item;
+        this.targetXY = targetXY;
+
+        if (!this.targetXY) {
+            this.targetXY = {
+                "x": this.entityRef.x,
+                "y": this.entityRef.y
+            };
+        }
     }
 
-    perform(doAction) { }
+    getTargetActor() {
+        return this.getEngine().getActorAtLocation(this.targetXY.x, this.targetXY.y);
+    }
+
+    perform(doAction) {
+        this.item.consumable.activate(this);
+    }
 }
 
 export class ConsumeAction extends ItemAction {
@@ -291,7 +305,7 @@ export class ConsumeAction extends ItemAction {
     }
 
     perform(doAction) {
-        this.item.consumable.activate(this.entityRef);
+        this.item.consumable.activate(this);
         this.entityRef.inventory.remove(this.item);
     }
 

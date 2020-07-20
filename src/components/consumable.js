@@ -10,7 +10,7 @@ export class Consumable extends BaseComponent {
         return new ItemAction(actor, this.parent);
     }
 
-    activate(actor) {
+    activate(action) {
         console.err("Not Implemented");
     }
 }
@@ -23,8 +23,9 @@ export class HealingConsumable extends Consumable {
         this.activateWord = activateWord;
     }
 
-    activate(actor) {
-        var amountRecovered = actor.fighter.heal(this.amount);
+    activate(action) {
+        var consumer = action.entityRef;
+        var amountRecovered = consumer.fighter.heal(this.amount);
 
         if (amountRecovered > 0) {
             this.getEngine().messageLog.text("You " + activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
