@@ -18,6 +18,10 @@ export class Action {
         return this.entityRef.getGameMap();
     }
 
+    isCurrentPlayer() {
+        return this.entityRef == this.getEngine().player;
+    }
+
     perform(doAction) {
         console.err("Not Implemented");
     }
@@ -108,8 +112,11 @@ export class MovementAction extends ActionWithDirection {
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
+
         if (!this.getGameMap().locations[destX][destY].isTileWalkable() || this._getBlockingEntity()) {
-            this.getEngine().messageLog.text("That way is blocked.").build();
+            if (this.isCurrentPlayer()) {
+                this.getEngine().messageLog.text("That way is blocked.").build();
+            }
         } else {
             if (doAction) {
                 this.entityRef.move(this.getEngine(), this.dx, this.dy);
@@ -223,11 +230,9 @@ export class PickupAction extends Action {
 
         var inventory = this.entityRef.inventory;
 
-        var isCurrentPlayer = this.entityRef == this.getEngine().player;
-
         var items = this.getGameMap().getItems();
         if (items.length == 0) {
-            if (isCurrentPlayer) {
+            if (this.isCurrentPlayer()) {
                 this.getEngine().messageLog.text("There is nothing here to pick up.").build();
             }
             return new ActionResult(this, false);
@@ -238,7 +243,7 @@ export class PickupAction extends Action {
 
                 if (actorX == item.x && actorY == item.y) {
                     if (inventory.items.length >= inventory.capacity) {
-                        if (isCurrentPlayer) {
+                        if (this.isCurrentPlayer()) {
                             this.getEngine().messageLog.text("Your inventory is full.").build();
                         }
                         break;
@@ -253,7 +258,7 @@ export class PickupAction extends Action {
                             inventory.items.push(item);
 
                             var playerString;
-                            if (isCurrentPlayer) {
+                            if (this.isCurrentPlayer()) {
                                 playerString = "You";
                             } else {
                                 playerString = this.entityRef.name;
