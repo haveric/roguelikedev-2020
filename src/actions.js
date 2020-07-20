@@ -253,7 +253,7 @@ export class PickupAction extends Action {
                     if (index != -1) {
                         if (doAction) {
                             this.getGameMap().entities.splice(index, 1);
-                            item.parent = inventory;
+                            item.parent = this.entityRef.inventory;
                             item.sprite.destroy();
                             inventory.items.push(item);
 
