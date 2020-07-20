@@ -17,7 +17,7 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         var self = this;
         this.input.keyboard.off('keydown').on('keydown', function(event) {
             if (self.debugEnabled || !self.keysDown[event.code]) {
-                self.pressKey(event.code);
+                self.pressKey(event);
             }
 
             self.keysDown[event.code] = 1;
@@ -36,7 +36,7 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         });
     }
 
-    pressKey(eventCode) {
+    pressKey(event) {
         // Do nothing for base Event Handler
     }
 
@@ -86,10 +86,10 @@ export class MainGameEventHandler extends EventHandler {
         super(input, engine);
     }
 
-    pressKey(eventCode) {
+    pressKey(event) {
         var self = this;
 
-        switch (eventCode) {
+        switch (event.code) {
             // Left
             case "KeyA":
             case "ArrowLeft":
@@ -193,7 +193,7 @@ export class PlayerDeadEventHandler extends EventHandler {
         super(input, engine);
     }
 
-    pressKey(eventCode) {
+    pressKey(event) {
 
     }
 }
@@ -203,8 +203,8 @@ export class AskUserEventHandler extends EventHandler {
         super(input, engine);
     }
 
-    pressKey(eventCode) {
-        switch(eventCode) {
+    pressKey(event) {
+        switch(event.code) {
             case "ShiftLeft":
             case "ShiftRight":
             case "ControlLeft":
