@@ -64,9 +64,8 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         this.emit('action', new BumpAction(this.engineRef.player, dx, dy));
     }
 
-    warp(x, y, entity) {
-        entity = entity || this.engineRef.player;
-        this.emit('action', new WarpAction(entity, x, y));
+    warp(x, y) {
+        this.emit('action', new WarpAction(this.engineRef.player, x, y));
     }
 
     wait() {
