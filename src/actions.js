@@ -86,6 +86,8 @@ export class MeleeAction extends ActionWithDirection {
                 }
             }
             success = true;
+        } else {
+            this.getEngine().messageLog.text("Nothing to attack.").build();
         }
 
         return new ActionResult(this, success);
@@ -106,7 +108,9 @@ export class MovementAction extends ActionWithDirection {
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
-        if (this.getGameMap().locations[destX][destY].isTileWalkable() && !this._getBlockingEntity()) {
+        if (!this.getGameMap().locations[destX][destY].isTileWalkable() || this._getBlockingEntity()) {
+            this.getEngine().messageLog.text("That way is blocked.").build();
+        } else {
             if (doAction) {
                 this.entityRef.move(this.getEngine(), this.dx, this.dy);
             }
