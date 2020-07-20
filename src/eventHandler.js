@@ -55,6 +55,7 @@ export class EventHandler extends Phaser.Events.EventEmitter {
     killEvents() {
         this.input.keyboard.off('keydown');
         this.input.keyboard.off('keyup');
+        this.input.off('pointermove');
     }
 
     pressKey(eventCode) {
