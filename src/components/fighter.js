@@ -26,8 +26,8 @@ export default class Fighter extends BaseComponent {
         }
     }
 
-    takeDamage(damage) {
-        this.setHp(this._hp - damage);
+    takeDamage(amount) {
+        this.setHp(this._hp - amount);
     }
 
     heal(amount) {
