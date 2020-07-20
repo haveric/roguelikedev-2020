@@ -13,7 +13,7 @@ export class BaseAI extends BaseComponent {
     perform() {}
 
     getPathTo(destX, destY) {
-        var gameMap = this.entityRef.gameMap;
+        var gameMap = this.getGameMap();
         var locations = gameMap.locations;
 
         var cost = Array(gameMap.width).fill().map(() => Array(gameMap.height).fill(0));
@@ -37,7 +37,7 @@ export class BaseAI extends BaseComponent {
 
         var costGraph = new Graph(cost, { diagonal: true });
 
-        var start = costGraph.grid[this.entityRef.x][this.entityRef.y];
+        var start = costGraph.grid[this.parent.x][this.parent.y];
         var end = costGraph.grid[destX][destY];
         var result = astar.search(costGraph, start, end);
 
@@ -59,8 +59,8 @@ export class HostileEnemy extends BaseAI {
         for (var i = 0; i < players.length; i++) {
             var target = players[i];
             if (target.isAlive()) {
-                var dx = target.x - this.entityRef.x;
-                var dy = target.y - this.entityRef.y;
+                var dx = target.x - this.parent.x;
+                var dy = target.y - this.parent.y;
 
                 var distance = Math.max(Math.abs(dx), Math.abs(dy));
                 if (closestDistance == null || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
@@ -72,9 +72,9 @@ export class HostileEnemy extends BaseAI {
 
         // Only take action if a player exists
         if (closestPlayer) {
-            if (this.getEngine().gameMap.shroud[this.entityRef.x][this.entityRef.y].visible) {
+            if (this.getGameMap().shroud[this.parent.x][this.parent.y].visible) {
                 if (closestDistance <= 1) {
-                    return new MeleeAction(this.entityRef, closestPlayer.x - this.entityRef.x, closestPlayer.y - this.entityRef.y).perform(true);
+                    return new MeleeAction(this.parent, closestPlayer.x - this.parent.x, closestPlayer.y - this.parent.y).perform(true);
                 }
 
                 this.path = this.getPathTo(closestPlayer.x, closestPlayer.y);
@@ -83,10 +83,10 @@ export class HostileEnemy extends BaseAI {
             if (this.path.length > 0) {
                 var next = this.path.shift();
 
-                return new MovementAction(this.entityRef, next.x - this.entityRef.x, next.y - this.entityRef.y).perform(true);
+                return new MovementAction(this.parent, next.x - this.parent.x, next.y - this.parent.y).perform(true);
             }
         }
 
-        return new WaitAction(this.entityRef).perform(true);
+        return new WaitAction(this.parent).perform(true);
     }
 }

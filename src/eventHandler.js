@@ -181,3 +181,26 @@ export class PlayerDeadEventHandler extends EventHandler {
 
     }
 }
+
+export class AskUserEventHandler extends EventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+    }
+
+    exit() {
+        this.engineRef.eventHandler.killEvents();
+        this.engineRef.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
+    }
+}
+
+export class InventoryEventHandler extends AskUserEventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+    }
+
+    pressKey(eventCode) {
+
+        this.exit();
+    }
+
+}

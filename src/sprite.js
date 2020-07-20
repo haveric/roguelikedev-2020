@@ -3,7 +3,7 @@ import Tilemaps from './tilemaps';
 
 export default class Sprite {
     constructor(name, color) {
-        this.owner = null;
+        this.parent = null;
         this.name = name;
         this.color = color;
         this.spriteObject = null;
@@ -20,8 +20,8 @@ export default class Sprite {
             this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
             this.spriteObject.setFrame(frame);
             this.spriteObject.setTint("0x" + this.color);
-            if (this.owner) {
-                this.spriteObject.setDepth(this.owner.renderOrder);
+            if (this.parent) {
+                this.spriteObject.setDepth(this.parent.renderOrder);
             }
         }
     }
@@ -44,7 +44,7 @@ export default class Sprite {
             this.spriteObject.setTint("0x" + this.color);
         }
 
-        this.spriteObject.setDepth(this.owner.renderOrder);
+        this.spriteObject.setDepth(this.parent.renderOrder);
     }
 
     move(dx, dy) {

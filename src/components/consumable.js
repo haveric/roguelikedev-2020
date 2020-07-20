@@ -22,7 +22,7 @@ export class HealingConsumable extends Consumable {
         var amountRecovered = actor.fighter.heal(this.amount);
 
         if (amountRecovered > 0) {
-            this.getEngine().messageLog.text("You " + consumeWord + " the " + this.entityRef.name + ", and recover " + amountRecovered + " HP!").build();
+            this.getEngine().messageLog.text("You " + consumeWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
         } else {
             this.getEngine().messageLog.text("Your health is already full.").build();
         }

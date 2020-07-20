@@ -10,7 +10,7 @@ export default class Entity {
         this.blocksMovement = blocksMovement;
         this.renderOrder = renderOrder;
         this.lightRadius = 8;
-        this.gameMap = null;
+        this.parent = null;
 
         this.setSprite(sprite);
 
@@ -19,38 +19,42 @@ export default class Entity {
         this.ai = null;
     }
 
+    getGameMap() {
+        return this.parent.getGameMap();
+    }
+
     setSprite(sprite) {
         if (sprite) {
             this.sprite = sprite;
-            this.sprite.owner = this;
+            this.sprite.parent = this;
         }
     }
 
     setFighter(fighter) {
         if (fighter) {
             this.fighter = fighter;
-            this.fighter.owner = this;
+            this.fighter.parent = this;
         }
     }
 
     setAI(ai) {
         if (ai) {
             this.ai = ai;
-            this.ai.owner = this;
+            this.ai.parent = this;
         }
     }
 
     setConsumable(consumable) {
         if (consumable) {
             this.consumable = consumable;
-            this.consumable.owner = this;
+            this.consumable.parent = this;
         }
     }
 
     setInventory(inventory) {
         if (inventory) {
             this.inventory = inventory;
-            this.inventory.owner = this;
+            this.inventory.parent = this;
         }
     }
 
@@ -80,8 +84,8 @@ export default class Entity {
     }
 
     place(gameMap, x, y) {
-        if (this.gameMap) {
-            this.gameMap.remove(this);
+        if (this.parent && this.parent === this.getGameMap()) {
+            this.getGameMap().remove(this);
         }
 
         if (x !== undefined) {
@@ -92,7 +96,7 @@ export default class Entity {
             this.y = y;
         }
 
-        this.gameMap = gameMap;
+        this.parent = gameMap;
         gameMap.entities.push(this);
     }
 }

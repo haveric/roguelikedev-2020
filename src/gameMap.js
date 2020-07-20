@@ -31,6 +31,11 @@ export default class GameMap {
         }
     }
 
+    // Used for reference in entity parents
+    getGameMap() {
+        return this;
+    }
+
     getBlockingEntityAtLocation(x, y) {
         var foundEntity = null;
         for (var i = 0; i < this.entities.length; i++) {

@@ -21,7 +21,7 @@ export default class Fighter extends BaseComponent {
     setHp(hp) {
         this._hp = Math.max(0, Math.min(hp, this.hpMax));
 
-        if (this._hp == 0 && this.entityRef.ai) {
+        if (this._hp == 0 && this.parent.ai) {
             this.die();
         }
     }
@@ -48,20 +48,20 @@ export default class Fighter extends BaseComponent {
 
     die() {
         var engine = this.getEngine();
-        if (this.entityRef === engine.player) {
+        if (this.parent === engine.player) {
             engine.eventHandler.killEvents();
             engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
         }
 
-        this.entityRef.renderOrder = RenderOrder.CORPSE;
+        this.parent.renderOrder = RenderOrder.CORPSE;
 
-        this.getEngine().messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" has died!").build();
+        this.getEngine().messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has died!").build();
 
-        this.entityRef.sprite.updateSprite("corpse", "BF0000");
-        this.entityRef.blocksMovement = false;
-        this.entityRef.ai = null;
-        this.entityRef.originalName = this.entityRef.name; // Save just in case we need to resurrect the entity
-        this.entityRef.name = this.entityRef.name + "'s corpse";
+        this.parent.sprite.updateSprite("corpse", "BF0000");
+        this.parent.blocksMovement = false;
+        this.parent.ai = null;
+        this.parent.originalName = this.parent.name; // Save just in case we need to resurrect the entity
+        this.parent.name = this.parent.name + "'s corpse";
 
     }
 }

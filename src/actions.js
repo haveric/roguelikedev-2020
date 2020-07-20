@@ -11,11 +11,11 @@ export class Action {
     }
 
     getEngine() {
-        return this.entityRef.gameMap.engineRef;
+        return this.entityRef.getGameMap().engineRef;
     }
 
     getGameMap() {
-        return this.entityRef.gameMap;
+        return this.entityRef.getGameMap();
     }
 
     perform(doAction) {
@@ -268,5 +268,44 @@ export class PickupAction extends Action {
 
     toString() {
         return { action: "PickupAction" };
+    }
+}
+
+export class ItemAction extends Action {
+    constructor(entity, item) {
+        super(entity);
+
+        this.item = item;
+    }
+
+    perform(doAction) { }
+}
+
+export class ConsumeAction extends ItemAction {
+    constructor(entity) {
+        super(entity);
+    }
+
+    perform(doAction) {
+        this.item.consumable.consume(this.entityRef);
+        this.entityRef.inventory.remove(this.item);
+    }
+
+    toString() {
+        return { action: "ConsumeAction" };
+    }
+}
+
+export class DropAction extends ItemAction {
+    constructor(entity) {
+        super(entity);
+    }
+
+    perform(doAction) {
+        this.entityRef.inventory.drop(this.item);
+    }
+
+    toString() {
+        return { action: "DropAction" };
     }
 }
