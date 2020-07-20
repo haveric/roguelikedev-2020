@@ -291,7 +291,7 @@ export class ConsumeAction extends ItemAction {
     }
 
     perform(doAction) {
-        this.item.consumable.consume(this.entityRef);
+        this.item.consumable.activate(this.entityRef);
         this.entityRef.inventory.remove(this.item);
     }
 
