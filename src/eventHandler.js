@@ -28,35 +28,23 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         });
 
         this.input.off('pointermove').on('pointermove', function(event) {
-            var gameMap = self.engineRef.gameMap;
-            var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
-            var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
+            self.mouseMove(event);
+        });
 
-            var sidePanel = self.engineRef.sidePanel;
-            if (gameMap.locations[x] && gameMap.locations[x][y]) {
-                sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
-                var entity = gameMap.getBlockingEntityAtLocation(x, y);
-
-                if (entity) {
-                    sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
-                    sidePanel.text(entity.description + "\n\n");
-                }
-
-                var tiles = gameMap.locations[x][y].tiles;
-                for (var i = 0; i < tiles.length; i++) {
-                    var tile = tiles[i];
-                    sidePanel.text(tile.name + "\n");
-                    sidePanel.text(tile.description + "\n\n");
-                }
-
-                sidePanel.build();
-            } else {
-                sidePanel.text("").build();
-            }
+        this.input.off('pointerclick').on('pointerclick', function(event) {
+            self.mouseClick(event);
         });
     }
 
     pressKey(eventCode) {
+        // Do nothing for base Event Handler
+    }
+
+    mouseMove(event) {
+        // Do nothing for base Event Handler
+    }
+
+    mouseClick(event) {
         // Do nothing for base Event Handler
     }
 
@@ -168,6 +156,36 @@ export class MainGameEventHandler extends EventHandler {
                 break;
         }
     }
+
+    mouseMove(event) {
+        var self = this;
+
+        var gameMap = self.engineRef.gameMap;
+        var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
+        var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
+
+        var sidePanel = self.engineRef.sidePanel;
+        if (gameMap.locations[x] && gameMap.locations[x][y]) {
+            sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
+            var entity = gameMap.getBlockingEntityAtLocation(x, y);
+
+            if (entity) {
+                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                sidePanel.text(entity.description + "\n\n");
+            }
+
+            var tiles = gameMap.locations[x][y].tiles;
+            for (var i = 0; i < tiles.length; i++) {
+                var tile = tiles[i];
+                sidePanel.text(tile.name + "\n");
+                sidePanel.text(tile.description + "\n\n");
+            }
+
+            sidePanel.build();
+        } else {
+            sidePanel.text("").build();
+        }
+    }
 }
 
 export class PlayerDeadEventHandler extends EventHandler {
@@ -185,19 +203,52 @@ export class AskUserEventHandler extends EventHandler {
         super(input, engine);
     }
 
+    pressKey(eventCode) {
+        switch(eventCode) {
+            case "ShiftLeft":
+            case "ShiftRight":
+            case "ControlLeft":
+            case "ControlRight":
+            case "AltLeft":
+            case "AltRight":
+                break;
+            default:
+                this.exit();
+                break;
+        }
+    }
+
+    mouseClick(event) {
+        this.exit();
+    }
+
     exit() {
-        this.engineRef.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
+        this.engineRef.eventHandler = new MainGameEventHandler(this.engineRef.scene.input, this.engineRef);
     }
 }
 
 export class InventoryEventHandler extends AskUserEventHandler {
     constructor(input, engine) {
         super(input, engine);
+
+        this.title = "<missing title>";
+    }
+
+    render() {
+        var items = this.engineRef.player.inventory.items;
+        var itemsLength = items.length;
+        if (itemsLength == 0) {
+            // TODO: display "(Empty)"
+        } else {
+            for (var i = 0; i < itemsLength; i++) {
+                var itemKey = 'a' + i;
+                var itemLine = "(" + itemKey + ") " + items[i].name;
+                // TODO: display itemLine
+            }
+        }
     }
 
     pressKey(eventCode) {
 
-        this.exit();
     }
-
 }
