@@ -49,7 +49,6 @@ export default class Fighter extends BaseComponent {
     die() {
         var engine = this.getEngine();
         if (this.parent === engine.player) {
-            engine.eventHandler.killEvents();
             engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
         }
 

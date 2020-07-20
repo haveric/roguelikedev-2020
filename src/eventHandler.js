@@ -5,13 +5,17 @@ export class EventHandler extends Phaser.Events.EventEmitter {
     constructor(input, engine) {
         super();
         this.engineRef = engine;
-        var self = this;
 
         this.debugEnabled = false;
         this.input = input;
         this.keysDown = [];
 
-        this.input.keyboard.on('keydown', function(event) {
+        this.initEvents();
+    }
+
+    initEvents() {
+        var self = this;
+        this.input.keyboard.off('keydown').on('keydown', function(event) {
             if (self.debugEnabled || !self.keysDown[event.code]) {
                 self.pressKey(event.code);
             }
@@ -19,11 +23,11 @@ export class EventHandler extends Phaser.Events.EventEmitter {
             self.keysDown[event.code] = 1;
         });
 
-        this.input.keyboard.on('keyup', function(event) {
+        this.input.keyboard.off('keyup').on('keyup', function(event) {
             self.keysDown[event.code] = 0;
         });
 
-        this.input.on('pointermove', function(event) {
+        this.input.off('pointermove').on('pointermove', function(event) {
             var gameMap = self.engineRef.gameMap;
             var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
             var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
@@ -50,12 +54,6 @@ export class EventHandler extends Phaser.Events.EventEmitter {
                 sidePanel.text("").build();
             }
         });
-    }
-
-    killEvents() {
-        this.input.keyboard.off('keydown');
-        this.input.keyboard.off('keyup');
-        this.input.off('pointermove');
     }
 
     pressKey(eventCode) {
@@ -189,7 +187,6 @@ export class AskUserEventHandler extends EventHandler {
     }
 
     exit() {
-        this.engineRef.eventHandler.killEvents();
         this.engineRef.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
     }
 }
