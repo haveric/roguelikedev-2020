@@ -36,7 +36,6 @@ io.on('connection', function (socket) {
 
     socket.on('createRoom', function(playerName) {
         var roomId = createRoomId();
-        console.log("Room Created: " + roomId);
 
         rooms[roomId] = {
             roomId: roomId,
@@ -45,6 +44,8 @@ io.on('connection', function (socket) {
             players: [],
             spectators: []
         };
+
+        console.log("Room Created: " + roomId + ", Seed: " + rooms[roomId].seed);
 
         moveUserToRoomCreate(socket, roomId);
 

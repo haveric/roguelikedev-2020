@@ -30,6 +30,7 @@ export class SceneGame extends Phaser.Scene {
         this.entities = [];
 
         Srand.seed(this.room.seed);
+        console.log("Seed: " + this.room.seed);
     }
 
     create() {
