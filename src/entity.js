@@ -72,10 +72,6 @@ export default class Entity {
         this.sprite.moveTo(engine.gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth), engine.gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight));
     }
 
-    moveTowards(engine, targetX, targetY) {
-
-    }
-
     distanceTo(otherEntity) {
         var dx = otherEntity.x - this.x;
         var dy = otherEntity.y - this.y;
