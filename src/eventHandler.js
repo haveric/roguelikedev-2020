@@ -282,6 +282,7 @@ export class InventoryEventHandler extends AskUserEventHandler {
     render() {
         this.engineRef.inventoryMenu.show();
 
+        this.engineRef.inventoryMenu.text(this.title + "\n\n");
         var items = this.engineRef.player.inventory.items;
         var itemsLength = items.length;
         if (itemsLength == 0) {
