@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, PickupAction, WarpAction } from './actions';
+import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction } from './actions';
 import Tilemaps from './tilemaps';
 
 export class EventHandler extends Phaser.Events.EventEmitter {
@@ -6,7 +6,6 @@ export class EventHandler extends Phaser.Events.EventEmitter {
         super();
         this.engineRef = engine;
 
-        this.debugEnabled = false;
         this.input = input;
         this.keysDown = [];
 
@@ -31,7 +30,7 @@ export class EventHandler extends Phaser.Events.EventEmitter {
             self.mouseMove(event);
         });
 
-        this.input.off('pointerclick').on('pointerclick', function(event) {
+        this.input.off('pointerup').on('pointerup', function(event) {
             self.mouseClick(event);
         });
     }
@@ -49,35 +48,79 @@ export class EventHandler extends Phaser.Events.EventEmitter {
     }
 
     move(dx, dy) {
-        this.emit('action', new BumpAction(this.engineRef.player, dx, dy));
+        this.performAction(new BumpAction(this.engineRef.player, dx, dy));
     }
 
     warp(x, y) {
-        this.emit('action', new WarpAction(this.engineRef.player, x, y));
+        this.performAction(new WarpAction(this.engineRef.player, x, y));
     }
 
     wait() {
-        this.emit('action', new WaitAction(this.engineRef.player));
+        this.performAction(new WaitAction(this.engineRef.player));
     }
 
     pickup() {
-        this.emit('action', new PickupAction(this.engineRef.player));
+        this.performAction(new PickupAction(this.engineRef.player));
+    }
+
+    dropItem(inventorySlot) {
+        this.performAction(new DropItemAction(this.engineRef.player, inventorySlot));
+    }
+
+    performAction(action) {
+        if (this.engineRef.player) {
+            var actionResult = action.perform(false);
+            if (actionResult.success) {
+                var scene = this.engineRef.scene;
+                scene.socket.emit('s-performAction', {roomId: scene.room.roomId, playerId: scene.socket.id, actionData: actionResult.action.toString()});
+            }
+        }
     }
 
     zoom(zoomLevel) {
-        this.emit('zoom', zoomLevel);
+        if (zoomLevel == 1) { // Zoom In
+            if (this.engineRef.zoomLevel < 2) {
+                this.engineRef.zoomLevel ++;
+            }
+        } else if (zoomLevel == -1) { // Zoom Out
+            if (this.engineRef.zoomLevel > -1) {
+                this.engineRef.zoomLevel --;
+            }
+        }
+
+        var zoom;
+        switch(this.engineRef.zoomLevel) {
+            case 1: zoom = 1; break;
+            case 2: zoom = 2; break;
+            case 0: zoom = .5; break;
+            case -1: zoom = .25; break;
+            default: zoom = 1; break;
+        }
+        this.engineRef.scene.cameras.main.setZoom(zoom);
     }
 
     debug() {
-        this.emit('debug', 1);
+        var scene = this.engineRef.scene;
+        var player = this.engineRef.player;
+        this.engineRef.clearFov();
+        player.energy = 5000;
+        player.energyMax = 5000;
+        this.engineRef.debugEnabled = true;
+        scene.events.emit('ui-updateEnergy', {energy: player.energy, energyMax: player.energyMax });
+        scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax });
     }
 
     addEnergy() {
-        this.emit('addEnergy', 1);
+        var scene = this.engineRef.scene;
+        var player = this.engineRef.player;
+        player.energy = 5000;
+        player.energyMax = 5000;
+        scene.events.emit('ui-updateEnergy', {energy: player.energy, energyMax: player.energyMax });
+        scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax});
     }
 
-    debugRoom() {
-        this.emit('debugRoom', 1);
+   debugRoom() {
+        self.socket.emit('s-createDebugRoom', { roomId: self.room.roomId, playerId: self.socket.id });
     }
 }
 
@@ -91,25 +134,21 @@ export class MainGameEventHandler extends EventHandler {
 
         switch (event.code) {
             // Left
-            case "KeyA":
             case "ArrowLeft":
             case "Numpad4":
                 self.move(-1, 0);
                 break;
             // Right
-            case "KeyD":
             case "ArrowRight":
             case "Numpad6":
                 self.move(1, 0);
                 break;
             // Up
-            case "KeyW":
             case "ArrowUp":
             case "Numpad8":
                 self.move(0, -1);
                 break;
             // Down
-            case "KeyS":
             case "ArrowDown":
             case "Numpad2":
                 self.move(0, 1);
@@ -136,6 +175,12 @@ export class MainGameEventHandler extends EventHandler {
                 break;
             case "KeyG":
                 self.pickup();
+                break;
+            case "KeyI":
+                this.engineRef.eventHandler = new InventoryActivateEventHandler(this.engineRef.scene.input, this.engineRef);
+                break;
+            case "KeyD":
+                this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
                 break;
             case "Minus":
                 self.zoom(-1);
@@ -235,20 +280,71 @@ export class InventoryEventHandler extends AskUserEventHandler {
     }
 
     render() {
+        this.engineRef.inventoryMenu.show();
+
         var items = this.engineRef.player.inventory.items;
         var itemsLength = items.length;
         if (itemsLength == 0) {
-            // TODO: display "(Empty)"
+            this.engineRef.inventoryMenu.text("(Empty)");
         } else {
             for (var i = 0; i < itemsLength; i++) {
-                var itemKey = 'a' + i;
+                var itemKey = String.fromCharCode(65 + i);
                 var itemLine = "(" + itemKey + ") " + items[i].name;
-                // TODO: display itemLine
+                this.engineRef.inventoryMenu.text(itemLine + "\n");
             }
         }
+
+        this.engineRef.inventoryMenu.build();
     }
 
-    pressKey(eventCode) {
+    pressKey(event) {
+        var player = this.engineRef.player;
+        var charAKeyCode = 65;
+        var index = event.keyCode - 65;
 
+        if (index >= 0 && index < 26) {
+            var selectedItem = player.inventory.items[index];
+            if (selectedItem) {
+                this.selectItem(index, selectedItem);
+                return;
+            }
+        }
+
+        super.pressKey(event);
+    }
+
+    selectItem(index, item) {
+        // Do nothing for base InventoryEventHandler
+    }
+
+    exit() {
+        this.engineRef.inventoryMenu.hide();
+        super.exit();
+    }
+}
+
+export class InventoryActivateEventHandler extends InventoryEventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+
+        this.title = "Select an item to use";
+        this.render();
+    }
+
+    selectItem(index, item) {
+        this.performAction(item.consumable.getAction(this.engineRef.player, index));
+    }
+}
+
+export class InventoryDropEventHandler extends InventoryEventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+
+        this.title = "Select an item to drop";
+        this.render();
+    }
+
+    selectItem(index, item) {
+        this.dropItem(index);
     }
 }

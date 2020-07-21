@@ -8,22 +8,25 @@ export class Inventory extends BaseComponent {
         this.items = [];
     }
 
-    drop(item) {
-        if (this.remove(item)) {
-            item.place(this.parent.gameMap, this.parent.x, this.parent.y);
-            this.getEngine().messageLog.text("You dropped the " + item.name + ".").build();
+    _dropItem(item) {
+        item.place(this.getGameMap(), this.parent.x, this.parent.y);
+        this.getEngine().messageLog.text("You dropped the " + item.name + ".").build();
+    }
+
+    dropByIndex(index) {
+        var item = this.removeByIndex(index);
+        if (item) {
+            this._dropItem(item);
         }
     }
 
-    remove(item) {
-        var index = this.items.indexOf(item);
-
-        if (index != -1) {
+    removeByIndex(index) {
+        if (this.items.length > index) {
+            var item = this.items[index];
             this.items.splice(index, 1);
-
-            return true;
+            return item;
         }
 
-        return false;
+        return null;
     }
 }

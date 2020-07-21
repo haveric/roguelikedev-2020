@@ -7,7 +7,8 @@ import Sprite from '../sprite';
 import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction } from '../actions';
+import { InventoryEventHandler } from '../eventHandler';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction, ItemAction, DropItemAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -27,7 +28,6 @@ export class SceneGame extends Phaser.Scene {
         this.otherPlayers = [];
         this.players = [];
         this.entities = [];
-        this.zoomLevel = 1;
 
         Srand.seed(this.room.seed);
     }
@@ -70,57 +70,6 @@ export class SceneGame extends Phaser.Scene {
             self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
         }
 
-        self.engine.eventHandler.on('action', function(action) {
-            if (self.player) {
-                var actionResult = action.perform(false);
-                if (actionResult.success) {
-                    self.socket.emit('s-performAction', {roomId: self.room.roomId, playerId: self.socket.id, actionData: actionResult.action.toString()});
-                }
-            }
-        });
-
-        self.engine.eventHandler.on('zoom', function(zoomLevel) {
-            if (zoomLevel == 1) { // Zoom In
-                if (self.zoomLevel < 2) {
-                    self.zoomLevel ++;
-                }
-            } else if (zoomLevel == -1) { // Zoom Out
-                if (self.zoomLevel > -1) {
-                    self.zoomLevel --;
-                }
-            }
-
-            var zoom;
-            switch(self.zoomLevel) {
-                case 1: zoom = 1; break;
-                case 2: zoom = 2; break;
-                case 0: zoom = .5; break;
-                case -1: zoom = .25; break;
-                default: zoom = 1; break;
-            }
-            self.cameras.main.setZoom(zoom);
-        });
-
-        self.engine.eventHandler.on('debug', function() {
-            self.engine.clearFov();
-            self.player.energy = 5000;
-            self.player.energyMax = 5000;
-            self.engine.eventHandler.debugEnabled = true;
-            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
-            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy, energyMax: self.player.energyMax });
-        });
-
-        self.engine.eventHandler.on('addEnergy', function () {
-            self.player.energy = 5000;
-            self.player.energyMax = 5000;
-            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
-            self.socket.emit('updateEnergy', { roomId: self.room.roomId, playerId: self.socket.id, energy: self.player.energy, energyMax: self.player.energyMax});
-        });
-
-        self.engine.eventHandler.on('debugRoom', function () {
-            self.socket.emit('s-createDebugRoom', { roomId: self.room.roomId, playerId: self.socket.id });
-        });
-
         self.socket.on('c-createDebugRoom', function (data) {
             var playerId = data.playerId;
             var debugRoomCenter = self.shipGenerator.createDebugRoom().center();
@@ -159,10 +108,20 @@ export class SceneGame extends Phaser.Scene {
                         case "PickupAction":
                             new PickupAction(player).perform(true);
                             break;
+                        case "ItemAction":
+                            new ItemAction(player, args.inventorySlot).perform(true);
+                            break;
+                        case "DropItemAction":
+                            new DropItemAction(player, args.inventorySlot).perform(true);
+                            break;
                         default:
-                            console.err("Unrecognized action: " + actionData.action);
+                            console.error("Unrecognized action: " + actionData.action);
                             break;
                     }
+                }
+
+                if (self.engine.eventHandler instanceof InventoryEventHandler) {
+                    self.engine.eventHandler.render();
                 }
             }
 

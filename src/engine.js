@@ -2,6 +2,7 @@ import { MainGameEventHandler } from './eventHandler';
 import { FovAdamMillazo } from './fov';
 import { MessageLog } from './messageLog';
 import { SidePanel } from './sidePanel';
+import { InventoryMenu } from './inventoryMenu';
 import Tilemaps from './tilemaps';
 
 export default class Engine {
@@ -9,9 +10,13 @@ export default class Engine {
         var self = this;
 
         self.scene = scene;
+        self.zoomLevel = 1;
+        self.debugEnabled = false;
+
         self.eventHandler = new MainGameEventHandler(scene.input, this);
         self.messageLog = new MessageLog();
         self.sidePanel = new SidePanel();
+        self.inventoryMenu = new InventoryMenu();
         self.gameMap = null;
         self.player = player;
         self.players = players;

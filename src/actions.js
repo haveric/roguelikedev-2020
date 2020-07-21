@@ -23,7 +23,7 @@ export class Action {
     }
 
     perform(doAction) {
-        console.err("Not Implemented");
+        console.error("Not Implemented");
     }
 }
 
@@ -64,7 +64,7 @@ export class ActionWithDirection extends Action {
     }
 
     perform(doAction) {
-        console.err("Not Implemented");
+        console.error("Not Implemented");
     }
 }
 
@@ -281,10 +281,10 @@ export class PickupAction extends Action {
 }
 
 export class ItemAction extends Action {
-    constructor(entity, item, targetXY) {
+    constructor(entity, inventorySlot, targetXY) {
         super(entity);
 
-        this.item = item;
+        this.inventorySlot = inventorySlot;
         this.targetXY = targetXY;
 
         if (!this.targetXY) {
@@ -300,35 +300,34 @@ export class ItemAction extends Action {
     }
 
     perform(doAction) {
-        this.item.consumable.activate(this);
-    }
-}
+        if (doAction) {
+            var item = this.entityRef.inventory.items[this.inventorySlot];
+            item.consumable.activate(this);
+            this.entityRef.inventory.removeByIndex(this.inventorySlot);
+        }
 
-export class ConsumeAction extends ItemAction {
-    constructor(entity) {
-        super(entity);
-    }
-
-    perform(doAction) {
-        this.item.consumable.activate(this);
-        this.entityRef.inventory.remove(this.item);
+        return new ActionResult(this, true);
     }
 
     toString() {
-        return { action: "ConsumeAction" };
+        return { action: "ItemAction", args: { inventorySlot: this.inventorySlot }};
     }
 }
 
-export class DropAction extends ItemAction {
-    constructor(entity) {
-        super(entity);
+export class DropItemAction extends ItemAction {
+    constructor(entity, inventorySlot, targetXY) {
+        super(entity, inventorySlot, targetXY);
     }
 
     perform(doAction) {
-        this.entityRef.inventory.drop(this.item);
+        if (doAction) {
+            this.entityRef.inventory.dropByIndex(this.inventorySlot);
+        }
+
+        return new ActionResult(this, true);
     }
 
     toString() {
-        return { action: "DropAction" };
+        return { action: "DropItemAction", args: { inventorySlot: this.inventorySlot }};
     }
 }

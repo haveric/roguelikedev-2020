@@ -6,12 +6,12 @@ export class Consumable extends BaseComponent {
         super(entity);
     }
 
-    getAction(actor) {
-        return new ItemAction(actor, this.parent);
+    getAction(actor, inventorySlot) {
+        return new ItemAction(actor, inventorySlot);
     }
 
     activate(action) {
-        console.err("Not Implemented");
+        console.error("Not Implemented");
     }
 }
 
@@ -28,7 +28,7 @@ export class HealingConsumable extends Consumable {
         var amountRecovered = consumer.fighter.heal(this.amount);
 
         if (amountRecovered > 0) {
-            this.getEngine().messageLog.text("You " + activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
+            this.getEngine().messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
         } else {
             this.getEngine().messageLog.text("Your health is already full.").build();
         }

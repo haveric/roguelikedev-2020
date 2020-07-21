@@ -27,6 +27,7 @@ export class SceneGameUI extends Phaser.Scene {
 
             engine.messageLog.createScrollablePanel(self);
             engine.sidePanel.createSidePanel(self);
+            engine.inventoryMenu.createInventoryMenu(self);
         }, this);
 
         game.events.on('ui-updateEnergy', function(data) {

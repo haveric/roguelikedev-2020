@@ -98,6 +98,10 @@ export default class Entity {
 
         this.parent = gameMap;
         gameMap.entities.push(this);
+
+        var spriteX = gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth);
+        var spriteY = gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight);
+        this.sprite.create(gameMap.engineRef.scene, spriteX, spriteY);
     }
 }
 
