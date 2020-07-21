@@ -150,12 +150,13 @@ export class SceneGame extends Phaser.Scene {
         self.engine.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
     }
 
-    updateCameraView() {
-        var objectToFollow;
-        if (this.player) {
-            objectToFollow = this.player.sprite.spriteObject
-        } else {
-            objectToFollow = this.otherPlayers[0].sprite.spriteObject;
+    updateCameraView(objectToFollow) {
+        if (!objectToFollow) {
+            if (this.player) {
+                objectToFollow = this.player.sprite.spriteObject
+            } else {
+                objectToFollow = this.otherPlayers[0].sprite.spriteObject;
+            }
         }
 
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);

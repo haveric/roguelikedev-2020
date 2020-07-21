@@ -60,6 +60,12 @@ export default class Engine {
                 if (shroudTile) {
                     shroudTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
                 }
+
+                var highlightTile = this.gameMap.highlight[i][j];
+                if (highlightTile) {
+                    highlightTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+                    highlightTile.render();
+                }
             }
         }
     }

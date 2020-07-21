@@ -1,5 +1,6 @@
 import { create2dArray } from '../utils';
 import FovTile from './fovTile';
+import HighlightTile from './highlightTile';
 import { Actor, Item } from './entity';
 import Tilemaps from './tilemaps';
 
@@ -23,10 +24,16 @@ export default class GameMap {
 
         this.lastExploredFovTiles = [];
         this.shroud = create2dArray(this.width);
-
         for (var i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
                 this.shroud[i][j] = new FovTile(i, j, "shroud");
+            }
+        }
+
+        this.highlight = create2dArray(this.width);
+        for (var i = 0; i < this.width; i++) {
+            for (var j = 0; j < this.height; j++) {
+                this.highlight[i][j] = new HighlightTile(i, j, "highlight");
             }
         }
     }

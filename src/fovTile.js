@@ -73,7 +73,6 @@ export default class FovTile extends Entity {
 
                     this.renderOrder = RenderOrder.FLOOR_LIGHTING;
                     this.sprite.spriteObject.setDepth(this.renderOrder);
-
                 }
             } else {
                 this.sprite.spriteObject.setAlpha(.5);

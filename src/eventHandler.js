@@ -1,29 +1,40 @@
 import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction, DebugAction } from './actions';
 import Tilemaps from './tilemaps';
 
-export class EventHandler extends Phaser.Events.EventEmitter {
+export class EventHandler {
     constructor(input, engine) {
-        super();
         this.engineRef = engine;
 
         this.input = input;
-        this.keysDown = [];
+        this.keysDown = {};
 
         this.initEvents();
+    }
+
+    addKey(keyCode) {
+        this.keysDown[keyCode] = 1;
+    }
+
+    removeKey(keyCode) {
+        this.keysDown[keyCode] = 0;
     }
 
     initEvents() {
         var self = this;
         this.input.keyboard.off('keydown').on('keydown', function(event) {
+            var numLockOn = event.getModifierState('NumLock');
+            if (numLockOn && !event.shiftKey && event.code.startsWith("Numpad") && event.keyCode < 90) {
+                event.numLockShiftKey = true;
+            }
             if (self.debugEnabled || !self.keysDown[event.code]) {
                 self.pressKey(event);
             }
 
-            self.keysDown[event.code] = 1;
+            self.addKey(event.code);
         });
 
         this.input.keyboard.off('keyup').on('keyup', function(event) {
-            self.keysDown[event.code] = 0;
+            self.removeKey(event.code);
         });
 
         this.input.off('pointermove').on('pointermove', function(event) {
@@ -181,6 +192,9 @@ export class MainGameEventHandler extends EventHandler {
                 break;
             case "KeyD":
                 this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
+                break;
+            case "Backslash":
+                this.engineRef.eventHandler = new LookHandler(this.engineRef.scene.input, this.engineRef);
                 break;
             case "Minus":
                 self.zoom(-1);
@@ -347,5 +361,155 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
 
     selectItem(index, item) {
         this.dropItem(index);
+    }
+}
+
+export class SelectIndexHandler extends AskUserEventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+
+        var player = this.engineRef.player;
+        this.x = player.x;
+        this.y = player.y;
+        this.lastX = -1;
+        this.lastY = -1;
+        this.highlightTile();
+    }
+
+    pressKey(event) {
+        var modifier = 1;
+
+        if (event.shiftKey || event.numLockShiftKey) {
+            modifier *= 5;
+        }
+
+        if (event.ctrlKey) {
+            modifier *= 10;
+        }
+
+        if (event.altKey) {
+            modifier *= 20;
+        }
+
+        var dx = 0;
+        var dy = 0;
+        switch (event.code) {
+            // Left
+            case "ArrowLeft":
+            case "Numpad4":
+                dx = -1;
+                break;
+            // Right
+            case "ArrowRight":
+            case "Numpad6":
+                dx = 1;
+                break;
+            // Up
+            case "ArrowUp":
+            case "Numpad8":
+                dy = -1;
+                break;
+            // Down
+            case "ArrowDown":
+            case "Numpad2":
+                dy = 1;
+                break;
+            // Northwest
+            case "Numpad7":
+                dx = -1;
+                dy = -1;
+                break;
+            // Northeast
+            case "Numpad9":
+                dx = 1;
+                dy = -1;
+                break;
+            // Southwest
+            case "Numpad1":
+                dx = -1;
+                dy = 1;
+                break;
+            // Southeast
+            case "Numpad3":
+                dx = 1;
+                dy = 1;
+                break;
+            default:
+                break;
+        }
+
+        if (dx != 0 || dy != 0) {
+            this.lastX = this.x;
+            this.lastY = this.y;
+            this.x += dx * modifier;
+            this.y += dy * modifier;
+
+            var gameMap = this.engineRef.gameMap;
+            this.x = Math.max(0, Math.min(this.x, gameMap.width - 1));
+            this.y = Math.max(0, Math.min(this.y, gameMap.height - 1));
+
+            this.highlightTile();
+        } else {
+            switch (event.code) {
+                // Enter / Confirm
+                case "Enter":
+                case "NumpadEnter":
+                    this.selectTile();
+                    break;
+                case "Minus":
+                    this.zoom(-1);
+                    break;
+                case "Equal":
+                    this.zoom(1);
+                    break;
+                default:
+                    super.pressKey(event);
+                    break;
+            }
+        }
+    }
+
+    mouseClick(event) {
+        if (this.engineRef.gameMap.locations[this.x] && this.engineRef.gameMap.locations[this.x][this.y]) {
+            this.selectTile();
+        }
+    }
+
+    highlightTile() {
+        if (this.engineRef.gameMap.highlight[this.lastX] && this.engineRef.gameMap.highlight[this.lastX][this.lastY]) {
+            this.engineRef.gameMap.highlight[this.lastX][this.lastY].setVisible(false);
+        }
+
+        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
+            this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[this.x][this.y].sprite.spriteObject);
+            this.engineRef.gameMap.highlight[this.x][this.y].setVisible(true);
+        }
+    }
+
+    clearHighlight() {
+        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
+            this.engineRef.gameMap.highlight[this.x][this.y].setVisible(false);
+        }
+    }
+
+    selectTile() {
+        console.error("Not implemented");
+    }
+
+    exit() {
+        this.clearHighlight();
+        this.engineRef.scene.updateCameraView();
+
+        super.exit();
+    }
+}
+
+export class LookHandler extends SelectIndexHandler {
+    constructor(input, engine) {
+        super(input, engine);
+    }
+
+    selectTile() {
+        this.exit();
     }
 }

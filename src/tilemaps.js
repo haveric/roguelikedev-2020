@@ -7,6 +7,7 @@ Tilemaps.getTileMap = () => {
         frameHeight: 24,
         tiles: {
             "shroud": 219,
+            "highlight": 219,
             "player": 64,
             "wall": 35,
             "floor": 219,

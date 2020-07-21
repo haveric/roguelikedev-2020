@@ -5,7 +5,8 @@ const RenderOrder = {
     CORPSE: 3,
     ITEM: 4,
     ACTOR: 5,
-    FOV: 100
+    FOV: 100,
+    HIGHLIGHT: 200
 }
 
 export default RenderOrder;
