@@ -79,6 +79,12 @@ export default class Entity {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    distance(x, y) {
+        var dx = x - this.x;
+        var dy = y - this.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     place(gameMap, x, y) {
         if (this.parent && this.parent === this.getGameMap()) {
             this.getGameMap().remove(this);

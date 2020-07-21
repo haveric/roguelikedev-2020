@@ -249,7 +249,13 @@ export class Ship {
 
             var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
             if (!entity) {
-                new EntityFactories.medkit(x, y).place(this.gameMap);
+                var itemChance = Srand.random();
+
+                if (random < 0.7) {
+                    new EntityFactories.medkit(x, y).place(this.gameMap);
+                } else {
+                    new EntityFactories.laserCharge(x, y).place(this.gameMap);
+                }
             }
         }
     }

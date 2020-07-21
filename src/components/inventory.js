@@ -1,6 +1,6 @@
 import BaseComponent from './baseComponent';
 
-export class Inventory extends BaseComponent {
+export default class Inventory extends BaseComponent {
     constructor(entity, capacity) {
         super(entity);
 
@@ -28,5 +28,16 @@ export class Inventory extends BaseComponent {
         }
 
         return null;
+    }
+
+    remove(item) {
+        var index = this.items.indexOf(item);
+        if (index != -1) {
+            this.items.splice(index, 1);
+
+            return true;
+        }
+
+        return false;
     }
 }

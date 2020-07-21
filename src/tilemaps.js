@@ -17,7 +17,8 @@ Tilemaps.getTileMap = () => {
             "door": 68,
             "doorOpen": 92,
             "corpse": 37,
-            "medkit": 43
+            "medkit": 43,
+            "laserCharge": 126
         }
     }
 

@@ -4,8 +4,8 @@ import Sprite from './sprite';
 import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
-import { HealingConsumable } from './components/consumable';
-import { Inventory } from './components/inventory';
+import { HealingConsumable, LaserDamageConsumable } from './components/consumable';
+import Inventory from './components/inventory';
 
 export default class EntityFactories {}
 
@@ -39,5 +39,11 @@ EntityFactories.automatedTurret = (x, y) => {
 EntityFactories.medkit = (x, y) => {
     var entity = new Item(x, y, "Medkit", "Can be used to heal a small amount of health.", new Sprite("medkit", "7f00ff"));
     entity.setConsumable(new HealingConsumable(entity, 4, "use"));
+    return entity;
+}
+
+EntityFactories.laserCharge = (x, y) => {
+    var entity = new Item(x, y, "Laser Charge", "Shoots a laser at the nearest visible enemy.", new Sprite("laserCharge", "ffff00"));
+    entity.setConsumable(new LaserDamageConsumable(entity, 20, 5));
     return entity;
 }

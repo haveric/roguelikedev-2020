@@ -320,7 +320,6 @@ export class ItemAction extends Action {
         if (doAction) {
             var item = this.entityRef.inventory.items[this.inventorySlot];
             item.consumable.activate(this);
-            this.entityRef.inventory.removeByIndex(this.inventorySlot);
         }
 
         return new ActionResult(this, true);
