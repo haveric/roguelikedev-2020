@@ -27,6 +27,24 @@ export class Action {
     }
 }
 
+export class DebugAction extends Action {
+    constructor(entity) {
+        super(entity);
+    }
+
+    perform(doAction) {
+        if (doAction) {
+            this.getEngine().clearFov();
+        }
+
+        return new ActionResult(this, true);
+    }
+
+    toString() {
+        return { action: "DebugAction" };
+    }
+}
+
 export class WaitAction extends Action {
     constructor(entity) {
         super(entity);

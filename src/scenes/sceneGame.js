@@ -8,7 +8,7 @@ import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
 import { InventoryEventHandler } from '../eventHandler';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction, ItemAction, DropItemAction } from '../actions';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction, ItemAction, DropItemAction, DebugAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -114,6 +114,9 @@ export class SceneGame extends Phaser.Scene {
                             break;
                         case "DropItemAction":
                             new DropItemAction(player, args.inventorySlot).perform(true);
+                            break;
+                        case "DebugAction":
+                            new DebugAction(player).perform(true);
                             break;
                         default:
                             console.error("Unrecognized action: " + actionData.action);

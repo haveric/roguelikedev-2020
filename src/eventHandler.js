@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction } from './actions';
+import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction, DebugAction } from './actions';
 import Tilemaps from './tilemaps';
 
 export class EventHandler extends Phaser.Events.EventEmitter {
@@ -102,7 +102,7 @@ export class EventHandler extends Phaser.Events.EventEmitter {
     debug() {
         var scene = this.engineRef.scene;
         var player = this.engineRef.player;
-        this.engineRef.clearFov();
+        this.performAction(new DebugAction(this.engineRef.player));
         player.energy = 5000;
         player.energyMax = 5000;
         this.engineRef.debugEnabled = true;
