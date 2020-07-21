@@ -219,9 +219,8 @@ export class WarpAction extends Action {
 }
 
 export class PickupAction extends Action {
-    constructor(entity, actor) {
+    constructor(entity) {
         super(entity);
-        this.actor = actor;
     }
 
     perform(doAction) {
