@@ -17,6 +17,7 @@ const getFrameOf = (tilemap, sprite) => {
     if (tilemap.tiles[sprite]) {
         frame = tilemap.tiles[sprite];
     } else {
+        frame = tilemap.tiles["unknown"];
         console.log("Tilemap missing sprites! " + sprite);
     }
 

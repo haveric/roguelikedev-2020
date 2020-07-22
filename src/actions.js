@@ -76,7 +76,7 @@ export class ActionWithDirection extends Action {
         return this.getGameMap().getBlockingEntityAtLocation(destXY.x, destXY.y);
     }
 
-    _targetActor() {
+    getTargetActor() {
         var destXY = this._getDestXY();
         return this.getGameMap().getActorAtLocation(destXY.x, destXY.y);
     }
@@ -92,7 +92,7 @@ export class MeleeAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var target = this._targetActor();
+        var target = this.getTargetActor();
         var success = false;
         if (target) {
             if (doAction) {
@@ -182,19 +182,20 @@ export class BumpAction extends ActionWithDirection {
         super(entity, dx, dy);
     }
 
-    perform() {
+    perform(doAction) {
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
 
         var tiles = this.getGameMap().locations[destX][destY].tiles;
-        var target = this._targetActor(destX, destY);
+        var target = this.getTargetActor();
+
         if (target) {
-            return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(false);
+            return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
         } else if (_isClosedOpenable(tiles)) {
-            return new OpenAction(this.entityRef, this.dx, this.dy).perform(false);
+            return new OpenAction(this.entityRef, this.dx, this.dy).perform(doAction);
         } else {
-            return new MovementAction(this.entityRef, this.dx, this.dy).perform(false);
+            return new MovementAction(this.entityRef, this.dx, this.dy).perform(doAction);
         }
     }
 }
@@ -303,7 +304,6 @@ export class ItemAction extends Action {
 
         this.inventorySlot = inventorySlot;
         this.targetXY = targetXY;
-
         if (!this.targetXY) {
             this.targetXY = {
                 "x": this.entityRef.x,
@@ -313,7 +313,7 @@ export class ItemAction extends Action {
     }
 
     getTargetActor() {
-        return this.getEngine().getActorAtLocation(this.targetXY.x, this.targetXY.y);
+        return this.getGameMap().getActorAtLocation(this.targetXY.x, this.targetXY.y);
     }
 
     perform(doAction) {
@@ -326,7 +326,7 @@ export class ItemAction extends Action {
     }
 
     toString() {
-        return { action: "ItemAction", args: { inventorySlot: this.inventorySlot }};
+        return { action: "ItemAction", args: { inventorySlot: this.inventorySlot, targetXY: this.targetXY }};
     }
 }
 

@@ -2,7 +2,7 @@ import { astar, Graph } from 'javascript-astar';
 import Srand from 'seeded-rand';
 import { create2dArray } from '../../utils';
 import { Actor } from '../entity';
-import { MeleeAction, MovementAction, WaitAction } from '../actions';
+import { MeleeAction, MovementAction, WaitAction, BumpAction } from '../actions';
 import BaseComponent from './baseComponent';
 
 export class BaseAI extends BaseComponent {
@@ -88,5 +88,55 @@ export class HostileEnemy extends BaseAI {
         }
 
         return new WaitAction(this.parent).perform(true);
+    }
+}
+
+export class ConfusedEnemy extends BaseAI {
+    constructor(entity, previousAI, turnsRemaining) {
+        super(entity);
+
+        this.previousAI = previousAI;
+        this.turnsRemaining = turnsRemaining;
+    }
+
+    perform() {
+        if (this.turnsRemaining <= 0) {
+            this.getEngine().messageLog.text("The ").text(this.parent.name, "#" + this.parent.sprite.color).text(" is no longer confused.").build();
+            this.parent.ai = this.previousAI;
+        } else {
+            var x;
+            var y;
+            var choice = Srand.intInRange(1, 8);
+            switch(choice) {
+                case 1:
+                    x = -1; y = -1;
+                    break;
+                case 2:
+                    x = 0; y = -1;
+                    break;
+                case 3:
+                    x = 1; y = -1;
+                    break;
+                case 4:
+                    x = -1; y = 0;
+                    break;
+                case 5:
+                    x = 1; y = 0;
+                    break;
+                case 6:
+                    x = -1; y = 1;
+                    break;
+                case 7:
+                    x = 0; y = 1;
+                    break;
+                case 8:
+                default:
+                    x = 1; y = 1;
+                    break;
+            }
+
+            this.turnsRemaining -= 1;
+            return new BumpAction(this.parent, x, y).perform(true);
+        }
     }
 }

@@ -251,8 +251,10 @@ export class Ship {
             if (!entity) {
                 var itemChance = Srand.random();
 
-                if (random < 0.7) {
+                if (itemChance < 0.7) {
                     new EntityFactories.medkit(x, y).place(this.gameMap);
+                } else if (itemChance < 0.9) {
+                    new EntityFactories.confuseRay(x, y).place(this.gameMap);
                 } else {
                     new EntityFactories.laserCharge(x, y).place(this.gameMap);
                 }

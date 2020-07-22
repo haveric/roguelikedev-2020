@@ -4,7 +4,7 @@ import Sprite from './sprite';
 import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
-import { HealingConsumable, LaserDamageConsumable } from './components/consumable';
+import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable } from './components/consumable';
 import Inventory from './components/inventory';
 
 export default class EntityFactories {}
@@ -45,5 +45,11 @@ EntityFactories.medkit = (x, y) => {
 EntityFactories.laserCharge = (x, y) => {
     var entity = new Item(x, y, "Laser Charge", "Shoots a laser at the nearest visible enemy.", new Sprite("laserCharge", "ffff00"));
     entity.setConsumable(new LaserDamageConsumable(entity, 20, 5));
+    return entity;
+}
+
+EntityFactories.confuseRay = (x, y) => {
+    var entity = new Item(x, y, "Confuse Ray", "Confuses the weak-minded temporarily.", new Sprite("confuseRay", "cf3fff"));
+    entity.setConsumable(new ConfusionConsumable(entity, 10));
     return entity;
 }

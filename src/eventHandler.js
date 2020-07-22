@@ -79,7 +79,7 @@ export class EventHandler {
     }
 
     performAction(action) {
-        if (this.engineRef.player) {
+        if (action && this.engineRef.player) {
             var actionResult = action.perform(false);
             if (actionResult.success) {
                 var scene = this.engineRef.scene;
@@ -510,6 +510,19 @@ export class LookHandler extends SelectIndexHandler {
     }
 
     selectTile() {
+        this.exit();
+    }
+}
+
+export class SingleRangedAttackHandler extends SelectIndexHandler {
+    constructor(input, engine, callback) {
+        super(input, engine);
+
+        this.callback = callback;
+    }
+
+    selectTile() {
+        this.performAction(this.callback(this.x, this.y));
         this.exit();
     }
 }

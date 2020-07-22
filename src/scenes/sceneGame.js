@@ -110,7 +110,7 @@ export class SceneGame extends Phaser.Scene {
                             new PickupAction(player).perform(true);
                             break;
                         case "ItemAction":
-                            new ItemAction(player, args.inventorySlot).perform(true);
+                            new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
                             break;
                         case "DropItemAction":
                             new DropItemAction(player, args.inventorySlot).perform(true);

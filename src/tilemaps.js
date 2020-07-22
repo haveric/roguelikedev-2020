@@ -6,6 +6,7 @@ Tilemaps.getTileMap = () => {
         frameWidth: 24,
         frameHeight: 24,
         tiles: {
+            "unknown": 63,
             "shroud": 219,
             "highlight": 219,
             "player": 64,
@@ -19,7 +20,8 @@ Tilemaps.getTileMap = () => {
             "doorOpen": 92,
             "corpse": 37,
             "medkit": 43,
-            "laserCharge": 126
+            "laserCharge": 126,
+            "confuseRay": 126
         }
     }
 
