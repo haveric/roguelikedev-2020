@@ -4,7 +4,7 @@ import Sprite from './sprite';
 import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
-import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable } from './components/consumable';
+import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable } from './components/consumable';
 import Inventory from './components/inventory';
 
 export default class EntityFactories {}
@@ -51,5 +51,12 @@ EntityFactories.laserCharge = (x, y) => {
 EntityFactories.confuseRay = (x, y) => {
     var entity = new Item(x, y, "Confuse Ray", "Confuses the weak-minded temporarily.", new Sprite("confuseRay", "cf3fff"));
     entity.setConsumable(new ConfusionConsumable(entity, 10));
+    return entity;
+}
+
+
+EntityFactories.grenade = (x, y) => {
+    var entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade", "ff0000"));
+    entity.setConsumable(new GrenadeDamageConsumable(entity, 12, 3));
     return entity;
 }

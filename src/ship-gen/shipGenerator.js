@@ -253,6 +253,8 @@ export class Ship {
 
                 if (itemChance < 0.7) {
                     new EntityFactories.medkit(x, y).place(this.gameMap);
+                } else if (itemChance < 0.8) {
+                    new EntityFactories.grenade(x, y).place(this.gameMap);
                 } else if (itemChance < 0.9) {
                     new EntityFactories.confuseRay(x, y).place(this.gameMap);
                 } else {

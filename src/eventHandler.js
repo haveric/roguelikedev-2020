@@ -526,3 +526,50 @@ export class SingleRangedAttackHandler extends SelectIndexHandler {
         this.exit();
     }
 }
+
+export class AreaRangedAttackHandler extends SelectIndexHandler {
+    constructor(input, engine, radius, callback) {
+        super(input, engine);
+
+        this.radius = radius;
+        this.callback = callback;
+        this.highlightTile();
+    }
+
+    highlightTile() {
+        for (var i = this.lastX - this.radius + 1; i < this.lastX + this.radius; i++) {
+            for (var j = this.lastY - this.radius + 1; j < this.lastY + this.radius; j++) {
+                if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
+                    this.engineRef.gameMap.highlight[i][j].setVisible(false);
+                }
+            }
+        }
+
+        for (var i = this.x - this.radius + 1; i < this.x + this.radius; i++) {
+            for (var j = this.y - this.radius + 1; j < this.y + this.radius; j++) {
+                if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
+                    this.engineRef.gameMap.highlight[i][j].setVisible(true);
+                }
+            }
+        }
+
+        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
+            this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[this.x][this.y].sprite.spriteObject);
+        }
+    }
+
+    clearHighlight() {
+        for (var i = this.x - this.radius; i < this.x + this.radius; i++) {
+            for (var j = this.y - this.radius; j < this.y + this.radius; j++) {
+                if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
+                    this.engineRef.gameMap.highlight[i][j].setVisible(false);
+                }
+            }
+        }
+    }
+
+    selectTile() {
+        this.performAction(this.callback(this.x, this.y));
+        this.exit();
+    }
+}
