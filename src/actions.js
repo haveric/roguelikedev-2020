@@ -94,22 +94,23 @@ export class MeleeAction extends ActionWithDirection {
     perform(doAction) {
         var target = this.getTargetActor();
         var success = false;
+        var messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
                 var damage = this.entityRef.fighter.power - target.fighter.defense;
-                this.getEngine().messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
+                messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
                 var attackDesc = this.entityRef.name + " attacks " + target.name;
 
                 if (damage > 0) {
-                    this.getEngine().messageLog.text(" for " + damage + " hit points.").build();
+                    messageLog.text(" for " + damage + " hit points.").build();
                     target.fighter.takeDamage(damage);
                 } else {
-                    this.getEngine().messageLog.text(" but does no damage.").build();
+                    messageLog.text(" but does no damage.").build();
                 }
             }
             success = true;
         } else {
-            this.getEngine().messageLog.text("Nothing to attack.").build();
+            messageLog.text("Nothing to attack.").build();
         }
 
         return new ActionResult(this, success);
@@ -130,10 +131,10 @@ export class MovementAction extends ActionWithDirection {
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
-
+        var messageLog = this.getEngine().ui.messageLog;
         if (!this.getGameMap().locations[destX][destY].isTileWalkable() || this._getBlockingEntity()) {
             if (this.isCurrentPlayer()) {
-                this.getEngine().messageLog.text("That way is blocked.").build();
+                messageLog.text("That way is blocked.").build();
             }
         } else {
             if (doAction) {
@@ -249,9 +250,10 @@ export class PickupAction extends Action {
         var inventory = this.entityRef.inventory;
 
         var items = this.getGameMap().getItems();
+        var messageLog = this.getEngine().ui.messageLog;
         if (items.length == 0) {
             if (this.isCurrentPlayer()) {
-                this.getEngine().messageLog.text("There is nothing here to pick up.").build();
+                messageLog.text("There is nothing here to pick up.").build();
             }
             return new ActionResult(this, false);
         } else {
@@ -262,7 +264,7 @@ export class PickupAction extends Action {
                 if (actorX == item.x && actorY == item.y) {
                     if (inventory.items.length >= inventory.capacity) {
                         if (this.isCurrentPlayer()) {
-                            this.getEngine().messageLog.text("Your inventory is full.").build();
+                            messageLog.text("Your inventory is full.").build();
                         }
                         break;
                     }
@@ -281,7 +283,7 @@ export class PickupAction extends Action {
                             } else {
                                 playerString = this.entityRef.name;
                             }
-                            this.getEngine().messageLog.text(playerString + " picked up the " + item.name + "!").build();
+                            messageLog.text(playerString + " picked up the " + item.name + "!").build();
                         }
 
                         success = true;

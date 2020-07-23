@@ -223,7 +223,7 @@ export class MainGameEventHandler extends EventHandler {
         var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
         var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
 
-        var sidePanel = self.engineRef.sidePanel;
+        var sidePanel = self.engineRef.ui.sidePanel;
         if (gameMap.locations[x] && gameMap.locations[x][y]) {
             sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
             var entity = gameMap.getBlockingEntityAtLocation(x, y);
@@ -294,22 +294,22 @@ export class InventoryEventHandler extends AskUserEventHandler {
     }
 
     render() {
-        this.engineRef.inventoryMenu.show();
-
-        this.engineRef.inventoryMenu.text(this.title + "\n\n");
+        var inventoryMenu = this.engineRef.ui.inventoryMenu;
+        inventoryMenu.show();
+        inventoryMenu.text(this.title + "\n\n");
         var items = this.engineRef.player.inventory.items;
         var itemsLength = items.length;
         if (itemsLength == 0) {
-            this.engineRef.inventoryMenu.text("(Empty)");
+            inventoryMenu.text("(Empty)");
         } else {
             for (var i = 0; i < itemsLength; i++) {
                 var itemKey = String.fromCharCode(65 + i);
                 var itemLine = "(" + itemKey + ") " + items[i].name;
-                this.engineRef.inventoryMenu.text(itemLine + "\n");
+                inventoryMenu.text(itemLine + "\n");
             }
         }
 
-        this.engineRef.inventoryMenu.build();
+        inventoryMenu.build();
     }
 
     pressKey(event) {
@@ -333,7 +333,7 @@ export class InventoryEventHandler extends AskUserEventHandler {
     }
 
     exit() {
-        this.engineRef.inventoryMenu.hide();
+        this.engineRef.ui.inventoryMenu.hide();
         super.exit();
     }
 }

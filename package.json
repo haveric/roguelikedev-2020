@@ -20,7 +20,7 @@
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "javascript-astar": "^0.4.1",
-    "phaser3-rex-plugins": "^1.1.20",
+    "phaser3-rex-plugins": "^1.1.21",
     "raw-loader": "^3.1.0",
     "socket.io": "^2.3.0",
     "terser-webpack-plugin": "^2.2.1",

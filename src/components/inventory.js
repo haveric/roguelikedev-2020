@@ -10,7 +10,7 @@ export default class Inventory extends BaseComponent {
 
     _dropItem(item) {
         item.place(this.getGameMap(), this.parent.x, this.parent.y);
-        this.getEngine().messageLog.text("You dropped the " + item.name + ".").build();
+        this.getEngine().ui.messageLog.text("You dropped the " + item.name + ".").build();
     }
 
     dropByIndex(index) {

@@ -1,9 +1,10 @@
 import { MainGameEventHandler } from './eventHandler';
 import { FovAdamMillazo } from './fov';
-import { MessageLog } from './messageLog';
-import { SidePanel } from './sidePanel';
-import { InventoryMenu } from './inventoryMenu';
+import { MessageLog } from './ui/messageLog';
+import { SidePanel } from './ui/sidePanel';
+import { InventoryMenu } from './ui/inventoryMenu';
 import Tilemaps from './tilemaps';
+import UI from './ui/ui';
 
 export default class Engine {
     constructor(scene, player, players) {
@@ -14,9 +15,7 @@ export default class Engine {
         self.debugEnabled = false;
 
         self.eventHandler = new MainGameEventHandler(scene.input, this);
-        self.messageLog = new MessageLog();
-        self.sidePanel = new SidePanel();
-        self.inventoryMenu = new InventoryMenu();
+        self.ui = new UI(scene.scene.get('SceneGameUI'));
         self.gameMap = null;
         self.player = player;
         self.players = players;
