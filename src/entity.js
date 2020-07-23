@@ -30,31 +30,10 @@ export default class Entity {
         }
     }
 
-    setFighter(fighter) {
-        if (fighter) {
-            this.fighter = fighter;
-            this.fighter.parent = this;
-        }
-    }
-
-    setAI(ai) {
-        if (ai) {
-            this.ai = ai;
-            this.ai.parent = this;
-        }
-    }
-
-    setConsumable(consumable) {
-        if (consumable) {
-            this.consumable = consumable;
-            this.consumable.parent = this;
-        }
-    }
-
-    setInventory(inventory) {
-        if (inventory) {
-            this.inventory = inventory;
-            this.inventory.parent = this;
+    setComponent(componentName, component) {
+        if (component) {
+            this[componentName] = component;
+            this[componentName].parent = this;
         }
     }
 
