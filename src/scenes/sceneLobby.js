@@ -1,6 +1,7 @@
 import io from 'socket.io-client';
+import tilemapCurses from "../assets/Curses_square_24.png";
 
-var socket = io('http://localhost:8081');
+var socket;
 
 export class SceneLobby extends Phaser.Scene {
     constructor() {
@@ -8,7 +9,8 @@ export class SceneLobby extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('tilemap', "/src/assets/Curses_square_24.png", {
+        this.load.json('config', "/config/config.json");
+        this.load.spritesheet('tilemap', tilemapCurses, {
             frameWidth: 24,
             frameHeight: 24
         });
@@ -16,6 +18,9 @@ export class SceneLobby extends Phaser.Scene {
 
     create() {
         var self = this;
+
+        var config = this.cache.json.get('config');
+        socket = io(config.protocol + config.server + ":" + config.port);
 
         var lobbyStatsStyle = { font: "22px Arial", fill: "#fff"}
         this.lobbyCount = this.add.text(20, 50, "Lobby: 0", lobbyStatsStyle);
