@@ -22,7 +22,9 @@ Tilemaps.getTileMap = () => {
             "medkit": 43,
             "laserCharge": 126,
             "confuseRay": 126,
-            "grenade": 235
+            "grenade": 235,
+            "stairsDown": 60,
+            "stairsUp": 62
         }
     }
 

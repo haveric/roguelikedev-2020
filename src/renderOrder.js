@@ -1,10 +1,11 @@
 const RenderOrder = {
     FLOOR: 0,
     WALL: 1,
-    FLOOR_LIGHTING: 2,
-    CORPSE: 3,
-    ITEM: 4,
-    ACTOR: 5,
+    STAIRS: 2,
+    FLOOR_LIGHTING: 3,
+    CORPSE: 4,
+    ITEM: 5,
+    ACTOR: 6,
     FOV: 100,
     HIGHLIGHT: 200
 }
