@@ -5,8 +5,6 @@ var io = require('socket.io').listen(server);
 var create2dArray = require('./utils.js').create2dArray;
 var getRandomInt = require('./utils.js').getRandomInt;
 
-io.set('origins', 'https://tethered.ryanbreuer.com:* http://localhost:*');
-
 var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var rooms = {};
 var lobbyStats = {
