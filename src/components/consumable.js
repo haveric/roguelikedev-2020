@@ -41,12 +41,12 @@ export class HealingConsumable extends Consumable {
     activate(action) {
         var consumer = action.entityRef;
         var amountRecovered = consumer.fighter.heal(this.amount);
-
+        var messageLog = this.getEngine().ui.messageLog;
         if (amountRecovered > 0) {
-            this.getEngine().messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
+            messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
             this.consume();
         } else {
-            this.getEngine().messageLog.text("Your health is already full.").build();
+            messageLog.text("Your health is already full.").build();
         }
     }
 }
@@ -76,12 +76,13 @@ export class LaserDamageConsumable extends Consumable {
             }
         }
 
+        var messageLog = this.getEngine().ui.messageLog;
         if (target) {
-            this.getEngine().messageLog.text("A laser strikes ").text(target.name, "#" + target.sprite.color).text(", for ").text(this.damage, "#660000").text(" damage!").build();
+            messageLog.text("A laser strikes ").text(target.name, "#" + target.sprite.color).text(", for ").text(this.damage, "#660000").text(" damage!").build();
             target.fighter.takeDamage(this.damage);
             this.consume();
         } else {
-            this.getEngine().messageLog.text("No enemy is close enough to strike.").build();
+            messageLog.text("No enemy is close enough to strike.").build();
         }
     }
 }
@@ -93,9 +94,9 @@ export class ConfusionConsumable extends Consumable {
     }
 
     getAction(actor, inventorySlot) {
-        this.getEngine().messageLog.text("Select a target location.").build();
+        this.getEngine().ui.messageLog.text("Select a target location.").build();
 
-        this.getEngine().inventoryMenu.hide();
+        this.getEngine().ui.inventoryMenu.hide();
         this.getEngine().eventHandler = new SingleRangedAttackHandler(this.getEngine().scene.input, this.getEngine(), function(x, y) {
             return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
         });
@@ -106,15 +107,15 @@ export class ConfusionConsumable extends Consumable {
     activate(action) {
         var consumer = action.entityRef;
         var target = action.getTargetActor();
-
+        var messageLog = this.getEngine().ui.messageLog;
         if (!target) {
-            this.getEngine().messageLog.text("You must select an enemy to target.").build();
+            messageLog.text("You must select an enemy to target.").build();
         } else if (!this.getGameMap().shroud[target.x][target.y].visible) {
-            this.getEngine().messageLog.text("You cannot target an area that you cannot see.").build();
+            messageLog.text("You cannot target an area that you cannot see.").build();
         } else if (target === consumer) {
-            this.getEngine().messageLog.text("You cannot confuse yourself.").build();
+            messageLog.text("You cannot confuse yourself.").build();
         } else {
-            this.getEngine().messageLog.text("The eyes of the ").text(target.name, "#" + target.sprite.color).text(" look vacant, as it starts to stumble around!").build();
+            messageLog.text("The eyes of the ").text(target.name, "#" + target.sprite.color).text(" look vacant, as it starts to stumble around!").build();
             target.ai = new ConfusedEnemy(target, target.ai, this.numTurns);
             this.consume();
         }
@@ -129,9 +130,9 @@ export class GrenadeDamageConsumable extends Consumable {
     }
 
     getAction(actor, inventorySlot) {
-        this.getEngine().messageLog.text("Select a target location.").build();
+        this.getEngine().ui.messageLog.text("Select a target location.").build();
 
-        this.getEngine().inventoryMenu.hide();
+        this.getEngine().ui.inventoryMenu.hide();
         this.getEngine().eventHandler = new AreaRangedAttackHandler(this.getEngine().scene.input, this.getEngine(), this.radius, function(x, y) {
             return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
         });
@@ -142,16 +143,16 @@ export class GrenadeDamageConsumable extends Consumable {
     activate(action) {
         var consumer = action.entityRef;
         var targetXY = action.targetXY;
-
+        var messageLog = this.getEngine().ui.messageLog;
         if (!this.getGameMap().shroud[targetXY.x][targetXY.y].visible) {
-            this.getEngine().messageLog.text("You cannot target an area that you cannot see.").build();
+            messageLog.text("You cannot target an area that you cannot see.").build();
         } else {
             var targetsHit = false;
             var actors = this.getGameMap().getActors();
             for (var i = 0; i < actors.length; i++) {
                 var actor = actors[i];
                 if (actor.distance(targetXY.x, targetXY.y) < this.radius) {
-                    this.getEngine().messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + this.damage + " damage!").build();
+                    messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + this.damage + " damage!").build();
                     actor.fighter.takeDamage(this.damage);
                     targetsHit = true;
                 }
@@ -160,7 +161,7 @@ export class GrenadeDamageConsumable extends Consumable {
             if (targetsHit) {
                 this.consume();
             } else {
-                this.getEngine().messageLog.text("There are no targets in the radius.").build();
+                messageLog.text("There are no targets in the radius.").build();
             }
         }
     }

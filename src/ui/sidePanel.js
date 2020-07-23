@@ -1,7 +1,8 @@
 import { SubMessage, Message } from './message';
 
-export class SidePanel {
-    constructor() {
+export default class SidePanel {
+    constructor(scene) {
+        this.scene = scene;
         this.description = [];
     }
 
@@ -20,9 +21,9 @@ export class SidePanel {
         this.descriptionPanel.setText(message.getBBCodeFullText());
     }
 
-    createSidePanel(scene) {
-        var background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
-        this.sidePanel = scene.rexUI.add.sizer({
+    createSidePanel() {
+        var background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
+        this.sidePanel = this.scene.rexUI.add.sizer({
             x: 0,
             y: 0,
             width: 180,
@@ -34,30 +35,29 @@ export class SidePanel {
         })
         .addBackground(background);
 
-        this.createDescriptionPanel(scene);
+        this.createDescriptionPanel(this.scene);
 
         this.sidePanel.add(this.descriptionPanel, 0, 'right', { top: 10, bottom: 10, left: 10, right: 10 }, false);
         this.sidePanel.setOrigin(0).layout();
     }
 
-    createDescriptionPanel(scene) {
-        this.descriptionPanel = scene.rexUI.add.textArea({
+    createDescriptionPanel() {
+        this.descriptionPanel = this.scene.rexUI.add.textArea({
             x: 0,
             y: 0,
             width: 180,
             height: 200,
-            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, 0xeeeeee),
-            text: scene.rexUI.add.BBCodeText(0, 0, "", {fontSize: "12px"}),
+            background: this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, 0xeeeeee),
+            text: this.scene.rexUI.add.BBCodeText(0, 0, "", {fontSize: "12px"}),
             slider: {
-                track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x260e04),
-                thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0x7b5e57),
+                track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x260e04),
+                thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0x7b5e57),
             },
             space: {
                 left: 10,
                 right: 10,
                 top: 10,
                 bottom: 10,
-
                 panel: 10,
             }
         });

@@ -1,7 +1,8 @@
 import { SubMessage, Message } from './message';
 
-export class MessageLog {
-    constructor() {
+export default class MessageLog {
+    constructor(scene) {
+        this.scene = scene;
         this.messages = [];
         this.builder = [];
     }
@@ -42,8 +43,8 @@ export class MessageLog {
         this.messageLog.scrollToBottom();
     }
 
-    createScrollablePanel(scene) {
-        this.messageLog = scene.rexUI.add.textArea({
+    createScrollablePanel() {
+        this.messageLog = this.scene.rexUI.add.textArea({
             x: 0,
             y: 500,
             width: 800,
@@ -52,11 +53,11 @@ export class MessageLog {
                 top: "100%-100",
                 centerX: "50%"
             },
-            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, 0xeeeeee),
-            text: scene.rexUI.add.BBCodeText(),
+            background: this.scene.rexUI.add.roundRectangle(0, 0, 2, 2, 0, 0xeeeeee),
+            text: this.scene.rexUI.add.BBCodeText(),
             slider: {
-                track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x260e04),
-                thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0x7b5e57),
+                track: this.scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x260e04),
+                thumb: this.scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0x7b5e57),
             },
             space: {
                 left: 10,

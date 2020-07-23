@@ -101,7 +101,7 @@ export class ConfusedEnemy extends BaseAI {
 
     perform() {
         if (this.turnsRemaining <= 0) {
-            this.getEngine().messageLog.text("The ").text(this.parent.name, "#" + this.parent.sprite.color).text(" is no longer confused.").build();
+            this.getEngine().ui.messageLog.text("The ").text(this.parent.name, "#" + this.parent.sprite.color).text(" is no longer confused.").build();
             this.parent.ai = this.previousAI;
         } else {
             var x;
