@@ -54,7 +54,7 @@ export default class Fighter extends BaseComponent {
 
         this.parent.renderOrder = RenderOrder.CORPSE;
 
-        this.getEngine().messageLog.ui.text(this.parent.name, "#" + this.parent.sprite.color).text(" has died!").build();
+        this.getEngine().ui.messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has died!").build();
 
         this.parent.sprite.updateSprite("corpse", "BF0000");
         this.parent.blocksMovement = false;
