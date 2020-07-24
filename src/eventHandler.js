@@ -73,15 +73,17 @@ export class EventHandler {
         this.updateSidePanelDescriptionsForTile(x, y);
     }
 
-    updateSidePanelDescriptionsForTile(x, y) {
+    updateSidePanelDescriptionsForTile(x, y, skipBlocking) {
         var gameMap = this.engineRef.gameMap;
         var sidePanel = this.engineRef.ui.sidePanel;
         if (gameMap.locations[x] && gameMap.locations[x][y]) {
             sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
-            var entity = gameMap.getBlockingEntityAtLocation(x, y);
-            if (entity) {
-                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
-                sidePanel.text(entity.description + "\n\n");
+            if (!skipBlocking) {
+                var entity = gameMap.getBlockingEntityAtLocation(x, y);
+                if (entity) {
+                    sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                    sidePanel.text(entity.description + "\n\n");
+                }
             }
 
             var entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);

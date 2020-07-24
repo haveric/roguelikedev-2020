@@ -125,6 +125,10 @@ export class SceneGame extends Phaser.Scene {
                     }
                 }
 
+                if (player === self.player) {
+                    self.engine.eventHandler.updateSidePanelDescriptionsForTile(self.player.x, self.player.y, true);
+                }
+
                 if (self.engine.eventHandler instanceof InventoryEventHandler) {
                     self.engine.eventHandler.render();
                 }
