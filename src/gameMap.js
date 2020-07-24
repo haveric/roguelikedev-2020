@@ -56,6 +56,20 @@ export default class GameMap {
         return foundEntity;
     }
 
+    getNonBlockingEntitiesAtLocation(x, y) {
+        var entities = [];
+        for (var i = 0; i < this.entities.length; i++) {
+            var entity = this.entities[i];
+            if (!entity.blocksMovement && entity.x == x && entity.y == y) {
+                entities.push(entity);
+            }
+        }
+
+        this.entities.sort(_entityDepthCompare);
+
+        return entities;
+    }
+
     getActors() {
         var actors = [];
         for (var i = 0; i < this.entities.length; i++) {
@@ -98,7 +112,18 @@ export default class GameMap {
             this.entities.splice(index, 1);
         }
     }
+}
 
+function _entityDepthCompare(a, b) {
+    if (a.renderOrder < b.renderOrder) {
+        return 1;
+    }
+
+    if (a.renderOrder > b.renderOrder) {
+        return -1;
+    }
+
+    return 0;
 }
 
 export class GameMapLocation {
@@ -110,6 +135,7 @@ export class GameMapLocation {
     addTile(tile) {
         if (!this.tiles.includes(tile)) {
             this.tiles.push(tile);
+            this.tiles.sort(_entityDepthCompare);
         }
     }
 

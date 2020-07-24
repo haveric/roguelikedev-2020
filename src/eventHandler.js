@@ -58,6 +58,57 @@ export class EventHandler {
         // Do nothing for base Event Handler
     }
 
+    getTileXFromWorldX(worldX) {
+        return Math.floor((worldX - this.engineRef.gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
+    }
+
+    getTileYFromWorldY(worldY) {
+        return Math.floor((worldY - this.engineRef.gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
+    }
+
+    updateSidePanelDescriptionsForWorldPosition(worldX, worldY) {
+        var x = this.getTileXFromWorldX(worldX);
+        var y = this.getTileYFromWorldY(worldY);
+
+        this.updateSidePanelDescriptionsForTile(x, y);
+    }
+
+    updateSidePanelDescriptionsForTile(x, y) {
+        var gameMap = this.engineRef.gameMap;
+        var sidePanel = this.engineRef.ui.sidePanel;
+        if (gameMap.locations[x] && gameMap.locations[x][y]) {
+            sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
+            var entity = gameMap.getBlockingEntityAtLocation(x, y);
+            if (entity) {
+                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                sidePanel.text(entity.description + "\n\n");
+            }
+
+            var entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);
+            for (var i = 0; i < entities.length; i++) {
+                var entity = entities[i];
+                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                if (entities.length == 1) {
+                    sidePanel.text(entity.description + "\n\n");
+                }
+            }
+            if (entities.length > 1) {
+                sidePanel.text("\n");
+            }
+
+            var tiles = gameMap.locations[x][y].tiles;
+            for (var i = 0; i < tiles.length; i++) {
+                var tile = tiles[i];
+                sidePanel.text(tile.name + "\n");
+                sidePanel.text(tile.description + "\n\n");
+            }
+
+            sidePanel.build();
+        } else {
+            sidePanel.text("").build();
+        }
+    }
+
     move(dx, dy) {
         this.performAction(new BumpAction(this.engineRef.player, dx, dy));
     }
@@ -228,33 +279,7 @@ export class MainGameEventHandler extends EventHandler {
     }
 
     mouseMove(event) {
-        var self = this;
-
-        var gameMap = self.engineRef.gameMap;
-        var x = Math.floor((event.worldX - gameMap.offsetWidth) / Tilemaps.getTileMap().frameWidth);
-        var y = Math.floor((event.worldY - gameMap.offsetHeight) / Tilemaps.getTileMap().frameHeight);
-
-        var sidePanel = self.engineRef.ui.sidePanel;
-        if (gameMap.locations[x] && gameMap.locations[x][y]) {
-            sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
-            var entity = gameMap.getBlockingEntityAtLocation(x, y);
-
-            if (entity) {
-                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
-                sidePanel.text(entity.description + "\n\n");
-            }
-
-            var tiles = gameMap.locations[x][y].tiles;
-            for (var i = 0; i < tiles.length; i++) {
-                var tile = tiles[i];
-                sidePanel.text(tile.name + "\n");
-                sidePanel.text(tile.description + "\n\n");
-            }
-
-            sidePanel.build();
-        } else {
-            sidePanel.text("").build();
-        }
+        this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
     }
 }
 
@@ -382,9 +407,9 @@ export class SelectIndexHandler extends AskUserEventHandler {
         var player = this.engineRef.player;
         this.x = player.x;
         this.y = player.y;
-        this.lastX = -1;
-        this.lastY = -1;
-        this.highlightTile();
+        this.lastX = this.x;
+        this.lastY = this.y;
+        this.highlightTile(this.x, this.y, true);
     }
 
     pressKey(event) {
@@ -459,7 +484,7 @@ export class SelectIndexHandler extends AskUserEventHandler {
             this.x = Math.max(0, Math.min(this.x, gameMap.width - 1));
             this.y = Math.max(0, Math.min(this.y, gameMap.height - 1));
 
-            this.highlightTile();
+            this.highlightTile(this.x, this.y, true);
         } else {
             switch (event.code) {
                 // Enter / Confirm
@@ -480,26 +505,41 @@ export class SelectIndexHandler extends AskUserEventHandler {
         }
     }
 
+    mouseMove(event) {
+        this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
+        var x = this.getTileXFromWorldX(event.worldX);
+        var y = this.getTileYFromWorldY(event.worldY);
+        this.highlightTile(x, y, false);
+        this.lastX = x;
+        this.lastY = y;
+    }
+
     mouseClick(event) {
         if (this.engineRef.gameMap.locations[this.x] && this.engineRef.gameMap.locations[this.x][this.y]) {
             this.selectTile();
         }
     }
 
-    highlightTile() {
+    highlightTile(x, y, moveCamera) {
+        this.targetX = x;
+        this.targetY = y;
+        this.updateSidePanelDescriptionsForTile(x, y);
+
         if (this.engineRef.gameMap.highlight[this.lastX] && this.engineRef.gameMap.highlight[this.lastX][this.lastY]) {
             this.engineRef.gameMap.highlight[this.lastX][this.lastY].setVisible(false);
         }
 
-        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
-            this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[this.x][this.y].sprite.spriteObject);
-            this.engineRef.gameMap.highlight[this.x][this.y].setVisible(true);
+        if (this.engineRef.gameMap.highlight[x] && this.engineRef.gameMap.highlight[x][y]) {
+            if (moveCamera) {
+                this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[x][y].sprite.spriteObject);
+            }
+            this.engineRef.gameMap.highlight[x][y].setVisible(true);
         }
     }
 
     clearHighlight() {
-        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
-            this.engineRef.gameMap.highlight[this.x][this.y].setVisible(false);
+        if (this.engineRef.gameMap.highlight[this.targetX] && this.engineRef.gameMap.highlight[this.targetX][this.targetY]) {
+            this.engineRef.gameMap.highlight[this.targetX][this.targetY].setVisible(false);
         }
     }
 
@@ -533,7 +573,7 @@ export class SingleRangedAttackHandler extends SelectIndexHandler {
     }
 
     selectTile() {
-        this.performAction(this.callback(this.x, this.y));
+        this.performAction(this.callback(this.targetX, this.targetY));
         this.exit();
     }
 }
@@ -544,10 +584,12 @@ export class AreaRangedAttackHandler extends SelectIndexHandler {
 
         this.radius = radius;
         this.callback = callback;
-        this.highlightTile();
+        this.highlightTile(this.x, this.y, true);
     }
 
-    highlightTile() {
+    highlightTile(x, y, moveCamera) {
+        this.targetX = x;
+        this.targetY = y;
         for (var i = this.lastX - this.radius + 1; i < this.lastX + this.radius; i++) {
             for (var j = this.lastY - this.radius + 1; j < this.lastY + this.radius; j++) {
                 if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
@@ -556,22 +598,22 @@ export class AreaRangedAttackHandler extends SelectIndexHandler {
             }
         }
 
-        for (var i = this.x - this.radius + 1; i < this.x + this.radius; i++) {
-            for (var j = this.y - this.radius + 1; j < this.y + this.radius; j++) {
+        for (var i = x - this.radius + 1; i < x + this.radius; i++) {
+            for (var j = y - this.radius + 1; j < y + this.radius; j++) {
                 if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
                     this.engineRef.gameMap.highlight[i][j].setVisible(true);
                 }
             }
         }
 
-        if (this.engineRef.gameMap.highlight[this.x] && this.engineRef.gameMap.highlight[this.x][this.y]) {
-            this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[this.x][this.y].sprite.spriteObject);
+        if (moveCamera && this.engineRef.gameMap.highlight[x] && this.engineRef.gameMap.highlight[x][y]) {
+            this.engineRef.scene.updateCameraView(this.engineRef.gameMap.highlight[x][y].sprite.spriteObject);
         }
     }
 
     clearHighlight() {
-        for (var i = this.x - this.radius; i < this.x + this.radius; i++) {
-            for (var j = this.y - this.radius; j < this.y + this.radius; j++) {
+        for (var i = this.targetX - this.radius; i < this.targetX + this.radius; i++) {
+            for (var j = this.targetY - this.radius; j < this.targetY + this.radius; j++) {
                 if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
                     this.engineRef.gameMap.highlight[i][j].setVisible(false);
                 }
@@ -580,7 +622,7 @@ export class AreaRangedAttackHandler extends SelectIndexHandler {
     }
 
     selectTile() {
-        this.performAction(this.callback(this.x, this.y));
+        this.performAction(this.callback(this.targetX, this.targetY));
         this.exit();
     }
 }
