@@ -59,10 +59,6 @@ export class RoomTunneler {
                 }
                 for (var i = 0; i < this.rooms.length; i++) {
                     var room = this.rooms[i];
-                    if (x == 16 && y == 22) {
-                        console.log(room.intersectsPoint(x,y));
-                        console.log(doorData.roomsEntered.includes(room));
-                    }
                     if (room.intersectsPoint(x,y)) {
                         if (!doorData.roomsEntered.includes(room)) {
                             doorData.roomsEntered.push(room);

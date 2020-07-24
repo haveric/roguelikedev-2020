@@ -131,6 +131,18 @@ export class GameMapLocation {
         return numTiles > 0 && numWalkable === numTiles;
     }
 
+    isTileAtDepth(depth) {
+        for (var i = 0; i < this.tiles.length; i++) {
+            var tile = this.tiles[i];
+
+            if (tile.renderOrder === depth) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     isTileBlockingFOV() {
         var numTiles = this.tiles.length;
         var anyBlocking = false;

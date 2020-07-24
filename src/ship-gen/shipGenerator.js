@@ -1,6 +1,7 @@
 import Srand from 'seeded-rand';
 import GameMap from "../gameMap";
 import EntityFactories from '../entityFactories';
+import RenderOrder from '../renderOrder';
 import Tiles from './tilefactories';
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
 import { RoomTunneler } from './roomTunneler.js'
@@ -196,13 +197,24 @@ export class Ship {
                     if (this.gameMap.locations[x][y].tiles.length === 0) {
                         this.gameMap.locations[x][y].addTile(Tiles.wall(x, y));
                         this.gameMap.locations[x][y].addTile(Tiles.darkFloor(x, y));
-                    } else if (this.gameMap.locations[x][y].isTileWalkable()) {
-                        console.log('Created door on edge of room at ' + x + ',' + y)
-                        this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
                     }
                 } else {
                     this.gameMap.locations[x][y].clearTiles();
                     this.gameMap.locations[x][y].addTile(Tiles.lightFloor(x, y));
+                }
+            }
+        }
+
+        for (var x = newRoom.x1; x <= newRoom.x2; x++) {
+            for (var y = newRoom.y1; y <= newRoom.y2; y++) {
+                if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
+                    if (this.gameMap.locations[x][y].isTileWalkable()) {
+                        if ((this.gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && this.gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
+                         || (this.gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && this.gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
+                            console.log('Created door on edge of room at ' + x + ',' + y)
+                            this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                        }
+                    }
                 }
             }
         }
