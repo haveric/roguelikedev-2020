@@ -34,6 +34,7 @@ export class DebugAction extends Action {
 
     perform(doAction) {
         if (doAction) {
+            this.getEngine().player.fighter.revive();
             this.getEngine().clearFov();
         }
 
