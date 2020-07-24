@@ -16,7 +16,7 @@ export class RoomTunneler {
     }
 
     _tunnelBetween(x1, y1, x2, y2) {
-        console.log("=== Start Tunnel");
+        console.log("=== Start Tunnel (" + x1 + "," + y1 +")->(" + x2 + "," + y2 + ")");
         var doorData = {
             roomsEntered: [],
             lastX: -1,
@@ -38,10 +38,15 @@ export class RoomTunneler {
     }
 
     _createTunnel(axisStart, axisEnd, otherAxis, isHorizontal, doorData) {
+        console.log(isHorizontal ? "  Horizontal" : "  Vertical");
+        var direction = 1;
+        if (axisEnd < axisStart) {
+            direction = -1;
+        }
         const start = Math.min(axisStart, axisEnd);
         const end =  Math.max(axisStart, axisEnd);
 
-        for (var axisCoord = start; axisCoord <= end; axisCoord++) {
+        for (var axisCoord = axisStart; axisCoord != axisEnd + direction; axisCoord += direction) {
             var x = isHorizontal ? axisCoord : otherAxis;
             var y = isHorizontal ? otherAxis : axisCoord;
 

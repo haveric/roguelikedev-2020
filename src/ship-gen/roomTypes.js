@@ -31,6 +31,13 @@ export class RectangularRoom {
             || (x >= this.x1 && x <= this.x2 && (y === this.y1 || y === this.y2));
     }
 
+    isInside(x, y) {
+        return this.x1 < x
+            && this.x2 > x
+            && this.y1 < y
+            && this.y2 > y;
+    }
+
     intersectsPoint(x, y) {
         return this.x1 <= x
             && this.x2 >= x
