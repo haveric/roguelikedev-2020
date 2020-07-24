@@ -288,6 +288,8 @@ export class MainGameEventHandler extends EventHandler {
 export class PlayerDeadEventHandler extends EventHandler {
     constructor(input, engine) {
         super(input, engine);
+
+        engine.ui.inventoryMenu.hide();
     }
 
     pressKey(event) {
