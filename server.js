@@ -210,6 +210,13 @@ io.on('connection', function (socket) {
         io.sockets.in("room-" + roomId).emit("c-createDebugRoom", { playerId: playerId });
     });
 
+    socket.on('s-regenMap', function(data) {
+        var roomId = data.roomId;
+        var room = rooms[roomId];
+        room.seed = generateRandomSeed();
+        io.sockets.in("room-" + roomId).emit("c-regenMap", { seed: room.seed });
+    });
+
     socket.on('updateEnergy', function(data) {
         var roomId = data.roomId;
         var playerId = data.playerId;

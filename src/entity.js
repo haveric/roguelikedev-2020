@@ -65,8 +65,8 @@ export default class Entity {
     }
 
     place(gameMap, x, y) {
-        if (this.parent && this.parent === this.getGameMap()) {
-            this.getGameMap().remove(this);
+        if (this.parent && this.getGameMap() && this.parent === this.getGameMap()) {
+            this.getGameMap().removeEntity(this);
         }
 
         if (x !== undefined) {

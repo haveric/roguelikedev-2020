@@ -130,8 +130,14 @@ export class EventHandler {
         scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax});
     }
 
-   debugRoom() {
-        self.socket.emit('s-createDebugRoom', { roomId: self.room.roomId, playerId: self.socket.id });
+    debugRoom() {
+        var scene = this.engineRef.scene;
+        scene.socket.emit('s-createDebugRoom', { roomId: scene.room.roomId, playerId: scene.socket.id });
+    }
+
+    regenMap() {
+        var scene = this.engineRef.scene;
+        scene.socket.emit('s-regenMap', { roomId: scene.room.roomId });
     }
 }
 
@@ -211,6 +217,11 @@ export class MainGameEventHandler extends EventHandler {
             case "PageDown":
                 console.log('Entering Debug Room...');
                 self.debugRoom();
+                break;
+            case "PageUp":
+                console.log('Regenerating map...');
+                self.regenMap();
+                break;
             default:
                 break;
         }

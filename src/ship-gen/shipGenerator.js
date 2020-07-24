@@ -107,8 +107,8 @@ export class Ship {
                 }
 
                 this._createRoom(hold);
-                this._tunnelBetweenRooms(previousMainRoom, hold);
                 this.rooms.push(hold);
+                this._tunnelBetweenRooms(previousMainRoom, hold);
 
                 // generate 4 side rooms off of each hold
                 console.log('Generating rooms for hold ' + h + '...');
@@ -136,9 +136,9 @@ export class Ship {
                         }
 
                         this._createRoom(room);
-                        this._tunnelBetweenRooms(hold, room);
                         this.rooms.push(room);
-                    } 
+                        this._tunnelBetweenRooms(hold, room);
+                    }
                     
                 }
 
@@ -159,7 +159,7 @@ export class Ship {
     }
 
     _tunnelBetweenRooms(room1, room2) {
-        var tunneler = new RoomTunneler(this.gameMap, room1, room2);
+        var tunneler = new RoomTunneler(this.gameMap, this.rooms, room1, room2);
         tunneler.tunnelBetweenRooms();
     }
 
@@ -196,6 +196,9 @@ export class Ship {
                     if (this.gameMap.locations[x][y].tiles.length === 0) {
                         this.gameMap.locations[x][y].addTile(Tiles.wall(x, y));
                         this.gameMap.locations[x][y].addTile(Tiles.darkFloor(x, y));
+                    } else if (this.gameMap.locations[x][y].isTileWalkable()) {
+                        console.log('Created door on edge of room at ' + x + ',' + y)
+                        this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
                     }
                 } else {
                     this.gameMap.locations[x][y].clearTiles();

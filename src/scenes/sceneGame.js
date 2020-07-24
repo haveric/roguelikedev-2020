@@ -42,11 +42,9 @@ export class SceneGame extends Phaser.Scene {
             var newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
             if (player.playerId == self.socket.id) {
                 self.player = newPlayer;
-                self.entities.push(self.player);
                 self.players.push(self.player);
             } else {
                 var otherPlayer = newPlayer;
-                self.entities.push(otherPlayer);
 
                 self.otherPlayers.push(otherPlayer);
                 self.players.push(otherPlayer);
@@ -56,14 +54,7 @@ export class SceneGame extends Phaser.Scene {
         // var isHost = self.room.players[0].playerId == self.socket.id;
         this.engine = new Engine(this, self.player, self.players);
 
-        var width = 70;
-        var height = 40;
-        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
-        this.shipGenerator = new Ship(this.engine, self.entities, genOptions);
-        this.engine.gameMap = this.shipGenerator.generateDungeon();
-        this.shipGenerator.setPlayerCoordinates(self.players);
-        this.engine.createSprites(self);
-        this.engine.updateFov();
+        self.generateNewShip();
 
         if (self.player) {
             self.events.emit('ui-enable', self.engine);
@@ -80,6 +71,16 @@ export class SceneGame extends Phaser.Scene {
             if (self.player.playerId === playerId) {
                 self.engine.eventHandler.warp(debugRoomCenter.x, debugRoomCenter.y);
             }
+        });
+
+        self.socket.on('c-regenMap', function (data) {
+            var newSeed = data.seed;
+            self.room.seed = newSeed;
+            Srand.seed(newSeed);
+            console.log("New Seed: " + newSeed);
+
+            self.engine.teardown();
+            self.generateNewShip();
         });
 
         self.socket.on('c-performAction', function (data) {
@@ -146,7 +147,6 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
-        self.updateCameraView();
         self.engine.ui.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
     }
 
@@ -162,5 +162,24 @@ export class SceneGame extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
         this.cameras.main.startFollow(objectToFollow);
         this.cameras.main.followOffset.set(-100, -50);
+    }
+
+    generateNewShip() {
+        var width = 70;
+        var height = 40;
+        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
+        this.entities = [];
+        this.entities.push(this.player);
+        for (var i = 0; i < this.otherPlayers.length; i++) {
+            this.entities.push(this.otherPlayers[i]);
+        }
+
+        this.shipGenerator = new Ship(this.engine, this.entities, genOptions);
+        this.engine.gameMap = this.shipGenerator.generateDungeon();
+        this.shipGenerator.setPlayerCoordinates(this.players);
+        this.engine.createSprites(this);
+        this.engine.updateFov();
+
+        this.updateCameraView();
     }
 }

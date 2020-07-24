@@ -91,6 +91,14 @@ export default class GameMap {
 
         return null;
     }
+
+    removeEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index != -1) {
+            this.entities.splice(index, 1);
+        }
+    }
+
 }
 
 export class GameMapLocation {

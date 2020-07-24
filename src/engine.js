@@ -69,6 +69,35 @@ export default class Engine {
         }
     }
 
+    teardown() {
+        for (var i = 0; i < this.gameMap.width; i++) {
+            for (var j = 0; j < this.gameMap.height; j++) {
+                var tiles = this.gameMap.locations[i][j].tiles;
+                for (var k = 0; k < tiles.length; k++) {
+                    var tile = tiles[k];
+                    tile.sprite.destroy();
+                }
+
+                var shroudTile = this.gameMap.shroud[i][j];
+                if (shroudTile) {
+                    shroudTile.sprite.destroy();
+                }
+
+                var highlightTile = this.gameMap.highlight[i][j];
+                if (highlightTile) {
+                    highlightTile.sprite.destroy();
+                }
+            }
+        }
+
+        for (var i = 0; i < this.gameMap.entities.length; i++) {
+            var entity = this.gameMap.entities[i];
+            entity.sprite.destroy();
+        }
+
+        this.lastExploredFovTiles = [];
+    }
+
     handleEnemyTurns() {
         for (var i = 0; i < this.gameMap.entities.length; i++) {
             var entity = this.gameMap.entities[i];
