@@ -507,11 +507,6 @@ export class SelectIndexHandler extends AskUserEventHandler {
 
     mouseMove(event) {
         this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
-        var x = this.getTileXFromWorldX(event.worldX);
-        var y = this.getTileYFromWorldY(event.worldY);
-        this.highlightTile(x, y, false);
-        this.lastX = x;
-        this.lastY = y;
     }
 
     mouseClick(event) {
@@ -572,6 +567,15 @@ export class SingleRangedAttackHandler extends SelectIndexHandler {
         this.callback = callback;
     }
 
+    mouseMove(event) {
+        this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
+        var x = this.getTileXFromWorldX(event.worldX);
+        var y = this.getTileYFromWorldY(event.worldY);
+        this.highlightTile(x, y, false);
+        this.lastX = x;
+        this.lastY = y;
+    }
+
     selectTile() {
         this.performAction(this.callback(this.targetX, this.targetY));
         this.exit();
@@ -619,6 +623,15 @@ export class AreaRangedAttackHandler extends SelectIndexHandler {
                 }
             }
         }
+    }
+
+    mouseMove(event) {
+        this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
+        var x = this.getTileXFromWorldX(event.worldX);
+        var y = this.getTileYFromWorldY(event.worldY);
+        this.highlightTile(x, y, false);
+        this.lastX = x;
+        this.lastY = y;
     }
 
     selectTile() {
