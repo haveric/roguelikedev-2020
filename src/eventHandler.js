@@ -289,6 +289,7 @@ export class PlayerDeadEventHandler extends EventHandler {
     constructor(input, engine) {
         super(input, engine);
 
+        engine.scene.events.emit('ui-updateHp', { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.hpMax });
         engine.ui.inventoryMenu.hide();
     }
 
