@@ -17,6 +17,7 @@ export default class Engine {
         self.eventHandler = new MainGameEventHandler(scene.input, this);
         self.ui = new UI(scene.scene.get('SceneGameUI'));
         self.gameMap = null;
+        self.gameMaps = {};
         self.player = player;
         self.players = players;
 
@@ -69,30 +70,63 @@ export default class Engine {
         }
     }
 
-    teardown() {
-        for (var i = 0; i < this.gameMap.width; i++) {
-            for (var j = 0; j < this.gameMap.height; j++) {
-                var tiles = this.gameMap.locations[i][j].tiles;
-                for (var k = 0; k < tiles.length; k++) {
-                    var tile = tiles[k];
-                    tile.sprite.destroy();
-                }
-
-                var shroudTile = this.gameMap.shroud[i][j];
-                if (shroudTile) {
-                    shroudTile.sprite.destroy();
-                }
-
-                var highlightTile = this.gameMap.highlight[i][j];
-                if (highlightTile) {
-                    highlightTile.sprite.destroy();
-                }
-            }
+    addGameMap(gameMap) {
+        if (!this.hasGameMap(gameMap.name)) {
+            this.gameMaps[gameMap.name] = gameMap;
         }
 
-        for (var i = 0; i < this.gameMap.entities.length; i++) {
-            var entity = this.gameMap.entities[i];
-            entity.sprite.destroy();
+        return this.gameMaps[gameMap.name];
+    }
+
+    getGameMap(name) {
+        if (this.hasGameMap(name)) {
+            return this.gameMaps[name];
+        }
+
+        return null;
+    }
+
+    hasGameMap(name) {
+        var index = this.gameMaps[name];
+        return index > -1;
+    }
+
+    removeGameMap(gameMap) {
+        delete this.gameMaps[gameMap.name];
+    }
+
+    setGameMap(gameMap) {
+        this.addGameMap(gameMap);
+        this.teardown();
+        this.gameMap = gameMap;
+    }
+
+    teardown() {
+        if (this.gameMap) {
+            for (var i = 0; i < this.gameMap.width; i++) {
+                for (var j = 0; j < this.gameMap.height; j++) {
+                    var tiles = this.gameMap.locations[i][j].tiles;
+                    for (var k = 0; k < tiles.length; k++) {
+                        var tile = tiles[k];
+                        tile.sprite.destroy();
+                    }
+
+                    var shroudTile = this.gameMap.shroud[i][j];
+                    if (shroudTile) {
+                        shroudTile.sprite.destroy();
+                    }
+
+                    var highlightTile = this.gameMap.highlight[i][j];
+                    if (highlightTile) {
+                        highlightTile.sprite.destroy();
+                    }
+                }
+            }
+
+            for (var i = 0; i < this.gameMap.entities.length; i++) {
+                var entity = this.gameMap.entities[i];
+                entity.sprite.destroy();
+            }
         }
 
         this.lastExploredFovTiles = [];

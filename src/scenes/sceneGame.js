@@ -64,13 +64,18 @@ export class SceneGame extends Phaser.Scene {
 
         self.socket.on('c-createDebugRoom', function (data) {
             var playerId = data.playerId;
-            var debugRoomCenter = self.shipGenerator.createDebugRoom().center();
-            self.engine.createSprites(self, 0, 0, 8, 8);
-            self.updateCameraView();
+            var debugMap = self.shipGenerator.createDebugMap();
 
-            if (self.player.playerId === playerId) {
-                self.engine.eventHandler.warp(debugRoomCenter.x, debugRoomCenter.y);
+            self.engine.setGameMap(debugMap);
+            self.engine.createSprites(self);
+
+            for (var i = 0; i < self.players.length; i++) {
+                var player = self.players[i];
+                player.place(debugMap, 25 + i, 25);
             }
+
+            self.engine.updateFov();
+            self.updateCameraView();
         });
 
         self.socket.on('c-regenMap', function (data) {
@@ -182,7 +187,7 @@ export class SceneGame extends Phaser.Scene {
         }
 
         this.shipGenerator = new Ship(this.engine, this.entities, genOptions);
-        this.engine.gameMap = this.shipGenerator.generateDungeon();
+        this.engine.setGameMap(this.shipGenerator.generateDungeon());
         this.shipGenerator.setPlayerCoordinates(this.players);
         this.engine.createSprites(this);
         this.engine.updateFov();

@@ -37,17 +37,17 @@ export class Ship {
         this.rooms = [];
         this.breachRoom = null;
         this.bridge = null;
-        this.debugRoom = null;
     }
 
     // Generates a game map with no players inside
     generateDungeon() {
-        this.gameMap = new GameMap(this.engineRef, this.shipOptions.width, this.shipOptions.height, this.entities);
+        var name = "ship-" + Srand.intInRange(100000000, 999999999);
+        this.gameMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height, this.entities);
 
         // create breach room near center left of map
         var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
         var breachRoom = new BreachRoom(0, breachX2);
-        this.breachRoom = this._createRoom(breachRoom);
+        this.breachRoom = this._createRoom(this.gameMap, breachRoom);
         this.rooms.push(breachRoom);
 
         var holdGenerationYMin = Math.floor(this.shipOptions.height / 4);
@@ -72,7 +72,7 @@ export class Ship {
                 }
                 continue;
             }
-            this._createRoom(bridge);
+            this._createRoom(this.gameMap, bridge);
             this.rooms.push(bridge);
         }
 
@@ -107,7 +107,7 @@ export class Ship {
                     continue;
                 }
 
-                this._createRoom(hold);
+                this._createRoom(this.gameMap, hold);
                 this.rooms.push(hold);
                 this._tunnelBetweenRooms(previousMainRoom, hold);
 
@@ -136,7 +136,7 @@ export class Ship {
                             continue;
                         }
 
-                        this._createRoom(room);
+                        this._createRoom(this.gameMap, room);
                         this.rooms.push(room);
                         this._tunnelBetweenRooms(hold, room);
                     }
@@ -164,19 +164,25 @@ export class Ship {
         tunneler.tunnelBetweenRooms();
     }
 
-    createDebugRoom() {
-        if(!this.debugRoom) {
-            var debug = new RectangularRoom(0, 0, 8, 8, 'BUG');
-            this.debugRoom = this._createRoom(debug);
+    createDebugMap() {
+        if (!this.engineRef.hasGameMap("DEBUG")) {
+            var entities = [];
+            for (var i = 0; i < this.engineRef.players.length; i++) {
+                entities.push(this.engineRef.players[i]);
+            }
+            var debugGameMap = new GameMap(this.engineRef, "DEBUG", 50, 50, entities);
+            var debugRoom = new RectangularRoom(0, 0, 50, 50, 'DEBUG');
+            debugRoom = this._createRoom(debugGameMap, debugRoom);
 
             // add test lights
-            this.gameMap.locations[this.debugRoom.x1 + 1][this.debugRoom.y1 + 1].addTile(Tiles.redTorch(this.debugRoom.x1 + 1, this.debugRoom.y1 + 1));
-            this.gameMap.locations[this.debugRoom.x2 - 1][this.debugRoom.y1 + 1].addTile(Tiles.yellowTorch(this.debugRoom.x2 - 1, this.debugRoom.y1 + 1));
-            this.gameMap.locations[this.debugRoom.x1 + 3][this.debugRoom.y2 - 1].addTile(Tiles.blueTorch(this.debugRoom.x1 + 3, this.debugRoom.y2 - 1));
-            return this.debugRoom;
-        } else {
-            console.log('Debug room already created, ya dummy!');
+            debugGameMap.locations[debugRoom.x1 + 1][debugRoom.y1 + 1].addTile(Tiles.redTorch(debugRoom.x1 + 1, debugRoom.y1 + 1));
+            debugGameMap.locations[debugRoom.x2 - 1][debugRoom.y1 + 1].addTile(Tiles.yellowTorch(debugRoom.x2 - 1, debugRoom.y1 + 1));
+            debugGameMap.locations[debugRoom.x1 + 3][debugRoom.y2 - 1].addTile(Tiles.blueTorch(debugRoom.x1 + 3, debugRoom.y2 - 1));
+
+            return this.engineRef.addGameMap(debugGameMap);
         }
+
+        return this.engineRef.getGameMap("DEBUG");
     }
 
     _doesThisIntersectWithOtherRooms(roomToCheck) {
@@ -189,18 +195,18 @@ export class Ship {
         return false;
     }
 
-    _createRoom(newRoom) {
+    _createRoom(gameMap, newRoom) {
         // Create Room in map
         for (var x = newRoom.x1; x <= newRoom.x2; x++) {
             for (var y = newRoom.y1; y <= newRoom.y2; y++) {
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
-                    if (this.gameMap.locations[x][y].tiles.length === 0) {
-                        this.gameMap.locations[x][y].addTile(Tiles.wall(x, y));
-                        this.gameMap.locations[x][y].addTile(Tiles.darkFloor(x, y));
+                    if (gameMap.locations[x][y].tiles.length === 0) {
+                        gameMap.locations[x][y].addTile(Tiles.wall(x, y));
+                        gameMap.locations[x][y].addTile(Tiles.darkFloor(x, y));
                     }
                 } else {
-                    this.gameMap.locations[x][y].clearTiles();
-                    this.gameMap.locations[x][y].addTile(Tiles.lightFloor(x, y));
+                    gameMap.locations[x][y].clearTiles();
+                    gameMap.locations[x][y].addTile(Tiles.lightFloor(x, y));
                 }
             }
         }
@@ -208,11 +214,11 @@ export class Ship {
         for (var x = newRoom.x1; x <= newRoom.x2; x++) {
             for (var y = newRoom.y1; y <= newRoom.y2; y++) {
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
-                    if (this.gameMap.locations[x][y].isTileWalkable()) {
-                        if ((this.gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && this.gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
-                         || (this.gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && this.gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
-                            console.log('Created door on edge of room at ' + x + ',' + y)
-                            this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                    if (gameMap.locations[x][y].isTileWalkable()) {
+                        if ((gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
+                         || (gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
+                            console.log('Created door on edge of room at ' + x + ',' + y);
+                            gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
                         }
                     }
                 }

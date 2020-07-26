@@ -5,8 +5,9 @@ import { Actor, Item } from './entity';
 import Tilemaps from './tilemaps';
 
 export default class GameMap {
-    constructor(engine, width, height, entities) {
+    constructor(engine, name, width, height, entities) {
         this.engineRef = engine;
+        this.name = name;
         this.width = width;
         this.height = height;
         this.entities = entities || [];

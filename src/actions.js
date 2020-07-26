@@ -279,6 +279,7 @@ export class WarpAction extends Action {
     perform(doAction) {
         var success = false;
 
+        var messageLog = this.getEngine().ui.messageLog;
         if (this.getGameMap().locations[this.x][this.y].isTileWalkable()) {
             if (doAction) {
                 this.entityRef.moveTo(this.getEngine(), this.x, this.x);
@@ -287,7 +288,7 @@ export class WarpAction extends Action {
             success = true;
         } else {
             if (this.isCurrentPlayer()) {
-                messageLog.text("You wan't warp there.").build();
+                messageLog.text("You can't warp there.").build();
             }
             success = false;
         }
