@@ -447,16 +447,15 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
 export class SelectDirectionHandler extends AskUserEventHandler {
     constructor(input, engine, validTargets, callback) {
         super(input, engine);
+        var player = this.engineRef.player;
+        this.x = player.x;
+        this.y = player.y;
+        this.validTargets = validTargets;
+        this.callback = callback;
 
-        if (!validTargets) {
-            this.exit();
+        if (!this.validTargets || this.validTargets.length === 0) {
+            this.selectDirection(-1, -1);
         } else {
-            var player = this.engineRef.player;
-            this.x = player.x;
-            this.y = player.y;
-            this.validTargets = validTargets;
-            this.callback = callback;
-
             this.highlightTargets();
         }
     }
