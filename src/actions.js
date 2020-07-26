@@ -301,6 +301,30 @@ export class WarpAction extends Action {
     }
 }
 
+export class TakeStairsAction extends Action {
+    constructor(entity) {
+        super(entity);
+    }
+
+    perform(doAction) {
+        var actorX = this.entityRef.x;
+        var actorY = this.entityRef.y;
+
+        var success = false;
+        if (doAction) {
+            this.getGameMap().locations[actorX][actorY].tileComponentRun("stairs", "take")
+        } else {
+            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("stairs");
+        }
+
+        return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "TakeStairsAction" };
+    }
+}
+
 export class PickupAction extends Action {
     constructor(entity) {
         super(entity);

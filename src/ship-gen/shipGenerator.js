@@ -170,14 +170,31 @@ export class Ship {
             for (var i = 0; i < this.engineRef.players.length; i++) {
                 entities.push(this.engineRef.players[i]);
             }
-            var debugGameMap = new GameMap(this.engineRef, "DEBUG", 50, 50, entities);
-            var debugRoom = new RectangularRoom(0, 0, 50, 50, 'DEBUG');
+            var debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20, entities);
+            var debugRoom = new RectangularRoom(0, 0, 20, 20, 'DEBUG');
             debugRoom = this._createRoom(debugGameMap, debugRoom);
 
             // add test lights
             debugGameMap.locations[debugRoom.x1 + 1][debugRoom.y1 + 1].addTile(Tiles.redTorch(debugRoom.x1 + 1, debugRoom.y1 + 1));
             debugGameMap.locations[debugRoom.x2 - 1][debugRoom.y1 + 1].addTile(Tiles.yellowTorch(debugRoom.x2 - 1, debugRoom.y1 + 1));
             debugGameMap.locations[debugRoom.x1 + 3][debugRoom.y2 - 1].addTile(Tiles.blueTorch(debugRoom.x1 + 3, debugRoom.y2 - 1));
+
+            var center = debugRoom.center();
+            debugGameMap.locations[center.x - 1][center.y].addTile(Tiles.stairsDown(center.x - 1, center.y, "DEBUG-DOWN"));
+            debugGameMap.locations[center.x + 1][center.y].addTile(Tiles.stairsUp(center.x + 1, center.y, "DEBUG-UP"));
+
+            var debugGameMapDown = new GameMap(this.engineRef, "DEBUG-DOWN", 20, 20, entities);
+            var debugRoomDown = new RectangularRoom(6, 6, 6, 6, 'DEBUG');
+            debugRoomDown = this._createRoom(debugGameMapDown, debugRoomDown);
+            debugGameMapDown.locations[center.x - 1][center.y].addTile(Tiles.stairsUp(center.x - 1, center.y, "DEBUG"));
+
+            var debugGameMapUp = new GameMap(this.engineRef, "DEBUG-UP", 20, 20, entities);
+            var debugRoomUp = new RectangularRoom(5, 5, 15, 15, 'DEBUG');
+            debugRoomUp = this._createRoom(debugGameMapUp, debugRoomUp);
+            debugGameMapUp.locations[center.x + 1][center.y].addTile(Tiles.stairsDown(center.x + 1, center.y, "DEBUG"));
+
+            this.engineRef.addGameMap(debugGameMapDown);
+            this.engineRef.addGameMap(debugGameMapUp);
 
             return this.engineRef.addGameMap(debugGameMap);
         }

@@ -1,5 +1,6 @@
 import LightSource from "../components/lightSource";
 import Openable from "../components/openable";
+import Stairs from "../components/stairs";
 import Tile from "../tile";
 import Sprite from "../sprite";
 import RenderOrder from "../renderOrder";
@@ -37,5 +38,17 @@ Tiles.blueTorch = (x, y) => {
 Tiles.greenDoor = (x, y) => {
     var tile = new Tile(x, y, "Door", "Typical door that opens and closes.", new Sprite("door", "009933"), false, true, RenderOrder.WALL);
     tile.openable = new Openable(tile, false, "door", "doorOpen");
+    return tile;
+}
+
+Tiles.stairsDown = (x, y, level) => {
+    var tile = new Tile(x, y, "Stairs (Down)", "There must be something below.", new Sprite("stairsDown", "eeeeee"), true, false, RenderOrder.WALL);
+    tile.stairs = new Stairs(tile, level);
+    return tile;
+}
+
+Tiles.stairsUp = (x, y, level) => {
+    var tile = new Tile(x, y, "Stairs (Up)", "There must be something above.", new Sprite("stairsUp", "eeeeee"), true, false, RenderOrder.WALL);
+    tile.stairs = new Stairs(tile, level);
     return tile;
 }

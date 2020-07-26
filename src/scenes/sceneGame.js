@@ -8,7 +8,7 @@ import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
 import { InventoryEventHandler } from '../eventHandler';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, ItemAction, DropItemAction, DebugAction } from '../actions';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, TakeStairsAction, ItemAction, DropItemAction, DebugAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -67,11 +67,11 @@ export class SceneGame extends Phaser.Scene {
             var debugMap = self.shipGenerator.createDebugMap();
 
             self.engine.setGameMap(debugMap);
-            self.engine.createSprites(self);
+            self.engine.createSprites();
 
             for (var i = 0; i < self.players.length; i++) {
                 var player = self.players[i];
-                player.place(debugMap, 25 + i, 25);
+                player.place(debugMap, 10 + i, 10);
             }
 
             self.engine.updateFov();
@@ -117,6 +117,9 @@ export class SceneGame extends Phaser.Scene {
                             break;
                         case "PickupAction":
                             new PickupAction(player).perform(true);
+                            break;
+                        case "TakeStairsAction":
+                            new TakeStairsAction(player).perform(true);
                             break;
                         case "ItemAction":
                             new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
@@ -189,7 +192,7 @@ export class SceneGame extends Phaser.Scene {
         this.shipGenerator = new Ship(this.engine, this.entities, genOptions);
         this.engine.setGameMap(this.shipGenerator.generateDungeon());
         this.shipGenerator.setPlayerCoordinates(this.players);
-        this.engine.createSprites(this);
+        this.engine.createSprites();
         this.engine.updateFov();
 
         this.updateCameraView();

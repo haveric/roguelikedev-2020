@@ -24,7 +24,7 @@ export default class Engine {
         self.enemyTurn = 0;
     }
 
-    createSprites(scene, startX, startY, endX, endY) {
+    createSprites(startX, startY, endX, endY) {
         startX = startX || 0;
         startY = startY || 0;
         endX = endX || this.gameMap.width;
@@ -37,7 +37,7 @@ export default class Engine {
                 var tiles = this.gameMap.locations[i][j].tiles;
                 for (var k = 0; k < tiles.length; k++) {
                     var tile = tiles[k];
-                    tile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+                    tile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                 }
             }
         }
@@ -48,7 +48,7 @@ export default class Engine {
             var x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
             var y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
 
-            entity.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+            entity.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
         }
 
         for (var i = startX; i < endX; i++) {
@@ -58,12 +58,12 @@ export default class Engine {
 
                 var shroudTile = this.gameMap.shroud[i][j];
                 if (shroudTile) {
-                    shroudTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+                    shroudTile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                 }
 
                 var highlightTile = this.gameMap.highlight[i][j];
                 if (highlightTile) {
-                    highlightTile.sprite.create(scene, x, y, Tilemaps.getTileMap().name);
+                    highlightTile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                     highlightTile.render();
                 }
             }
@@ -87,8 +87,8 @@ export default class Engine {
     }
 
     hasGameMap(name) {
-        var index = this.gameMaps[name];
-        return index > -1;
+        var gameMap = this.gameMaps[name];
+        return gameMap !== undefined;
     }
 
     removeGameMap(gameMap) {

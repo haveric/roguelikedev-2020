@@ -19,7 +19,7 @@ export default class GameMap {
         this.locations = create2dArray(this.width);
         for (var i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
-                this.locations[i][j] = new GameMapLocation();
+                this.locations[i][j] = new GameMapLocation(this);
             }
         }
 
@@ -128,13 +128,15 @@ function _entityDepthCompare(a, b) {
 }
 
 export class GameMapLocation {
-    constructor() {
+    constructor(gameMap) {
+        this.gameMap = gameMap;
         this.tiles = [];
         this.entities = [];
     }
 
     addTile(tile) {
         if (!this.tiles.includes(tile)) {
+            tile.parent = this.gameMap;
             this.tiles.push(tile);
             this.tiles.sort(_entityDepthCompare);
         }
@@ -181,6 +183,16 @@ export class GameMapLocation {
         }
 
         return numTiles > 0 && anyBlocking;
+    }
+
+    tileHasComponent(component) {
+        for (var i = 0; i < this.tiles.length; i++) {
+            if (this.tiles[i][component]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     tileComponentCheck(component, toRun) {
