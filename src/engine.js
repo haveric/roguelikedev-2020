@@ -198,6 +198,7 @@ export default class Engine {
             for (var j = 0; j < this.gameMap.height; j++) {
                 this.gameMap.shroud[i][j].explore();
                 this.gameMap.shroud[i][j].render();
+                this.gameMap.lastExploredFovTiles.push(this.gameMap.shroud[i][j]);
             }
         }
     }
