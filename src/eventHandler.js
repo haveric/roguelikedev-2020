@@ -136,7 +136,7 @@ export class EventHandler {
             var actionResult = action.perform(false);
             if (actionResult.success) {
                 var scene = this.engineRef.scene;
-                scene.socket.emit('s-performAction', {roomId: scene.room.roomId, playerId: scene.socket.id, actionData: actionResult.action.toString()});
+                scene.socket.emit('s-performAction', {roomId: scene.room.roomId, playerId: scene.socket.id, useEnergy: actionResult.useEnergy, actionData: actionResult.action.toString()});
             }
         }
     }
@@ -170,8 +170,6 @@ export class EventHandler {
         player.energy = 5000;
         player.energyMax = 5000;
         this.engineRef.debugEnabled = true;
-        scene.events.emit('ui-updateEnergy', {energy: player.energy, energyMax: player.energyMax });
-        scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax });
     }
 
     addEnergy() {

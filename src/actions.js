@@ -1,7 +1,11 @@
 export class ActionResult {
-    constructor(action, success) {
+    constructor(action, success, useEnergy) {
         this.action = action;
         this.success = success;
+        this.useEnergy = useEnergy;
+        if (this.useEnergy === null) {
+            this.useEnergy = success;
+        }
     }
 }
 
@@ -38,7 +42,7 @@ export class DebugAction extends Action {
             this.getEngine().clearFov();
         }
 
-        return new ActionResult(this, true);
+        return new ActionResult(this, true, false);
     }
 
     toString() {

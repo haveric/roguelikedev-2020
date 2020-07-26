@@ -169,31 +169,36 @@ io.on('connection', function (socket) {
         var roomId = data.roomId;
         var playerId = data.playerId;
         var actionData = data.actionData;
+        var useEnergy = data.useEnergy;
 
         var room = rooms[roomId];
         var players = room.players;
 
         var playerHasEnergy = false;
-        for (var i = 0; i < players.length; i++) {
-            var player = players[i];
-
-            if (player.playerId == playerId) {
-                if (player.energy > 0) {
-                    playerHasEnergy = true;
-                    break;
-                }
-            }
-        }
-
-        if (playerHasEnergy) {
+        if (useEnergy) {
             for (var i = 0; i < players.length; i++) {
                 var player = players[i];
 
                 if (player.playerId == playerId) {
-                    player.energy -= 1;
-                } else {
-                    if (player.energy < player.energyMax) {
-                        player.energy += 1;
+                    if (player.energy > 0) {
+                        playerHasEnergy = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!useEnergy || playerHasEnergy) {
+            if (useEnergy) {
+                for (var i = 0; i < players.length; i++) {
+                    var player = players[i];
+
+                    if (player.playerId == playerId) {
+                        player.energy -= 1;
+                    } else {
+                        if (player.energy < player.energyMax) {
+                            player.energy += 1;
+                        }
                     }
                 }
             }
