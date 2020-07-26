@@ -3,7 +3,7 @@ export class ActionResult {
         this.action = action;
         this.success = success;
         this.useEnergy = useEnergy;
-        if (this.useEnergy === null) {
+        if (this.useEnergy === undefined) {
             this.useEnergy = success;
         }
     }

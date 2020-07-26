@@ -225,6 +225,7 @@ io.on('connection', function (socket) {
     socket.on('updateEnergy', function(data) {
         var roomId = data.roomId;
         var playerId = data.playerId;
+        var giveEnergy = data.giveEnergy;
 
         var room = rooms[roomId];
         var players = room.players;
@@ -246,7 +247,7 @@ io.on('connection', function (socket) {
                     player.energy -= 1;
                 }
             } else {
-                if (player.energy < player.energyMax) {
+                if (giveEnergy && player.energy < player.energyMax) {
                     player.energy += 1;
                 }
             }
