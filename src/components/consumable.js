@@ -13,16 +13,18 @@ export class Consumable extends BaseComponent {
         return new ItemAction(actor, inventorySlot);
     }
 
-    activate(action) {
+    activate(action, doAction) {
         console.error("Not Implemented");
         return false;
     }
 
-    consume() {
+    consume(doAction) {
         var entity = this.parent;
         var inventory = entity.parent;
         if (inventory instanceof Inventory) {
-            inventory.remove(entity);
+            if (doAction) {
+                inventory.remove(entity);
+            }
             return true;
         }
 
@@ -38,16 +40,20 @@ export class HealingConsumable extends Consumable {
         this.activateWord = activateWord;
     }
 
-    activate(action) {
+    activate(action, doAction) {
         var consumer = action.entityRef;
         var amountRecovered = consumer.fighter.heal(this.amount);
         var messageLog = this.getEngine().ui.messageLog;
         if (amountRecovered > 0) {
-            messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
-            this.consume();
+            if (doAction) {
+                messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
+            }
+            return this.consume(doAction);
         } else {
             messageLog.text("Your health is already full.").build();
         }
+
+        return false;
     }
 }
 
@@ -58,7 +64,7 @@ export class LaserDamageConsumable extends Consumable {
         this.maxRange = maxRange;
     }
 
-    activate(action) {
+    activate(action, doAction) {
         var consumer = action.entityRef;
         var target = null;
         var closestDistance = this.maxRange + 1;
@@ -78,12 +84,16 @@ export class LaserDamageConsumable extends Consumable {
 
         var messageLog = this.getEngine().ui.messageLog;
         if (target) {
-            messageLog.text("A laser strikes ").text(target.name, "#" + target.sprite.color).text(", for ").text(this.damage, "#660000").text(" damage!").build();
-            target.fighter.takeDamage(this.damage);
-            this.consume();
+            if (doAction) {
+                messageLog.text("A laser strikes ").text(target.name, "#" + target.sprite.color).text(", for ").text(this.damage, "#660000").text(" damage!").build();
+                target.fighter.takeDamage(this.damage);
+            }
+            return this.consume(doAction);
         } else {
             messageLog.text("No enemy is close enough to strike.").build();
         }
+
+        return false;
     }
 }
 
@@ -104,7 +114,7 @@ export class ConfusionConsumable extends Consumable {
         return null;
     }
 
-    activate(action) {
+    activate(action, doAction) {
         var consumer = action.entityRef;
         var target = action.getTargetActor();
         var messageLog = this.getEngine().ui.messageLog;
@@ -115,10 +125,14 @@ export class ConfusionConsumable extends Consumable {
         } else if (target === consumer) {
             messageLog.text("You cannot confuse yourself.").build();
         } else {
-            messageLog.text("The eyes of the ").text(target.name, "#" + target.sprite.color).text(" look vacant, as it starts to stumble around!").build();
-            target.ai = new ConfusedEnemy(target, target.ai, this.numTurns);
-            this.consume();
+            if (doAction) {
+                messageLog.text("The eyes of the ").text(target.name, "#" + target.sprite.color).text(" look vacant, as it starts to stumble around!").build();
+                target.ai = new ConfusedEnemy(target, target.ai, this.numTurns);
+            }
+            return this.consume(doAction);
         }
+
+        return false;
     }
 }
 
@@ -140,7 +154,7 @@ export class GrenadeDamageConsumable extends Consumable {
         return null;
     }
 
-    activate(action) {
+    activate(action, doAction) {
         var consumer = action.entityRef;
         var targetXY = action.targetXY;
         var messageLog = this.getEngine().ui.messageLog;
@@ -152,17 +166,21 @@ export class GrenadeDamageConsumable extends Consumable {
             for (var i = 0; i < actors.length; i++) {
                 var actor = actors[i];
                 if (actor.distance(targetXY.x, targetXY.y) < this.radius) {
-                    messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + this.damage + " damage!").build();
-                    actor.fighter.takeDamage(this.damage);
+                    if (doAction) {
+                        messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + this.damage + " damage!").build();
+                        actor.fighter.takeDamage(this.damage);
+                    }
                     targetsHit = true;
                 }
             }
 
             if (targetsHit) {
-                this.consume();
+                return this.consume(doAction);
             } else {
                 messageLog.text("There are no targets in the radius.").build();
             }
+
+            return false;
         }
     }
 }

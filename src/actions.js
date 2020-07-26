@@ -112,6 +112,7 @@ export class MeleeAction extends ActionWithDirection {
             success = true;
         } else {
             messageLog.text("Nothing to attack.").build();
+            success = false;
         }
 
         return new ActionResult(this, success);
@@ -137,6 +138,7 @@ export class MovementAction extends ActionWithDirection {
             if (this.isCurrentPlayer()) {
                 messageLog.text("That way is blocked.").build();
             }
+            success = false;
         } else {
             if (doAction) {
                 this.entityRef.move(this.getEngine(), this.dx, this.dy);
@@ -169,12 +171,15 @@ export class OpenAction extends ActionWithDirection {
         if (doAction) {
             success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
         } else {
-            success = !this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
+            var check = this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
 
-            if (success === null) {
+            if (check === null) {
                 if (this.isCurrentPlayer()) {
                     messageLog.text("There is nothing there to open.").build();
                 }
+                success = false;
+            } else {
+                success = !check;
             }
         }
 
@@ -269,6 +274,11 @@ export class WarpAction extends Action {
             }
 
             success = true;
+        } else {
+            if (this.isCurrentPlayer()) {
+                messageLog.text("You wan't warp there.").build();
+            }
+            success = false;
         }
 
         return new ActionResult(this, success);
@@ -296,6 +306,7 @@ export class PickupAction extends Action {
             if (this.isCurrentPlayer()) {
                 messageLog.text("There is nothing here to pick up.").build();
             }
+
             return new ActionResult(this, false);
         } else {
             var success = false;
@@ -307,6 +318,7 @@ export class PickupAction extends Action {
                         if (this.isCurrentPlayer()) {
                             messageLog.text("Your inventory is full.").build();
                         }
+                        success = false;
                         break;
                     }
 
@@ -360,12 +372,10 @@ export class ItemAction extends Action {
     }
 
     perform(doAction) {
-        if (doAction) {
-            var item = this.entityRef.inventory.items[this.inventorySlot];
-            item.consumable.activate(this);
-        }
+        var item = this.entityRef.inventory.items[this.inventorySlot];
+        var success = item.consumable.activate(this, doAction);
 
-        return new ActionResult(this, true);
+        return new ActionResult(this, success);
     }
 
     toString() {
