@@ -217,6 +217,13 @@ export class CloseAction extends ActionWithDirection {
                 if (this.isCurrentPlayer()) {
                     messageLog.text("There is nothing there to close.").build();
                 }
+            } else {
+                var blockingEntity = this._getBlockingEntity();
+
+                if (blockingEntity) {
+                    messageLog.text(blockingEntity.name, "#" + blockingEntity.sprite.color).text(" is blocking the door.").build();
+                    success = false;
+                }
             }
         }
 
