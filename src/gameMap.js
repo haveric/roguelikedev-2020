@@ -189,7 +189,7 @@ export class GameMapLocation {
             }
         }
 
-        return false;
+        return null;
     }
 
     tileComponentRun(component, toRun) {
@@ -200,7 +200,7 @@ export class GameMapLocation {
             }
         }
 
-        return false;
+        return null;
     }
 
     addEntity(entity) {

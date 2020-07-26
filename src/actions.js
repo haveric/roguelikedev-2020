@@ -164,11 +164,18 @@ export class OpenAction extends ActionWithDirection {
         var destX = destXY.x;
         var destY = destXY.y;
 
+        var messageLog = this.getEngine().ui.messageLog;
         var success;
         if (doAction) {
             success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
         } else {
             success = !this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
+
+            if (success === null) {
+                if (this.isCurrentPlayer()) {
+                    messageLog.text("There is nothing there to open.").build();
+                }
+            }
         }
 
         return new ActionResult(this, success);
@@ -176,6 +183,39 @@ export class OpenAction extends ActionWithDirection {
 
     toString() {
         return { action: "OpenAction", args: { dx: this.dx, dy: this.dy } };
+    }
+}
+
+export class CloseAction extends ActionWithDirection {
+    constructor(entity, dx, dy) {
+        super(entity, dx, dy);
+    }
+
+    perform(doAction) {
+        var success = false;
+        var destXY = this._getDestXY();
+        var destX = destXY.x;
+        var destY = destXY.y;
+
+        var messageLog = this.getEngine().ui.messageLog;
+        var success;
+        if (doAction) {
+            success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "close");
+        } else {
+            success = this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
+
+            if (success === null) {
+                if (this.isCurrentPlayer()) {
+                    messageLog.text("There is nothing there to close.").build();
+                }
+            }
+        }
+
+        return new ActionResult(this, success);
+    }
+
+    toString() {
+        return { action: "CloseAction", args: { dx: this.dx, dy: this.dy } };
     }
 }
 

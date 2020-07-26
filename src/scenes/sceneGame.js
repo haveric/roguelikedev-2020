@@ -8,7 +8,7 @@ import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
 import GameMap from '../gameMap';
 import EntityFactories from '../entityFactories';
 import { InventoryEventHandler } from '../eventHandler';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, WarpAction, PickupAction, ItemAction, DropItemAction, DebugAction } from '../actions';
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, ItemAction, DropItemAction, DebugAction } from '../actions';
 import Fighter from '../components/fighter';
 
 export class SceneGame extends Phaser.Scene {
@@ -103,6 +103,9 @@ export class SceneGame extends Phaser.Scene {
                             break;
                         case "OpenAction":
                             new OpenAction(player, args.dx, args.dy).perform(true);
+                            break;
+                        case "CloseAction":
+                            new CloseAction(player, args.dx, args.dy).perform(true);
                             break;
                         case "WarpAction":
                             new WarpAction(player, args.x, args.y).perform(true);

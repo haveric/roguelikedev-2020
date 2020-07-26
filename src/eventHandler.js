@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction, DebugAction } from './actions';
+import { BumpAction, WaitAction, PickupAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from './actions';
 import Tilemaps from './tilemaps';
 
 export class EventHandler {
@@ -252,6 +252,47 @@ export class MainGameEventHandler extends EventHandler {
             case "KeyD":
                 this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
                 break;
+            case "KeyO":
+                var player = this.engineRef.player;
+                var targets = [];
+
+                for (var i = -1; i <= 1; i++) {
+                    for (var j = -1; j <= 1; j++) {
+                        if (i != 0 || j != 0) {
+                            var x = player.x + i;
+                            var y = player.y + j;
+                            var success = this.engineRef.gameMap.locations[x][y].tileComponentCheck("openable", "getIsOpen");
+                            if (success === false) {
+                                targets.push({"x": x, "y": y});
+                            }
+                        }
+                    }
+                }
+
+                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef.scene.input, this.engineRef, targets, function(dx, dy) {
+                    return new OpenAction(player, dx, dy);
+                });
+                break;
+            case "KeyC":
+                var player = this.engineRef.player;
+                var targets = [];
+
+                for (var i = -1; i <= 1; i++) {
+                    for (var j = -1; j <= 1; j++) {
+                        if (i != 0 || j != 0) {
+                            var x = player.x + i;
+                            var y = player.y + j;
+                            if (this.engineRef.gameMap.locations[x][y].tileComponentCheck("openable", "getIsOpen")) {
+                                targets.push({"x": x, "y": y});
+                            }
+                        }
+                    }
+                }
+
+                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef.scene.input, this.engineRef, targets, function(dx, dy) {
+                    return new CloseAction(player, dx, dy);
+                });
+                break;
             case "Backslash":
                 this.engineRef.eventHandler = new LookHandler(this.engineRef.scene.input, this.engineRef);
                 break;
@@ -402,6 +443,118 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
 
     selectItem(index, item) {
         this.dropItem(index);
+    }
+}
+
+export class SelectDirectionHandler extends AskUserEventHandler {
+    constructor(input, engine, validTargets, callback) {
+        super(input, engine);
+
+        if (!validTargets) {
+            this.exit();
+        } else {
+            var player = this.engineRef.player;
+            this.x = player.x;
+            this.y = player.y;
+            this.validTargets = validTargets;
+            this.callback = callback;
+
+            this.highlightTargets();
+        }
+    }
+
+    pressKey(event) {
+        var dx = 0;
+        var dy = 0;
+        switch (event.code) {
+            // Left
+            case "ArrowLeft":
+            case "Numpad4":
+                dx = -1;
+                break;
+            // Right
+            case "ArrowRight":
+            case "Numpad6":
+                dx = 1;
+                break;
+            // Up
+            case "ArrowUp":
+            case "Numpad8":
+                dy = -1;
+                break;
+            // Down
+            case "ArrowDown":
+            case "Numpad2":
+                dy = 1;
+                break;
+            // Northwest
+            case "Numpad7":
+                dx = -1;
+                dy = -1;
+                break;
+            // Northeast
+            case "Numpad9":
+                dx = 1;
+                dy = -1;
+                break;
+            // Southwest
+            case "Numpad1":
+                dx = -1;
+                dy = 1;
+                break;
+            // Southeast
+            case "Numpad3":
+                dx = 1;
+                dy = 1;
+                break;
+            default:
+                break;
+        }
+
+        if (dx != 0 || dy != 0) {
+            this.selectDirection(dx, dy);
+        } else {
+            super.pressKey(event);
+        }
+    }
+
+    highlightTargets() {
+        if (this.validTargets) {
+            for (var i = 0; i < this.validTargets.length; i++) {
+                var target = this.validTargets[i];
+
+                if (this.engineRef.gameMap.highlight[target.x] && this.engineRef.gameMap.highlight[target.x][target.y]) {
+                    this.engineRef.gameMap.highlight[target.x][target.y].setVisible(true);
+                }
+            }
+        }
+    }
+
+    clearHighlight() {
+        if (this.validTargets) {
+            for (var i = 0; i < this.validTargets.length; i++) {
+                var target = this.validTargets[i];
+
+                if (this.engineRef.gameMap.highlight[target.x] && this.engineRef.gameMap.highlight[target.x][target.y]) {
+                    this.engineRef.gameMap.highlight[target.x][target.y].setVisible(false);
+                }
+            }
+        }
+    }
+
+    mouseMove(event) {
+        this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
+    }
+
+    selectDirection(dx, dy) {
+        this.performAction(this.callback(dx, dy));
+        this.exit();
+    }
+
+    exit() {
+        this.clearHighlight();
+
+        super.exit();
     }
 }
 
