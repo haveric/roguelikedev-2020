@@ -4,7 +4,7 @@ import Sprite from './sprite';
 import RenderOrder from './renderOrder';
 import Fighter from './components/fighter';
 import { BaseAI, HostileEnemy } from './components/ai';
-import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable } from './components/consumable';
+import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from './components/consumable';
 import Inventory from './components/inventory';
 
 export default class EntityFactories {}
@@ -66,5 +66,11 @@ EntityFactories.confuseRay = (x, y) => {
 EntityFactories.grenade = (x, y) => {
     var entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade", "ff0000"));
     entity.setComponent("consumable", new GrenadeDamageConsumable(entity, 12, 3));
+    return entity;
+}
+
+EntityFactories.resurrectionInjector = (x, y) => {
+    var entity = new Item(x, y, "Resurrection Injector", "Brings dead things back to life. What looks like possible side effects has been scratched out.", new Sprite("resurrectionInjector", "00ee00"));
+    entity.setComponent("consumable", new ResurrectionConsumable(entity));
     return entity;
 }

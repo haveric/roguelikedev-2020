@@ -58,6 +58,7 @@ export default class Fighter extends BaseComponent {
         this.parent.renderOrder = RenderOrder.CORPSE;
 
         // Save just in case we need to resurrect the entity
+        this.parent.originalSpriteName = this.parent.sprite.name;
         this.parent.originalColor = this.parent.sprite.color;
         this.parent.originalAI = this.parent.ai;
         this.parent.originalName = this.parent.name;
@@ -74,7 +75,7 @@ export default class Fighter extends BaseComponent {
         var engine = this.getEngine();
         if (this._hp <= 0) {
             this.parent.renderOrder = RenderOrder.ACTOR;
-            this.parent.sprite.updateSprite("player", this.parent.originalColor);
+            this.parent.sprite.updateSprite(this.parent.originalSpriteName, this.parent.originalColor);
             this.parent.name = this.parent.originalName;
             this.parent.ai = this.parent.originalAI;
             if (this.parent === engine.player) {

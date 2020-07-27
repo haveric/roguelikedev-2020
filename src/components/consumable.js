@@ -1,5 +1,6 @@
 import { ItemAction } from '../actions';
-import { SingleRangedAttackHandler, AreaRangedAttackHandler } from '../eventHandler';
+import { Actor } from '../entity';
+import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHandler } from '../eventHandler';
 import BaseComponent from './baseComponent';
 import Inventory from './inventory';
 import { ConfusedEnemy } from './ai';
@@ -51,6 +52,53 @@ export class HealingConsumable extends Consumable {
             return this.consume(doAction);
         } else {
             messageLog.text("Your health is already full.").build();
+        }
+
+        return false;
+    }
+}
+
+export class ResurrectionConsumable extends Consumable {
+    constructor(entity) {
+        super(entity);
+    }
+
+    getAction(actor, inventorySlot) {
+        var consumer = this.getEngine().player;
+        this.getEngine().ui.messageLog.text("Select a target location.").build();
+        this.getEngine().ui.inventoryMenu.hide();
+
+        var targets = [];
+        var entities = this.getGameMap().entities;
+        for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            if (entity instanceof Actor && !entity.isAlive() && consumer.distanceTo(entity) == 1) {
+                targets.push({"x": entity.x, "y": entity.y});
+            }
+        }
+
+        this.getEngine().eventHandler = new SelectDirectionHandler(this.getEngine().scene.input, this.getEngine(), targets, function(dx, dy, x, y) {
+            return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
+        });
+
+        return null;
+    }
+
+    activate(action, doAction) {
+        var consumer = action.entityRef;
+        var destXY = action.targetXY;
+        var target = this.getGameMap().getPriorityDeadActorAtLocation(destXY.x, destXY.y);
+        var messageLog = this.getEngine().ui.messageLog;
+        if (!target || target.isAlive()) {
+            messageLog.text("You must select a corpse to revive.").build();
+        } else if (!this.getGameMap().shroud[target.x][target.y].visible) {
+            messageLog.text("You cannot target an area that you cannot see.").build();
+        } else {
+            if (doAction) {
+                messageLog.text(target.name, "#" + target.sprite.color).text(" is looking a bit more lively!").build();
+                target.fighter.revive();
+            }
+            return this.consume(doAction);
         }
 
         return false;

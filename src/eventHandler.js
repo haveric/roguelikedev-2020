@@ -555,7 +555,7 @@ export class SelectDirectionHandler extends AskUserEventHandler {
     }
 
     selectDirection(dx, dy) {
-        this.performAction(this.callback(dx, dy));
+        this.performAction(this.callback(dx, dy, this.x + dx, this.y + dy));
         this.exit();
     }
 

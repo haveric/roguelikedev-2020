@@ -173,13 +173,15 @@ export class Ship {
             var debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20, entities);
             var debugRoom = new RectangularRoom(0, 0, 20, 20, 'DEBUG');
             debugRoom = this._createRoom(debugGameMap, debugRoom);
+            var center = debugRoom.center();
 
             // add test lights
             debugGameMap.locations[debugRoom.x1 + 1][debugRoom.y1 + 1].addTile(Tiles.redTorch(debugRoom.x1 + 1, debugRoom.y1 + 1));
             debugGameMap.locations[debugRoom.x2 - 1][debugRoom.y1 + 1].addTile(Tiles.yellowTorch(debugRoom.x2 - 1, debugRoom.y1 + 1));
             debugGameMap.locations[debugRoom.x1 + 3][debugRoom.y2 - 1].addTile(Tiles.blueTorch(debugRoom.x1 + 3, debugRoom.y2 - 1));
 
-            var center = debugRoom.center();
+            new EntityFactories.resurrectionInjector(center.x, center.y).place(debugGameMap);
+
             debugGameMap.locations[center.x - 1][center.y].addTile(Tiles.stairsDown(center.x - 1, center.y, "DEBUG-DOWN"));
             debugGameMap.locations[center.x + 1][center.y].addTile(Tiles.stairsUp(center.x + 1, center.y, "DEBUG-UP"));
 
@@ -293,14 +295,16 @@ export class Ship {
             if (!entity) {
                 var itemChance = Srand.random();
 
-                if (itemChance < 0.7) {
+                if (itemChance < 0.6) {
                     new EntityFactories.medkit(x, y).place(this.gameMap);
-                } else if (itemChance < 0.8) {
+                } else if (itemChance < 0.73) {
                     new EntityFactories.grenade(x, y).place(this.gameMap);
-                } else if (itemChance < 0.9) {
+                } else if (itemChance < 0.86) {
                     new EntityFactories.confuseRay(x, y).place(this.gameMap);
-                } else {
+                } else if (itemChance < 0.99) {
                     new EntityFactories.laserCharge(x, y).place(this.gameMap);
+                } else {
+                    new EntityFactories.resurrectionInjector(x, y).place(this.gameMap);
                 }
             }
         }

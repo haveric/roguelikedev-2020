@@ -95,6 +95,26 @@ export default class GameMap {
         return items;
     }
 
+    getPriorityDeadActorAtLocation(x, y) {
+        var players = this.engineRef.players;
+        for (var i = 0; i < players.length; i++) {
+            var player = players[i];
+            if (!player.isAlive() && player.x == x && player.y == y) {
+                return player;
+            }
+        }
+
+        var entities = this.getGameMap().entities;
+        for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            if (entity instanceof Actor && !entity.isAlive() && entity.x == x && entity.y == y) {
+                return entity;
+            }
+        }
+
+        return null;
+    }
+
     getActorAtLocation(x, y) {
         var actors = this.getActors();
         for (var i = 0; i < actors.length; i++) {
