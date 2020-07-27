@@ -183,15 +183,19 @@ export class Ship {
             debugGameMap.locations[center.x - 1][center.y].addTile(Tiles.stairsDown(center.x - 1, center.y, "DEBUG-DOWN"));
             debugGameMap.locations[center.x + 1][center.y].addTile(Tiles.stairsUp(center.x + 1, center.y, "DEBUG-UP"));
 
-            var debugGameMapDown = new GameMap(this.engineRef, "DEBUG-DOWN", 20, 20, entities);
+            var debugGameMapDown = new GameMap(this.engineRef, "DEBUG-DOWN", 20, 20, []);
             var debugRoomDown = new RectangularRoom(6, 6, 6, 6, 'DEBUG');
             debugRoomDown = this._createRoom(debugGameMapDown, debugRoomDown);
             debugGameMapDown.locations[center.x - 1][center.y].addTile(Tiles.stairsUp(center.x - 1, center.y, "DEBUG"));
 
-            var debugGameMapUp = new GameMap(this.engineRef, "DEBUG-UP", 20, 20, entities);
-            var debugRoomUp = new RectangularRoom(5, 5, 15, 15, 'DEBUG');
+            var debugGameMapUp = new GameMap(this.engineRef, "DEBUG-UP", 20, 20, []);
+            var debugRoomUp = new RectangularRoom(0, 0, 15, 15, 'DEBUG');
             debugRoomUp = this._createRoom(debugGameMapUp, debugRoomUp);
             debugGameMapUp.locations[center.x + 1][center.y].addTile(Tiles.stairsDown(center.x + 1, center.y, "DEBUG"));
+
+            for (var i = 1; i < 14; i++) {
+                new EntityFactories.targetDummy(i, 1).place(debugGameMapUp);
+            }
 
             this.engineRef.addGameMap(debugGameMapDown);
             this.engineRef.addGameMap(debugGameMapUp);

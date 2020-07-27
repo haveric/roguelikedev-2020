@@ -17,18 +17,27 @@ EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
     return entity;
 }
 
+EntityFactories.targetDummy = (x, y) => {
+    var entity = new Actor(x, y, "Target Dummy", "It just stands there, mocking you.", new Sprite("targetDummy", "654321"));
+    entity.setComponent("fighter", new Fighter(entity, 1, 0, 0, true));
+    entity.setComponent("ai", new BaseAI(entity));
+    return entity;
+}
+
 EntityFactories.spacePirate = (x, y) => {
     var entity = new Actor(x, y, "Space Pirate", "A Pirate. In space! He has a menacing look.", new Sprite("spacePirate", "cc0000"));
     entity.setComponent("fighter", new Fighter(entity, 16, 1, 4));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
 }
+
 EntityFactories.attackDog = (x, y) => {
     var entity = new Actor(x, y, "Attack Dog", "Faithful companion to pirates; looking mighty hungry for flesh.", new Sprite("attackDog", "654321"));
     entity.setComponent("fighter", new Fighter(entity, 10, 0, 3));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
 }
+
 EntityFactories.automatedTurret = (x, y) => {
     var entity = new Actor(x, y, "Automated Turret", "Deadly Turret, pointing straight at you and defending whatever is nearby from you.", new Sprite("automatedTurret", "222222"));
     entity.setComponent("fighter", new Fighter(entity, 20, 2, 2));

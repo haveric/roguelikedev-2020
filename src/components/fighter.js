@@ -4,7 +4,7 @@ import { PlayerDeadEventHandler, MainGameEventHandler } from '../eventHandler';
 import BaseComponent from './baseComponent';
 
 export default class Fighter extends BaseComponent {
-    constructor(entity, hp, defense, power) {
+    constructor(entity, hp, defense, power, invulnerable=false) {
         super(entity);
 
         this._hp = hp;
@@ -12,6 +12,7 @@ export default class Fighter extends BaseComponent {
         this.hpMax = hp;
         this.defense = defense;
         this.power = power;
+        this.invulnerable = invulnerable;
     }
 
     getHp() {
@@ -19,10 +20,12 @@ export default class Fighter extends BaseComponent {
     }
 
     setHp(hp) {
-        this._hp = Math.max(0, Math.min(hp, this.hpMax));
+        if (!this.invulnerable) {
+            this._hp = Math.max(0, Math.min(hp, this.hpMax));
 
-        if (this._hp == 0 && this.parent.ai) {
-            this.die();
+            if (this._hp == 0 && this.parent.ai) {
+                this.die();
+            }
         }
     }
 
