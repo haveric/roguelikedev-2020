@@ -32,7 +32,7 @@ EntityFactories.spacePirate = (x, y) => {
 }
 
 EntityFactories.attackDog = (x, y) => {
-    var entity = new Actor(x, y, "Attack Dog", "Faithful companion to pirates; looking mighty hungry for flesh.", new Sprite("attackDog", "654321"));
+    var entity = new Actor(x, y, "Attack Dog", "Faithful companion to pirates; looking mighty hungry for flesh.", new Sprite("attackDog", "654321"), false);
     entity.setComponent("fighter", new Fighter(entity, 10, 0, 3));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
@@ -62,7 +62,6 @@ EntityFactories.confuseRay = (x, y) => {
     entity.setComponent("consumable", new ConfusionConsumable(entity, 10));
     return entity;
 }
-
 
 EntityFactories.grenade = (x, y) => {
     var entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade", "ff0000"));

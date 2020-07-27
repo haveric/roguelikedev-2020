@@ -250,7 +250,7 @@ export class BumpAction extends ActionWithDirection {
 
         if (target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
-        } else if (_isClosedOpenable(tiles)) {
+        } else if (this.entityRef.canOpenDoors && _isClosedOpenable(tiles)) {
             return new OpenAction(this.entityRef, this.dx, this.dy).perform(doAction);
         } else {
             return new MovementAction(this.entityRef, this.dx, this.dy).perform(doAction);

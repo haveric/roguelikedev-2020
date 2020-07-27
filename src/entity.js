@@ -87,8 +87,9 @@ export default class Entity {
 }
 
 export class Actor extends Entity {
-    constructor(x, y, name, description, sprite) {
+    constructor(x, y, name, description, sprite, canOpenDoors=true) {
         super(x, y, name, description, sprite, true, RenderOrder.ACTOR);
+        this.canOpenDoors = canOpenDoors;
     }
 
     isAlive() {

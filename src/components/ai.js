@@ -83,7 +83,12 @@ export class HostileEnemy extends BaseAI {
             if (this.path.length > 0) {
                 var next = this.path.shift();
 
-                return new MovementAction(this.parent, next.x - this.parent.x, next.y - this.parent.y).perform(true);
+                var resultAction = new BumpAction(this.parent, next.x - this.parent.x, next.y - this.parent.y).perform(true);
+                if (!resultAction.success) {
+                    this.path.unshift(next);
+                }
+
+                return resultAction;
             }
         }
 
