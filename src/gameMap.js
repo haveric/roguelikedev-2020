@@ -133,6 +133,13 @@ export default class GameMap {
             this.entities.splice(index, 1);
         }
     }
+
+    addEntity(entity) {
+        var index = this.entities.indexOf(entity);
+        if (index == -1) {
+            this.entities.push(entity);
+        }
+    }
 }
 
 function _entityDepthCompare(a, b) {
