@@ -30,9 +30,8 @@ export class GeneratorOptions {
 }
 
 export class Ship {
-    constructor(engine, entities, shipOptions) {
+    constructor(engine, shipOptions) {
         this.engineRef = engine;
-        this.entities = entities;
         this.shipOptions = shipOptions;
         this.rooms = [];
         this.breachRoom = null;
@@ -42,7 +41,7 @@ export class Ship {
     // Generates a game map with no players inside
     generateDungeon() {
         var name = "ship-" + Srand.intInRange(100000000, 999999999);
-        this.gameMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height, this.entities);
+        this.gameMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height);
 
         // create breach room near center left of map
         var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
@@ -166,11 +165,7 @@ export class Ship {
 
     createDebugMap() {
         if (!this.engineRef.hasGameMap("DEBUG")) {
-            var entities = [];
-            for (var i = 0; i < this.engineRef.players.length; i++) {
-                entities.push(this.engineRef.players[i]);
-            }
-            var debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20, entities);
+            var debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20);
             var debugRoom = new RectangularRoom(0, 0, 20, 20, 'DEBUG');
             debugRoom = this._createRoom(debugGameMap, debugRoom);
             var center = debugRoom.center();

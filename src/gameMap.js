@@ -5,12 +5,12 @@ import { Actor, Item } from './entity';
 import Tilemaps from './tilemaps';
 
 export default class GameMap {
-    constructor(engine, name, width, height, entities) {
+    constructor(engine, name, width, height) {
         this.engineRef = engine;
         this.name = name;
         this.width = width;
         this.height = height;
-        this.entities = entities || [];
+        this.entities = [];
 
         // Add a full map offset to allow for top and left sides to have blank space and zoom to be centered
         this.offsetWidth = this.width * Tilemaps.getTileMap().frameWidth;
