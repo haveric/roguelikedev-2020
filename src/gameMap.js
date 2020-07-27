@@ -66,7 +66,7 @@ export default class GameMap {
             }
         }
 
-        this.entities.sort(_entityDepthCompare);
+        entities.sort(_entityDepthCompare);
 
         return entities;
     }
