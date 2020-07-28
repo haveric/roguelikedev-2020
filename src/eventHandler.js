@@ -78,31 +78,36 @@ export class EventHandler {
         var sidePanel = this.engineRef.ui.sidePanel;
         if (gameMap.locations[x] && gameMap.locations[x][y]) {
             sidePanel.text("Looking at [" + x + "][" + y + "]:\n");
-            if (!skipBlocking) {
-                var entity = gameMap.getBlockingEntityAtLocation(x, y);
-                if (entity) {
+
+            if (gameMap.shroud[x][y].visible || gameMap.shroud[x][y].explored) {
+                if (!skipBlocking) {
+                    var entity = gameMap.getBlockingEntityAtLocation(x, y);
+                    if (entity) {
+                        sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                        sidePanel.text(entity.description + "\n\n");
+                    }
+                }
+
+                var entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);
+                for (var i = 0; i < entities.length; i++) {
+                    var entity = entities[i];
                     sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
-                    sidePanel.text(entity.description + "\n\n");
+                    if (entities.length == 1) {
+                        sidePanel.text(entity.description + "\n\n");
+                    }
                 }
-            }
-
-            var entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);
-            for (var i = 0; i < entities.length; i++) {
-                var entity = entities[i];
-                sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
-                if (entities.length == 1) {
-                    sidePanel.text(entity.description + "\n\n");
+                if (entities.length > 1) {
+                    sidePanel.text("\n");
                 }
-            }
-            if (entities.length > 1) {
-                sidePanel.text("\n");
-            }
 
-            var tiles = gameMap.locations[x][y].tiles;
-            for (var i = 0; i < tiles.length; i++) {
-                var tile = tiles[i];
-                sidePanel.text(tile.name + "\n");
-                sidePanel.text(tile.description + "\n\n");
+                var tiles = gameMap.locations[x][y].tiles;
+                for (var i = 0; i < tiles.length; i++) {
+                    var tile = tiles[i];
+                    sidePanel.text(tile.name + "\n");
+                    sidePanel.text(tile.description + "\n\n");
+                }
+            } else {
+                sidePanel.text("You can't see here." + "\n");
             }
 
             sidePanel.build();
