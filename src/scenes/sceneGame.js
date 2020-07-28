@@ -175,7 +175,7 @@ export class SceneGame extends Phaser.Scene {
         }
 
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
-        this.cameras.main.startFollow(objectToFollow);
+        this.cameras.main.startFollow(objectToFollow, true);
         this.cameras.main.followOffset.set(-100, -50);
     }
 
