@@ -22,7 +22,7 @@ export class SceneLobby extends Phaser.Scene {
         var config = this.cache.json.get('config');
         socket = io(config.protocol + config.server + ":" + config.port);
 
-        var lobbyStatsStyle = { font: "22px Arial", fill: "#fff"}
+        var lobbyStatsStyle = { font: "22px Arial", fill: "#fff"};
         this.lobbyCount = this.add.text(20, 50, "Lobby: 0", lobbyStatsStyle);
         this.roomCount = this.add.text(20, 80, "Rooms: 0", lobbyStatsStyle);
         this.playerCount = this.add.text(20, 110, "- Players: 0", lobbyStatsStyle);

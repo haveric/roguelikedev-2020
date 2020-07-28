@@ -20,14 +20,9 @@ export class SceneGame extends Phaser.Scene {
         this.room = data.room;
         this.socket = data.socket;
 
-        this.mapOffsetWidth = 400;
-        this.mapOffsetHeight = 300;
-
-        this.keysDown = [];
         this.player;
         this.otherPlayers = [];
         this.players = [];
-        this.entities = [];
 
         Srand.seed(this.room.seed);
         console.log("Seed: " + this.room.seed);
