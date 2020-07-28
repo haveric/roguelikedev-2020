@@ -312,7 +312,9 @@ export class TakeStairsAction extends Action {
 
         var success = false;
         if (doAction) {
-            this.getGameMap().locations[actorX][actorY].tileComponentRun("stairs", "take")
+            this.getGameMap().locations[actorX][actorY].tileComponentRun("stairs", "take");
+
+            success = true;
         } else {
             success = this.getGameMap().locations[actorX][actorY].tileHasComponent("stairs");
         }

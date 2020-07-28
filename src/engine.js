@@ -163,33 +163,58 @@ export default class Engine {
     }
 
     updateFov() {
-        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
-            var tile = this.gameMap.lastExploredFovTiles[i];
-            tile.resetVisible();
-        }
+        var gameMaps = [];
 
-        var newExploredTiles = [];
-        var newLightSources = [];
         if (!this.player || this.player.hasSharedVision) {
             for (var i = 0; i < this.players.length; i++) {
                 var player = this.players[i];
-                FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, player.x, player.y, player.lightRadius);
+                var playerGameMap = player.getGameMap();
+
+                if (gameMaps.indexOf(playerGameMap) === -1) {
+                    gameMaps.push(playerGameMap);
+                }
             }
         } else {
-            FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, this.player.x, this.player.y, this.player.lightRadius);
+            gameMaps.push(this.gameMap);
         }
 
-        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
-            var tile = this.gameMap.lastExploredFovTiles[i];
-            tile.render();
+        for (var i = 0; i < gameMaps.length; i++) {
+            var gameMap = gameMaps[i];
+            gameMap.newExploredTiles = [];
+            gameMap.newLightSources = [];
+
+            for (var j = 0; j < gameMap.lastExploredFovTiles.length; j++) {
+                var tile = gameMap.lastExploredFovTiles[j];
+                tile.resetVisible();
+            }
         }
 
-        for (var i = 0; i < newExploredTiles.length; i++) {
-            var tile = newExploredTiles[i];
-            tile.render();
+        if (!this.player || this.player.hasSharedVision) {
+            for (var i = 0; i < this.players.length; i++) {
+                var player = this.players[i];
+                FovAdamMillazo.compute(player.getGameMap(), player.x, player.y, player.lightRadius);
+            }
+        } else {
+            FovAdamMillazo.compute(this.gameMap, this.player.x, this.player.y, this.player.lightRadius);
         }
 
-        this.gameMap.lastExploredFovTiles = newExploredTiles;
+        for (var i = 0; i < gameMaps.length; i++) {
+            var gameMap = gameMaps[i];
+
+            if (gameMap === this.gameMap) {
+                for (var i = 0; i < gameMap.lastExploredFovTiles.length; i++) {
+                    var tile = gameMap.lastExploredFovTiles[i];
+                    tile.render();
+                }
+
+                for (var i = 0; i < gameMap.newExploredTiles.length; i++) {
+                    var tile = gameMap.newExploredTiles[i];
+                    tile.render();
+                }
+            }
+
+            gameMap.lastExploredFovTiles = gameMap.newExploredTiles;
+        }
     }
 
     clearFov() {

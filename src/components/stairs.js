@@ -17,9 +17,9 @@ export default class Stairs extends BaseComponent {
             }
 
             actor.place(newGameMap, this.parent.x, this.parent.y);
+            engine.updateFov();
 
             if (actor === engine.player) {
-                engine.updateFov();
                 engine.scene.updateCameraView();
             }
         }

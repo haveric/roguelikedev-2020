@@ -82,7 +82,11 @@ export default class Entity {
 
         var spriteX = gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth);
         var spriteY = gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight);
-        this.sprite.create(gameMap.engineRef.scene, spriteX, spriteY);
+        if (gameMap === gameMap.engineRef.gameMap) {
+            this.sprite.create(gameMap.engineRef.scene, spriteX, spriteY);
+        } else {
+            this.sprite.destroy();
+        }
     }
 }
 

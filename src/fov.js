@@ -18,14 +18,14 @@ class Slope {
 }
 
 export class Fov {}
-Fov.exploreTile = (gameMap, x, y, exploredTiles, lightSource) => {
+Fov.exploreTile = (gameMap, x, y, lightSource) => {
     if (gameMap.shroud[x] && gameMap.shroud[x][y]) {
         // Skip already explored tiles from other players
         if (!gameMap.shroud[x][y].visible) {
             gameMap.shroud[x][y].explore();
 
-            if (exploredTiles) {
-                exploredTiles.push(gameMap.shroud[x][y]);
+            if (gameMap.newExploredTiles) {
+                gameMap.newExploredTiles.push(gameMap.shroud[x][y]);
             }
 
         }
@@ -43,7 +43,7 @@ Fov.exploreTile = (gameMap, x, y, exploredTiles, lightSource) => {
     }
 }
 
-Fov.exploreLight = (gameMap, exploredTiles, newLightSources, x, y, octant, originX, originY) => {
+Fov.exploreLight = (gameMap, x, y, octant, originX, originY) => {
     switch(octant) {
         case 0:
             originX += x;
@@ -86,11 +86,11 @@ Fov.exploreLight = (gameMap, exploredTiles, newLightSources, x, y, octant, origi
             var lightSource = tile.lightSource;
 
             if (lightSource) {
-                if (!newLightSources.includes(lightSource)) {
-                    newLightSources.push(lightSource);
+                if (!gameMap.newLightSources.includes(lightSource)) {
+                    gameMap.newLightSources.push(lightSource);
 
                     for (var octant = 0; octant < 8; octant ++) {
-                        FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, 1, originX, originY, lightSource.range, lightSource.range, new Slope(1, 1), new Slope(0, 1), lightSource);
+                        FovAdamMillazo.computeOctant(gameMap, octant, 1, originX, originY, lightSource.range, lightSource.range, new Slope(1, 1), new Slope(0, 1), lightSource);
                     }
 
                 }
@@ -145,7 +145,7 @@ Fov.blocksLight = (gameMap, x, y, octant, originX, originY)  => {
     return blocksLight;
 }
 
-Fov.setVisible = (gameMap, exploredTiles, x, y, octant, originX, originY, lightSource) => {
+Fov.setVisible = (gameMap, x, y, octant, originX, originY, lightSource) => {
     switch(octant) {
         case 0:
             originX += x;
@@ -181,11 +181,11 @@ Fov.setVisible = (gameMap, exploredTiles, x, y, octant, originX, originY, lightS
             break;
     }
 
-    Fov.exploreTile(gameMap, originX, originY, exploredTiles, lightSource);
+    Fov.exploreTile(gameMap, originX, originY, lightSource);
 }
 
 export class FovSimple {}
-FovSimple.compute = (gameMap, exploredTiles, x, y, radius) => {
+FovSimple.compute = (gameMap, x, y, radius) => {
     var minX = Math.max(0, x - radius);
     var maxX = Math.min(gameMap.width, x + radius);
     var minY = Math.max(0, y - radius);
@@ -193,7 +193,7 @@ FovSimple.compute = (gameMap, exploredTiles, x, y, radius) => {
 
     for (var i = minX; i < maxX; i++) {
         for (var j = minY; j < maxY; j++) {
-            Fov.exploreTile(gameMap, i, j, exploredTiles);
+            Fov.exploreTile(gameMap, i, j);
         }
     }
 }
@@ -202,15 +202,15 @@ FovSimple.compute = (gameMap, exploredTiles, x, y, radius) => {
 * Credit to Adam Millazo: http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
 */
 export class FovAdamMillazo { }
-FovAdamMillazo.compute = (gameMap, exploredTiles, newLightSources, x, y, radius) => {
-    Fov.exploreTile(gameMap, x, y, exploredTiles);
+FovAdamMillazo.compute = (gameMap, x, y, radius) => {
+    Fov.exploreTile(gameMap, x, y);
 
     for (var octant = 0; octant < 8; octant++) {
-        FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, 1, x, y, radius, radius * 2, new Slope(1, 1), new Slope(0, 1));
+        FovAdamMillazo.computeOctant(gameMap, octant, 1, x, y, radius, radius * 2, new Slope(1, 1), new Slope(0, 1));
     }
 }
 
-FovAdamMillazo.computeOctant = (gameMap, exploredTiles, newLightSources, octant, x, originX, originY, radius, extendedRadius, top, bottom, lightSource) => {
+FovAdamMillazo.computeOctant = (gameMap, octant, x, originX, originY, radius, extendedRadius, top, bottom, lightSource) => {
     for (; x < extendedRadius; x++) {
         var topY;
         if (top.x == 1) {
@@ -251,12 +251,12 @@ FovAdamMillazo.computeOctant = (gameMap, exploredTiles, newLightSources, octant,
             var isVisible = isOpaque || ((y != topY || top.greater(y * 4 - 1, x * 4 + 1)) && (y != bottomY || bottom.less(y * 4 + 1, x * 4 - 1)));
 
             if (isVisible) {
-                Fov.exploreLight(gameMap, exploredTiles, newLightSources, x, y, octant, originX, originY);
+                Fov.exploreLight(gameMap, x, y, octant, originX, originY);
             }
 
             if (radius < 0 || Math.max(Math.abs(x), Math.abs(y)) <= radius) {
                 if (isVisible) {
-                    Fov.setVisible(gameMap, exploredTiles, x, y, octant, originX, originY, lightSource);
+                    Fov.setVisible(gameMap, x, y, octant, originX, originY, lightSource);
 
                     if (x != radius) {
                         if (isOpaque) {
@@ -273,7 +273,7 @@ FovAdamMillazo.computeOctant = (gameMap, exploredTiles, newLightSources, octant,
                                         bottom = new Slope(ny, nx);
                                         break;
                                     } else {
-                                        FovAdamMillazo.computeOctant(gameMap, exploredTiles, newLightSources, octant, x + 1, originX, originY, radius, extendedRadius, top, new Slope(ny, nx), lightSource);
+                                        FovAdamMillazo.computeOctant(gameMap, octant, x + 1, originX, originY, radius, extendedRadius, top, new Slope(ny, nx), lightSource);
                                     }
                                 } else {
                                     if (y == bottomY) {
