@@ -238,6 +238,7 @@ export class CloseAction extends ActionWithDirection {
 export class BumpAction extends ActionWithDirection {
     constructor(entity, dx, dy) {
         super(entity, dx, dy);
+        this.friendlyFire = false;
     }
 
     perform(doAction) {
@@ -248,7 +249,21 @@ export class BumpAction extends ActionWithDirection {
         var tiles = this.getGameMap().locations[destX][destY].tiles;
         var target = this.getTargetActor();
 
-        if (target) {
+        var entityIsPlayer = false;
+        var targetIsPlayer = false;
+        for (var i = 0; i < this.getEngine().players.length; i++) {
+            var player = this.getEngine().players[i];
+            if (this.entityRef === player) {
+                entityIsPlayer = true;
+            }
+
+            if (target === player) {
+                targetIsPlayer = true;
+            }
+        }
+
+
+        if ((this.friendlyFire || entityIsPlayer != targetIsPlayer) && target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
         } else if (this.entityRef.canOpenDoors && _isClosedOpenable(tiles)) {
             return new OpenAction(this.entityRef, this.dx, this.dy).perform(doAction);
