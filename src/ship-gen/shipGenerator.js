@@ -194,6 +194,18 @@ export class Ship {
                 new EntityFactories.targetDummy(i, 1).place(debugGameMapUp);
             }
 
+            new EntityFactories.grenade(1, 10).place(debugGameMapUp);
+            new EntityFactories.grenade(1, 11).place(debugGameMapUp);
+
+            new EntityFactories.laserCharge(3, 10).place(debugGameMapUp);
+            new EntityFactories.laserCharge(3, 11).place(debugGameMapUp);
+
+            new EntityFactories.confuseRay(5, 10).place(debugGameMapUp);
+            new EntityFactories.confuseRay(5, 11).place(debugGameMapUp);
+
+            new EntityFactories.medkit(7, 10).place(debugGameMapUp);
+            new EntityFactories.medkit(7, 11).place(debugGameMapUp);
+
             this.engineRef.addGameMap(debugGameMapDown);
             this.engineRef.addGameMap(debugGameMapUp);
 
