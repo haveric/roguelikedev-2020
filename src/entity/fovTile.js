@@ -1,10 +1,14 @@
 import Entity from "./entity";
-import Sprite from "./sprite";
-import RenderOrder from "./renderOrder";
+import Sprite from "../sprite";
+import RenderOrder from "../renderOrder";
 
 export default class FovTile extends Entity {
-    constructor(x, y, name) {
-        super(x, y, name);
+    /**
+     * @param x {integer} - X tile coordinate of the FovTile (from left->right).
+     * @param y {integer} - Y tile coordinate of the FovTile (from top->bottom).
+     */
+    constructor(x, y) {
+        super(x, y, "shroud");
 
         this.explored = false;
         this.visible = false;

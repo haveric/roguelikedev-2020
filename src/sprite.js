@@ -9,10 +9,6 @@ export default class Sprite {
         this.spriteObject = null;
     }
 
-    clone() {
-        return new Sprite(this.name, this.color, this.spriteObject);
-    }
-
     create(scene, x, y) {
         const frame = getFrameOf(Tilemaps.getTileMap(), this.name);
         if (frame !== null) {

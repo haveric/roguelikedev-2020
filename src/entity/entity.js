@@ -1,7 +1,17 @@
-import Tilemaps from "./tilemaps";
-import RenderOrder from "./renderOrder";
+import Tilemaps from "../tilemaps";
+import RenderOrder from "../renderOrder";
+import Sprite from "../sprite"; // eslint-disable-line no-unused-vars
 
 export default class Entity {
+    /**
+     * @param x {integer} - X tile coordinate of the Entity (from left->right).
+     * @param y {integer} - Y tile coordinate of the Entity (from top->bottom).
+     * @param name {string} - Name of the Entity.
+     * @param description {string} - Description of the Entity.
+     * @param sprite {Sprite} - Sprite of the Entity.
+     * @param blocksMovement {boolean} - Whether this Entity blocks other Entities' movement.
+     * @param renderOrder {RenderOrder} - Visual depth to render the Sprite.
+     */
     constructor(x, y, name, description, sprite, blocksMovement, renderOrder) {
         this.x = x;
         this.y = y;
@@ -90,19 +100,3 @@ export default class Entity {
     }
 }
 
-export class Actor extends Entity {
-    constructor(x, y, name, description, sprite, canOpenDoors=true) {
-        super(x, y, name, description, sprite, true, RenderOrder.ACTOR);
-        this.canOpenDoors = canOpenDoors;
-    }
-
-    isAlive() {
-        return this.ai !== null;
-    }
-}
-
-export class Item extends Entity {
-    constructor(x, y, name, description, sprite) {
-        super(x, y, name, description, sprite, false, RenderOrder.ITEM);
-    }
-}

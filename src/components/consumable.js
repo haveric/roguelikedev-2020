@@ -1,5 +1,5 @@
 import { ItemAction } from "../actions";
-import { Actor } from "../entity";
+import Actor from "../entity/actor";
 import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHandler } from "../eventHandler";
 import BaseComponent from "./baseComponent";
 import Inventory from "./inventory";

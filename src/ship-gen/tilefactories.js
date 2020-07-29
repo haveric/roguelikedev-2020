@@ -1,7 +1,7 @@
 import LightSource from "../components/lightSource";
 import Openable from "../components/openable";
 import Stairs from "../components/stairs";
-import Tile from "../tile";
+import Tile from "../entity/tile";
 import Sprite from "../sprite";
 import RenderOrder from "../renderOrder";
 

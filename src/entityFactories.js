@@ -1,10 +1,11 @@
-import { Actor, Item } from "./entity";
-import Player from "./player";
+import Player from "./entity/player";
 import Sprite from "./sprite";
 import Fighter from "./components/fighter";
 import { BaseAI, HostileEnemy } from "./components/ai";
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
 import Inventory from "./components/inventory";
+import Actor from "./entity/actor";
+import Item from "./entity/item";
 
 export default class EntityFactories {}
 
