@@ -1,7 +1,19 @@
 import Tilemaps from './tilemaps';
 import RenderOrder from './renderOrder';
+import Sprite from './sprite';
+
 
 export default class Entity {
+    /**
+     * An Entity
+     * @constructor
+     * @param {integer} x - X coordinate of the tile.
+     * @param {integer} y - Y coordinate of the tile.
+     * @param {string} name - Name of the Entity.
+     * @param {object} sprite - Sprite
+     * @param {boolean} blocksMovement - Whether the Entity blocks movement
+     * @param {RenderOrder} renderOrder - Z level render depth for layering
+     */
     constructor(x, y, name, description, sprite, blocksMovement, renderOrder) {
         this.x = x;
         this.y = y;
@@ -86,8 +98,17 @@ export default class Entity {
     }
 }
 
+
 export class Actor extends Entity {
-    constructor(x, y, name, description, sprite, canOpenDoors=true) {
+    /**
+     * @param {integer} x - X coordinate of the tile.
+     * @param {integer} y - Y coordinate of the tile.
+     * @param {string} name - Name of the Actor.
+     * @param {string} description - Description of the Actor.
+     * @param {Sprite} sprite - Sprite
+     * @param {boolean} canOpenDoors - Whether this Actor can open doors
+     */
+    constructor(x, y, name, description, sprite, canOpenDoors = true) {
         super(x, y, name, description, sprite, true, RenderOrder.ACTOR);
         this.canOpenDoors = canOpenDoors;
     }
@@ -98,6 +119,14 @@ export class Actor extends Entity {
 }
 
 export class Item extends Entity {
+    /**
+     * @param {integer} x - X coordinate of the tile.
+     * @param {integer} y - Y coordinate of the tile.
+     * @param {string} name - Name of the Item.
+     * @param {string} description - Description of the Item.
+     * @param {Sprite} sprite - Sprite
+     * @param {boolean} canOpenDoors - Whether this Item can open doors
+     */
     constructor(x, y, name, description, sprite) {
         super(x, y, name, description, sprite, false, RenderOrder.ITEM);
     }
