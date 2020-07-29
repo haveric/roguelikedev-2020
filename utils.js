@@ -1,7 +1,7 @@
 const create2dArray = (rows) => {
-    var array = [];
+    const array = [];
 
-    for (var i = 0; i < rows; i++) {
+    for (let i = 0; i < rows; i++) {
         array[i] = [];
     }
 
@@ -13,7 +13,7 @@ const getRandomInt = (min, max) => {
 };
 
 const getFrameOf = (tilemap, sprite) => {
-    var frame = null;
+    let frame;
     if (tilemap.tiles[sprite]) {
         frame = tilemap.tiles[sprite];
     } else {
@@ -25,7 +25,7 @@ const getFrameOf = (tilemap, sprite) => {
 };
 
 const hexToRgb = (hex) => {
-    var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),

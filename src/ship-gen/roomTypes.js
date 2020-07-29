@@ -13,8 +13,8 @@ export class RectangularRoom {
     }
 
     center() {
-        var centerX = Math.floor((this.x1 + this.x2) / 2);
-        var centerY = Math.floor((this.y1 + this.y2) / 2);
+        const centerX = Math.floor((this.x1 + this.x2) / 2);
+        const centerY = Math.floor((this.y1 + this.y2) / 2);
 
         return { x: centerX, y: centerY };
     }

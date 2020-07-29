@@ -45,10 +45,10 @@ export default class GameMap {
     }
 
     getBlockingEntityAtLocation(x, y) {
-        var foundEntity = null;
-        for (var i = 0; i < this.entities.length; i++) {
-            var entity = this.entities[i];
-            if (entity.blocksMovement && entity.x == x && entity.y == y) {
+        let foundEntity = null;
+        for (let i = 0; i < this.entities.length; i++) {
+            const entity = this.entities[i];
+            if (entity.blocksMovement && entity.x === x && entity.y === y) {
                 foundEntity = entity;
                 break;
             }
@@ -58,10 +58,10 @@ export default class GameMap {
     }
 
     getNonBlockingEntitiesAtLocation(x, y) {
-        var entities = [];
-        for (var i = 0; i < this.entities.length; i++) {
-            var entity = this.entities[i];
-            if (!entity.blocksMovement && entity.x == x && entity.y == y) {
+        const entities = [];
+        for (let i = 0; i < this.entities.length; i++) {
+            const entity = this.entities[i];
+            if (!entity.blocksMovement && entity.x === x && entity.y === y) {
                 entities.push(entity);
             }
         }
@@ -72,9 +72,9 @@ export default class GameMap {
     }
 
     getActors() {
-        var actors = [];
-        for (var i = 0; i < this.entities.length; i++) {
-            var entity = this.entities[i];
+        const actors = [];
+        for (let i = 0; i < this.entities.length; i++) {
+            const entity = this.entities[i];
             if (entity instanceof Actor && entity.isAlive()) {
                 actors.push(entity);
             }
@@ -84,9 +84,9 @@ export default class GameMap {
     }
 
     getItems() {
-        var items = [];
-        for (var i = 0; i < this.entities.length; i++) {
-            var entity = this.entities[i];
+        const items = [];
+        for (let i = 0; i < this.entities.length; i++) {
+            const entity = this.entities[i];
             if (entity instanceof Item) {
                 items.push(entity);
             }
@@ -96,18 +96,18 @@ export default class GameMap {
     }
 
     getPriorityDeadActorAtLocation(x, y) {
-        var players = this.engineRef.players;
+        const players = this.engineRef.players;
         for (let i = 0; i < players.length; i++) {
-            var player = players[i];
-            if (!player.isAlive() && player.x == x && player.y == y) {
+            const player = players[i];
+            if (!player.isAlive() && player.x === x && player.y === y) {
                 return player;
             }
         }
 
-        var entities = this.getGameMap().entities;
+        const entities = this.getGameMap().entities;
         for (let i = 0; i < entities.length; i++) {
-            var entity = entities[i];
-            if (entity instanceof Actor && !entity.isAlive() && entity.x == x && entity.y == y) {
+            const entity = entities[i];
+            if (entity instanceof Actor && !entity.isAlive() && entity.x === x && entity.y === y) {
                 return entity;
             }
         }
@@ -116,10 +116,10 @@ export default class GameMap {
     }
 
     getActorAtLocation(x, y) {
-        var actors = this.getActors();
-        for (var i = 0; i < actors.length; i++) {
-            var actor = actors[i];
-            if (actor.x == x && actor.y == y) {
+        const actors = this.getActors();
+        for (let i = 0; i < actors.length; i++) {
+            const actor = actors[i];
+            if (actor.x === x && actor.y === y) {
                 return actor;
             }
         }
@@ -128,15 +128,15 @@ export default class GameMap {
     }
 
     removeEntity(entity) {
-        var index = this.entities.indexOf(entity);
-        if (index != -1) {
+        const index = this.entities.indexOf(entity);
+        if (index !== -1) {
             this.entities.splice(index, 1);
         }
     }
 
     addEntity(entity) {
-        var index = this.entities.indexOf(entity);
-        if (index == -1) {
+        const index = this.entities.indexOf(entity);
+        if (index === -1) {
             this.entities.push(entity);
         }
     }
@@ -174,9 +174,9 @@ export class GameMapLocation {
     }
 
     isTileWalkable() {
-        var numTiles = this.tiles.length;
-        var numWalkable = 0;
-        for (var i = 0; i < numTiles; i++) {
+        const numTiles = this.tiles.length;
+        let numWalkable = 0;
+        for (let i = 0; i < numTiles; i++) {
             if (this.tiles[i].walkable) {
                 numWalkable += 1;
             } else {
@@ -188,8 +188,8 @@ export class GameMapLocation {
     }
 
     isTileAtDepth(depth) {
-        for (var i = 0; i < this.tiles.length; i++) {
-            var tile = this.tiles[i];
+        for (let i = 0; i < this.tiles.length; i++) {
+            const tile = this.tiles[i];
 
             if (tile.renderOrder === depth) {
                 return true;
@@ -200,9 +200,9 @@ export class GameMapLocation {
     }
 
     isTileBlockingFOV() {
-        var numTiles = this.tiles.length;
-        var anyBlocking = false;
-        for (var i = 0; i < numTiles; i++) {
+        const numTiles = this.tiles.length;
+        let anyBlocking = false;
+        for (let i = 0; i < numTiles; i++) {
             if (this.tiles[i].blockFOV) {
                 anyBlocking = true;
                 break;
@@ -213,7 +213,7 @@ export class GameMapLocation {
     }
 
     tileHasComponent(component) {
-        for (var i = 0; i < this.tiles.length; i++) {
+        for (let i = 0; i < this.tiles.length; i++) {
             if (this.tiles[i][component]) {
                 return true;
             }
@@ -223,7 +223,7 @@ export class GameMapLocation {
     }
 
     tileComponentCheck(component, toRun) {
-        for (var i = 0; i < this.tiles.length; i++) {
+        for (let i = 0; i < this.tiles.length; i++) {
             if (this.tiles[i][component]) {
                 return this.tiles[i][component][toRun]();
             }
@@ -233,7 +233,7 @@ export class GameMapLocation {
     }
 
     tileComponentRun(component, toRun) {
-        for (var i = 0; i < this.tiles.length; i++) {
+        for (let i = 0; i < this.tiles.length; i++) {
             if (this.tiles[i][component]) {
                 this.tiles[i][component][toRun]();
                 return true;

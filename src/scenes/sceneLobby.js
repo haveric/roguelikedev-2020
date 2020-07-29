@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import io from "socket.io-client";
 import tilemapCurses from "../assets/Curses_square_24.png";
 
-var socket;
+let socket;
 
 export class SceneLobby extends Phaser.Scene {
     constructor() {
@@ -18,19 +18,19 @@ export class SceneLobby extends Phaser.Scene {
     }
 
     create() {
-        var self = this;
+        const self = this;
 
-        var config = this.cache.json.get("config");
+        const config = this.cache.json.get("config");
         socket = io(config.protocol + config.server + ":" + config.port);
 
-        var lobbyStatsStyle = { font: "22px Arial", fill: "#fff"};
+        const lobbyStatsStyle = { font: "22px Arial", fill: "#fff"};
         this.lobbyCount = this.add.text(20, 50, "Lobby: 0", lobbyStatsStyle);
         this.roomCount = this.add.text(20, 80, "Rooms: 0", lobbyStatsStyle);
         this.playerCount = this.add.text(20, 110, "- Players: 0", lobbyStatsStyle);
         this.spectatorCount = this.add.text(20, 140, "- Spectators: 0", lobbyStatsStyle);
 
         // Logo
-        var title = this.add.text(0, 0, "Tethered", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
+        const title = this.add.text(0, 0, "Tethered", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
         this.rexUI.add.label({
             anchor: {
                 centerX: "center"
@@ -39,7 +39,7 @@ export class SceneLobby extends Phaser.Scene {
             text: title
         }).layout();
 
-        var buttons = this.rexUI.add.buttons({
+        const buttons = this.rexUI.add.buttons({
             anchor: {
                 centerX: "center"
             },
@@ -57,16 +57,16 @@ export class SceneLobby extends Phaser.Scene {
         self.joinDialog = undefined;
 
         buttons.on("button.click", function (button, index/*, pointer, event*/) {
-            if (index == 0) {
-                var playerName;
-                var initialPlayerName = localStorage.getItem("playerName");
+            if (index === 0) {
+                let playerName;
+                const initialPlayerName = localStorage.getItem("playerName");
                 if (initialPlayerName) {
                     playerName = initialPlayerName;
                 } else {
                     playerName = "Player 1";
                 }
                 socket.emit("createRoom", playerName);
-            } else if (index == 1) {
+            } else if (index === 1) {
                 self.joinDialog = createJoinDialog(self);
             }
         });
@@ -108,7 +108,7 @@ export class SceneLobby extends Phaser.Scene {
 }
 
 
-var createButton = function (scene, text) {
+const createButton = function (scene, text) {
     return scene.rexUI.add.label({
         width: 40,
         height: 40,
@@ -124,24 +124,25 @@ var createButton = function (scene, text) {
     });
 };
 
-var createJoinDialog = function (scene) {
+const createJoinDialog = function (scene) {
+    let joinDialog;
     if (scene.joinDialog) {
         scene.rexUI.show(scene.joinDialog);
     } else {
-        var roomId = "";
-        var title = "Room ID";
-        var y = 300;
+        let roomId = "";
+        const title = "Room ID";
+        const y = 300;
 
-        var background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x4e342e);
-        var titleField = scene.add.text(0, 0, title);
-        var roomIdField = scene.rexUI.add.label({
+        const background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x4e342e);
+        const titleField = scene.add.text(0, 0, title);
+        const roomIdField = scene.rexUI.add.label({
             orientation: "x",
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10).setStrokeStyle(2, 0x7b5e57),
             text: scene.rexUI.add.BBCodeText(0, 0, roomId, { fixedWidth: 180, fixedHeight: 36, valign: "center" }),
             space: { top: 5, bottom: 5, left: 5, right: 5, icon: 10, }
         }).setInteractive()
         .on("pointerdown", function () {
-            var config = {
+            const config = {
                 onTextChanged: function(textObject, text) {
                     roomId = text;
                     textObject.text = text;
@@ -151,7 +152,7 @@ var createJoinDialog = function (scene) {
             scene.rexUI.edit(roomIdField.getElement("text"), config);
         });
 
-        var joinButton = scene.rexUI.add.label({
+        const joinButton = scene.rexUI.add.label({
             orientation: "x",
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x7b5e57),
             text: scene.add.text(0, 0, "Join"),
@@ -162,7 +163,7 @@ var createJoinDialog = function (scene) {
             joinDialog.emit("join", roomId);
         });
 
-        var cancelButton = scene.rexUI.add.label({
+        const cancelButton = scene.rexUI.add.label({
             orientation: "x",
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x7b5e57),
             text: scene.add.text(0, 0, "Cancel"),
@@ -173,7 +174,7 @@ var createJoinDialog = function (scene) {
             joinDialog.emit("cancel", roomId);
         });
 
-        var buttons = scene.rexUI.add.sizer({
+        const buttons = scene.rexUI.add.sizer({
             orientation: "x"
         })
         .add(cancelButton, 0, "right", { bottom: 10, left: 10, right: 10 }, false)
@@ -181,7 +182,7 @@ var createJoinDialog = function (scene) {
         .layout();
 
         scene.joinDialogErrorField = scene.add.text(0, 0, " ");
-        var joinDialog = scene.rexUI.add.sizer({
+        joinDialog = scene.rexUI.add.sizer({
             orientation: "y",
             anchor: {
                 centerX: "center"
@@ -196,8 +197,8 @@ var createJoinDialog = function (scene) {
         .layout();
 
         joinDialog.on("join", function(/*button, groupName, index*/) {
-            var playerName;
-            var initialPlayerName = localStorage.getItem("playerName");
+            let playerName;
+            const initialPlayerName = localStorage.getItem("playerName");
             if (initialPlayerName) {
                 playerName = initialPlayerName;
             } else {
@@ -214,5 +215,6 @@ var createJoinDialog = function (scene) {
             scene.joinDialogErrorField.setText(message);
         });
     }
+
     return joinDialog;
 };

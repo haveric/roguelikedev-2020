@@ -7,10 +7,10 @@ export default class Stairs extends BaseComponent {
     }
 
     take() {
-        var actor = this.getGameMap().getActorAtLocation(this.parent.x, this.parent.y);
+        const actor = this.getGameMap().getActorAtLocation(this.parent.x, this.parent.y);
         if (actor) {
-            var engine = this.getEngine();
-            var newGameMap = engine.getGameMap(this.floor);
+            const engine = this.getEngine();
+            const newGameMap = engine.getGameMap(this.floor);
             if (actor === engine.player) {
                 engine.setGameMap(newGameMap);
                 engine.createSprites();

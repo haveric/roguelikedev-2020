@@ -52,15 +52,15 @@ export default class Entity {
     }
 
     distanceTo(otherEntity) {
-        var dx = otherEntity.x - this.x;
-        var dy = otherEntity.y - this.y;
+        const dx = otherEntity.x - this.x;
+        const dy = otherEntity.y - this.y;
 
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     distance(x, y) {
-        var dx = x - this.x;
-        var dy = y - this.y;
+        const dx = x - this.x;
+        const dy = y - this.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
@@ -80,8 +80,8 @@ export default class Entity {
         this.parent = gameMap;
         gameMap.addEntity(this);
 
-        var spriteX = gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth);
-        var spriteY = gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight);
+        const spriteX = gameMap.offsetWidth + (x * Tilemaps.getTileMap().frameWidth);
+        const spriteY = gameMap.offsetHeight + (y * Tilemaps.getTileMap().frameHeight);
         if (gameMap === gameMap.engineRef.gameMap) {
             this.sprite.create(gameMap.engineRef.scene, spriteX, spriteY);
         } else {
@@ -97,7 +97,7 @@ export class Actor extends Entity {
     }
 
     isAlive() {
-        return this.ai != null;
+        return this.ai !== null;
     }
 }
 

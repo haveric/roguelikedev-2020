@@ -12,8 +12,8 @@ export class SceneGameUI extends Phaser.Scene {
     }
 
     create() {
-        var self = this;
-        var game = self.scene.get("SceneGame");
+        const self = this;
+        const game = self.scene.get("SceneGame");
 
         game.events.on("ui-enable", function(engine) {
             self.enabled = true;

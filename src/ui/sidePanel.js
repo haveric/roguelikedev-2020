@@ -17,12 +17,12 @@ export default class SidePanel {
     }
 
     setDescription(subMessages) {
-        var message = new Message(subMessages);
+        const message = new Message(subMessages);
         this.descriptionPanel.setText(message.getBBCodeFullText());
     }
 
     createSidePanel() {
-        var background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
+        const background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
         this.sidePanel = this.scene.rexUI.add.sizer({
             x: 0,
             y: 0,

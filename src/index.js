@@ -5,7 +5,7 @@ import {SceneSetup} from "./scenes/sceneSetup";
 import {SceneGame} from "./scenes/sceneGame";
 import {SceneGameUI} from "./scenes/sceneGameUI";
 
-var config = {
+const config = {
     type: Phaser.AUTO,
     parent: "tethered",
     dom: {
@@ -25,14 +25,14 @@ var config = {
 
 const game = new Phaser.Game(config);
 function resize() {
-    var width = window.innerWidth;
-    var height = window.innerHeight;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
     game.xScale = width / 800;
     game.yScale = height / 600;
-    var scale = Math.min(game.xScale, game.yScale);
+    const scale = Math.min(game.xScale, game.yScale);
 
-    var x = Math.ceil(width / scale);
-    var y = Math.ceil(height / scale);
+    let x = Math.ceil(width / scale);
+    let y = Math.ceil(height / scale);
     // Avoid odd numbers to prevent artifacts
     if (isOdd(x)) {
         x += 1;

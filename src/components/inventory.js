@@ -14,7 +14,7 @@ export default class Inventory extends BaseComponent {
     }
 
     dropByIndex(index) {
-        var item = this.removeByIndex(index);
+        const item = this.removeByIndex(index);
         if (item) {
             this._dropItem(item);
         }
@@ -22,7 +22,7 @@ export default class Inventory extends BaseComponent {
 
     removeByIndex(index) {
         if (this.items.length > index) {
-            var item = this.items[index];
+            const item = this.items[index];
             this.items.splice(index, 1);
             return item;
         }
@@ -31,8 +31,8 @@ export default class Inventory extends BaseComponent {
     }
 
     remove(item) {
-        var index = this.items.indexOf(item);
-        if (index != -1) {
+        const index = this.items.indexOf(item);
+        if (index !== -1) {
             this.items.splice(index, 1);
 
             return true;

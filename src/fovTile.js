@@ -15,15 +15,15 @@ export default class FovTile extends Entity {
     }
 
     _getBlendedLight() {
-        var blendedColor;
-        var intensities = 0;
-        var numLightSources = this.lightSources.length;
+        let blendedColor;
+        let intensities = 0;
+        const numLightSources = this.lightSources.length;
         if (numLightSources > 0) {
-            for (var i = 0; i < numLightSources; i++) {
-                var lightSource = this.lightSources[i];
+            for (let i = 0; i < numLightSources; i++) {
+                const lightSource = this.lightSources[i];
                 intensities += Number(lightSource.intensity);
 
-                if (i == 0) {
+                if (i === 0) {
                     blendedColor = lightSource.color;
                 } else {
                     blendedColor = this._blendColors(blendedColor, lightSource.color, .5);
@@ -63,10 +63,10 @@ export default class FovTile extends Entity {
     render() {
         if (this.explored) {
             if (this.visible) {
-                if (this.lightSources.length == 0) {
+                if (this.lightSources.length === 0) {
                     this.sprite.spriteObject.setAlpha(0);
                 } else {
-                    var data = this._getBlendedLight();
+                    const data = this._getBlendedLight();
 
                     this.sprite.spriteObject.setAlpha(data.intensity);
                     this.sprite.spriteObject.setTint("0x" + data.color);

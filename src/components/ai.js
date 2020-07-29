@@ -11,32 +11,32 @@ export class BaseAI extends BaseComponent {
     perform() {}
 
     getPathTo(destX, destY) {
-        var gameMap = this.getGameMap();
-        var locations = gameMap.locations;
+        const gameMap = this.getGameMap();
+        const locations = gameMap.locations;
 
-        var cost = Array(gameMap.width).fill().map(() => Array(gameMap.height).fill(0));
+        const cost = Array(gameMap.width).fill().map(() => Array(gameMap.height).fill(0));
 
         for (let i = 0; i < gameMap.width; i++) {
             for (let j = 0; j < gameMap.height; j++) {
-                var location = locations[i][j];
+                const location = locations[i][j];
                 if (location.isTileWalkable()) {
                     cost[i][j] = 1;
                 }
             }
         }
 
-        var entities = gameMap.entities;
+        const entities = gameMap.entities;
         for (let i = 0; i < entities.length; i++) {
-            var entity = entities[i];
+            const entity = entities[i];
             if (entity.blocksMovement && cost[entity.x][entity.y]) {
                 cost[entity.x][entity.y] += 10;
             }
         }
 
-        var costGraph = new Graph(cost, { diagonal: true });
+        const costGraph = new Graph(cost, { diagonal: true });
 
-        var start = costGraph.grid[this.parent.x][this.parent.y];
-        var end = costGraph.grid[destX][destY];
+        const start = costGraph.grid[this.parent.x][this.parent.y];
+        const end = costGraph.grid[destX][destY];
 
         return astar.search(costGraph, start, end);
     }
@@ -49,18 +49,18 @@ export class HostileEnemy extends BaseAI {
     }
 
     perform() {
-        var players = this.getEngine().players;
+        const players = this.getEngine().players;
 
-        var closestPlayer;
-        var closestDistance = null;
-        for (var i = 0; i < players.length; i++) {
-            var target = players[i];
+        let closestPlayer;
+        let closestDistance = null;
+        for (let i = 0; i < players.length; i++) {
+            const target = players[i];
             if (target.isAlive()) {
-                var dx = target.x - this.parent.x;
-                var dy = target.y - this.parent.y;
+                const dx = target.x - this.parent.x;
+                const dy = target.y - this.parent.y;
 
-                var distance = Math.max(Math.abs(dx), Math.abs(dy));
-                if (closestDistance == null || distance < closestDistance || (distance == closestDistance && Srand.intInRange(0,1) == 0)) {
+                const distance = Math.max(Math.abs(dx), Math.abs(dy));
+                if (closestDistance === null || distance < closestDistance || (distance === closestDistance && Srand.intInRange(0,1) === 0)) {
                     closestPlayer = target;
                     closestDistance = distance;
                 }
@@ -78,9 +78,9 @@ export class HostileEnemy extends BaseAI {
             }
 
             if (this.path.length > 0) {
-                var next = this.path.shift();
+                const next = this.path.shift();
 
-                var resultAction = new BumpAction(this.parent, next.x - this.parent.x, next.y - this.parent.y).perform(true);
+                const resultAction = new BumpAction(this.parent, next.x - this.parent.x, next.y - this.parent.y).perform(true);
                 if (!resultAction.success) {
                     this.path.unshift(next);
                 }
@@ -106,9 +106,9 @@ export class ConfusedEnemy extends BaseAI {
             this.getEngine().ui.messageLog.text("The ").text(this.parent.name, "#" + this.parent.sprite.color).text(" is no longer confused.").build();
             this.parent.ai = this.previousAI;
         } else {
-            var x;
-            var y;
-            var choice = Srand.intInRange(1, 8);
+            let x;
+            let y;
+            const choice = Srand.intInRange(1, 8);
             switch(choice) {
                 case 1:
                     x = -1; y = -1;

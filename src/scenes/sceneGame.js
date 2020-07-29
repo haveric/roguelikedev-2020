@@ -24,24 +24,24 @@ export class SceneGame extends Phaser.Scene {
     }
 
     create() {
-        var self = this;
+        const self = this;
 
         Object.keys(self.room.players).forEach(function(index) {
-            var player = self.room.players[index];
+            const player = self.room.players[index];
 
-            var newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
-            if (player.playerId == self.socket.id) {
+            const newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
+            if (player.playerId === self.socket.id) {
                 self.player = newPlayer;
                 self.players.push(self.player);
             } else {
-                var otherPlayer = newPlayer;
+                const otherPlayer = newPlayer;
 
                 self.otherPlayers.push(otherPlayer);
                 self.players.push(otherPlayer);
             }
         });
 
-        // var isHost = self.room.players[0].playerId == self.socket.id;
+        // let isHost = self.room.players[0].playerId == self.socket.id;
         this.engine = new Engine(this, self.player, self.players);
 
         self.generateNewShip();
@@ -53,13 +53,13 @@ export class SceneGame extends Phaser.Scene {
         }
 
         self.socket.on("c-createDebugRoom", function () {
-            var debugMap = self.shipGenerator.createDebugMap();
+            const debugMap = self.shipGenerator.createDebugMap();
 
             self.engine.setGameMap(debugMap);
             self.engine.createSprites();
 
-            for (var i = 0; i < self.players.length; i++) {
-                var player = self.players[i];
+            for (let i = 0; i < self.players.length; i++) {
+                const player = self.players[i];
                 player.place(debugMap, 10 + i, 10);
             }
 
@@ -68,7 +68,7 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.socket.on("c-regenMap", function (data) {
-            var newSeed = data.seed;
+            const newSeed = data.seed;
             self.room.seed = newSeed;
             Srand.seed(newSeed);
             console.log("New Seed: " + newSeed);
@@ -78,12 +78,12 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.socket.on("c-performAction", function (data) {
-            var playerId = data.playerId;
-            var actionData = data.actionData;
-            var args = actionData.args;
+            const playerId = data.playerId;
+            const actionData = data.actionData;
+            const args = actionData.args;
 
-            for (var i = 0; i < self.players.length; i++) {
-                var player = self.players[i];
+            for (let i = 0; i < self.players.length; i++) {
+                const player = self.players[i];
                 if (playerId === player.playerId) {
                     switch (actionData.action) {
                         case "WaitAction":
@@ -141,9 +141,9 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.socket.on("updatePlayerData", function (players) {
-            for (var i = 0; i < players.length; i++) {
-                var player = players[i];
-                if (player.playerId == self.socket.id) {
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
+                if (player.playerId === self.socket.id) {
                     self.player.energy = player.energy;
                     self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
                     break;
@@ -169,9 +169,9 @@ export class SceneGame extends Phaser.Scene {
     }
 
     generateNewShip() {
-        var width = 70;
-        var height = 40;
-        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
+        const width = 70;
+        const height = 40;
+        const genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
 
         this.shipGenerator = new Ship(this.engine, genOptions);
         this.engine.setGameMap(this.shipGenerator.generateDungeon());

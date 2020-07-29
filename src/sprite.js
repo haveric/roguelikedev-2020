@@ -14,8 +14,8 @@ export default class Sprite {
     }
 
     create(scene, x, y) {
-        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
-        if (frame != null) {
+        const frame = getFrameOf(Tilemaps.getTileMap(), this.name);
+        if (frame !== null) {
             this.destroy();
             this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
             this.spriteObject.setFrame(frame);
@@ -34,8 +34,8 @@ export default class Sprite {
 
     updateSprite(name, color) {
         this.name = name;
-        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
-        if (frame != null) {
+        const frame = getFrameOf(Tilemaps.getTileMap(), this.name);
+        if (frame !== null) {
             this.spriteObject.setFrame(frame);
         }
 
