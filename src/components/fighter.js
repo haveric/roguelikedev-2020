@@ -32,8 +32,12 @@ export default class Fighter extends BaseComponent {
         this.setHp(this._hp - amount);
     }
 
+    isAtMaxHp() {
+        return this._hp === this.hpMax;
+    }
+
     heal(amount) {
-        if (this._hp === this.hpMax) {
+        if (this.isAtMaxHp()) {
             return 0;
         }
 

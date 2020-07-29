@@ -43,15 +43,17 @@ export class HealingConsumable extends Consumable {
 
     activate(action, doAction) {
         const consumer = action.entityRef;
-        const amountRecovered = consumer.fighter.heal(this.amount);
+
         const messageLog = this.getEngine().ui.messageLog;
-        if (amountRecovered > 0) {
+        if (consumer.fighter.isAtMaxHp()) {
+            messageLog.text("Your health is already full.").build();
+        } else {
             if (doAction) {
+                const amountRecovered = consumer.fighter.heal(this.amount);
                 messageLog.text("You " + this.activateWord + " the " + this.parent.name + ", and recover " + amountRecovered + " HP!").build();
             }
+
             return this.consume(doAction);
-        } else {
-            messageLog.text("Your health is already full.").build();
         }
 
         return false;
