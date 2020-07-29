@@ -1,5 +1,5 @@
-import Sprite from "../sprite";
-import Actor from "./actor"; // eslint-disable-line no-unused-vars
+import Sprite from "../sprite"; // eslint-disable-line no-unused-vars
+import Actor from "./actor";
 
 export default class Player extends Actor {
     /**
