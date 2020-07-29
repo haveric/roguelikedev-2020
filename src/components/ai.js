@@ -37,9 +37,8 @@ export class BaseAI extends BaseComponent {
 
         var start = costGraph.grid[this.parent.x][this.parent.y];
         var end = costGraph.grid[destX][destY];
-        var result = astar.search(costGraph, start, end);
 
-        return result;
+        return astar.search(costGraph, start, end);
     }
 }
 

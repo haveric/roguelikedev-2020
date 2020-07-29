@@ -1,7 +1,7 @@
 export default class Tilemaps {}
 
 Tilemaps.getTileMap = () => {
-    var tilemap = {
+    return {
         name: "tilemap",
         frameWidth: 24,
         frameHeight: 24,
@@ -27,6 +27,4 @@ Tilemaps.getTileMap = () => {
             "stairsUp": 62
         }
     };
-
-    return tilemap;
 };
