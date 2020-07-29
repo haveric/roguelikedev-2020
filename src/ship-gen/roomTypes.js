@@ -1,5 +1,5 @@
-import Srand from 'seeded-rand';
-import { create2dArray } from '../../utils';
+import Srand from "seeded-rand";
+import { create2dArray } from "../../utils";
 
 export class RectangularRoom {
     constructor(x, y, width, height, name) {
@@ -46,10 +46,10 @@ export class RectangularRoom {
     }
 
     toString() {
-        return (this.name || 'unnamed') + ' { x1: ' + this.x1 
-            + ', y1: ' + this.y1
-            + ', x2: ' + this.x2
-            + ', y2: ' + this.y2 + ' }'
+        return (this.name || "unnamed") + " { x1: " + this.x1
+            + ", y1: " + this.y1
+            + ", x2: " + this.x2
+            + ", y2: " + this.y2 + " }";
     }
 }
 
@@ -60,32 +60,32 @@ export const RoomConstants = {
     baseBreachHeight: 7,
     bridgeWidth: 6,
     bridgeHeight: 10
-}
+};
 
 export class RoomTypeFactories { }
 
 RoomTypeFactories.createHold = (x, y) => {
     if(Srand.choice([true, false])) {
-        return new RectangularRoom(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, 'Hold');
+        return new RectangularRoom(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, "Hold");
     } else {
-        return new RectangularRoom(x, y, RoomConstants.holdHeight, RoomConstants.holdWidth, 'Hold');
+        return new RectangularRoom(x, y, RoomConstants.holdHeight, RoomConstants.holdWidth, "Hold");
     }
-    
-}
+};
+
 export class Hold extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, 'Hold')
+        super(x, y, RoomConstants.holdWidth, RoomConstants.holdHeight, "Hold");
     }
 }
 
 export class BreachRoom extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, 'Breach Room')
+        super(x, y, RoomConstants.baseBreachWidth, RoomConstants.baseBreachHeight, "Breach Room");
     }
 }
 
 export class Bridge extends RectangularRoom {
     constructor(x, y) {
-        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, 'Bridge');
+        super(x, y, RoomConstants.bridgeWidth, RoomConstants.bridgeHeight, "Bridge");
     }
 }

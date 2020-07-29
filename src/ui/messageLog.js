@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class MessageLog {
     constructor(scene) {

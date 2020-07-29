@@ -26,7 +26,7 @@ export class Action {
         return this.entityRef == this.getEngine().player;
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         console.error("Not Implemented");
     }
 }
@@ -55,7 +55,7 @@ export class WaitAction extends Action {
         super(entity);
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         return new ActionResult(this, true);
     }
 
@@ -86,7 +86,7 @@ export class ActionWithDirection extends Action {
         return this.getGameMap().getActorAtLocation(destXY.x, destXY.y);
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         console.error("Not Implemented");
     }
 }
@@ -98,13 +98,12 @@ export class MeleeAction extends ActionWithDirection {
 
     perform(doAction) {
         var target = this.getTargetActor();
-        var success = false;
+        var success;
         var messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
                 var damage = this.entityRef.fighter.power - target.fighter.defense;
                 messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
-                var attackDesc = this.entityRef.name + " attacks " + target.name;
 
                 if (damage > 0) {
                     messageLog.text(" for " + damage + " hit points.").build();
@@ -165,7 +164,6 @@ export class OpenAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var success = false;
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;
@@ -201,7 +199,6 @@ export class CloseAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var success = false;
         var destXY = this._getDestXY();
         var destX = destXY.x;
         var destY = destXY.y;

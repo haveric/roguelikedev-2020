@@ -1,5 +1,5 @@
-import Tilemaps from './tilemaps';
-import RenderOrder from './renderOrder';
+import Tilemaps from "./tilemaps";
+import RenderOrder from "./renderOrder";
 
 export default class Entity {
     constructor(x, y, name, description, sprite, blocksMovement, renderOrder) {

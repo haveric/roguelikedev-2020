@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class InventoryMenu {
     constructor(scene) {
@@ -36,7 +36,7 @@ export default class InventoryMenu {
             y: 0,
             width: 300,
             height: 500,
-            orientation: 'y',
+            orientation: "y",
             anchor: {
                 left: "50%-150",
             }
@@ -45,7 +45,7 @@ export default class InventoryMenu {
 
         this.createDescriptionPanel();
 
-        this.inventoryMenu.add(this.descriptionPanel, 0, 'right', { top: 10, bottom: 10, left: 10, right: 10 }, false);
+        this.inventoryMenu.add(this.descriptionPanel, 0, "right", { top: 10, bottom: 10, left: 10, right: 10 }, false);
         this.inventoryMenu.setOrigin(0).layout();
         this.inventoryMenu.visible = false;
     }

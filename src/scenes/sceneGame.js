@@ -1,19 +1,14 @@
-import Srand from 'seeded-rand';
-import { create2dArray } from '../../utils';
-import Engine from '../engine';
-import { Fov } from '../fov';
-import Player from '../player';
-import Sprite from '../sprite';
-import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
-import GameMap from '../gameMap';
-import EntityFactories from '../entityFactories';
-import { InventoryEventHandler } from '../eventHandler';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, TakeStairsAction, ItemAction, DropItemAction, DebugAction } from '../actions';
-import Fighter from '../components/fighter';
+import Phaser from "phaser";
+import Srand from "seeded-rand";
+import Engine from "../engine";
+import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
+import EntityFactories from "../entityFactories";
+import { InventoryEventHandler } from "../eventHandler";
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, TakeStairsAction, ItemAction, DropItemAction, DebugAction } from "../actions";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
-        super('SceneGame');
+        super("SceneGame");
     }
 
     init(data) {
@@ -52,13 +47,12 @@ export class SceneGame extends Phaser.Scene {
         self.generateNewShip();
 
         if (self.player) {
-            self.events.emit('ui-enable', self.engine);
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
-            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+            self.events.emit("ui-enable", self.engine);
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
         }
 
-        self.socket.on('c-createDebugRoom', function (data) {
-            var playerId = data.playerId;
+        self.socket.on("c-createDebugRoom", function () {
             var debugMap = self.shipGenerator.createDebugMap();
 
             self.engine.setGameMap(debugMap);
@@ -73,7 +67,7 @@ export class SceneGame extends Phaser.Scene {
             self.updateCameraView();
         });
 
-        self.socket.on('c-regenMap', function (data) {
+        self.socket.on("c-regenMap", function (data) {
             var newSeed = data.seed;
             self.room.seed = newSeed;
             Srand.seed(newSeed);
@@ -83,7 +77,7 @@ export class SceneGame extends Phaser.Scene {
             self.generateNewShip();
         });
 
-        self.socket.on('c-performAction', function (data) {
+        self.socket.on("c-performAction", function (data) {
             var playerId = data.playerId;
             var actionData = data.actionData;
             var args = actionData.args;
@@ -140,18 +134,18 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
 
             self.engine.handleEnemyTurns();
             self.engine.updateFov();
         });
 
-        self.socket.on('updatePlayerData', function (players) {
+        self.socket.on("updatePlayerData", function (players) {
             for (var i = 0; i < players.length; i++) {
                 var player = players[i];
                 if (player.playerId == self.socket.id) {
                     self.player.energy = player.energy;
-                    self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+                    self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
                     break;
                 }
             }
@@ -163,7 +157,7 @@ export class SceneGame extends Phaser.Scene {
     updateCameraView(objectToFollow) {
         if (!objectToFollow) {
             if (this.player) {
-                objectToFollow = this.player.sprite.spriteObject
+                objectToFollow = this.player.sprite.spriteObject;
             } else {
                 objectToFollow = this.otherPlayers[0].sprite.spriteObject;
             }

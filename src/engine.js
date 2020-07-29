@@ -1,10 +1,7 @@
-import { MainGameEventHandler } from './eventHandler';
-import { FovAdamMillazo } from './fov';
-import { MessageLog } from './ui/messageLog';
-import { SidePanel } from './ui/sidePanel';
-import { InventoryMenu } from './ui/inventoryMenu';
-import Tilemaps from './tilemaps';
-import UI from './ui/ui';
+import { MainGameEventHandler } from "./eventHandler";
+import { FovAdamMillazo } from "./fov";
+import Tilemaps from "./tilemaps";
+import UI from "./ui/ui";
 
 export default class Engine {
     constructor(scene, player, players) {
@@ -15,7 +12,7 @@ export default class Engine {
         self.debugEnabled = false;
 
         self.eventHandler = new MainGameEventHandler(scene.input, this);
-        self.ui = new UI(scene.scene.get('SceneGameUI'));
+        self.ui = new UI(scene.scene.get("SceneGameUI"));
         self.gameMap = null;
         self.gameMaps = {};
         self.player = player;
@@ -29,10 +26,10 @@ export default class Engine {
         startY = startY || 0;
         endX = endX || this.gameMap.width;
         endY = endY || this.gameMap.height;
-        for (var i = startX; i < endX; i++) {
-            for (var j = startY; j < endY; j++) {
-                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
-                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
+        for (let i = startX; i < endX; i++) {
+            for (let j = startY; j < endY; j++) {
+                let x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                let y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
                 var tiles = this.gameMap.locations[i][j].tiles;
                 for (var k = 0; k < tiles.length; k++) {
@@ -42,19 +39,19 @@ export default class Engine {
             }
         }
 
-        for (var i = 0; i < this.gameMap.entities.length; i++) {
+        for (let i = 0; i < this.gameMap.entities.length; i++) {
             var entity = this.gameMap.entities[i];
 
-            var x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
-            var y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
+            let x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
+            let y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
 
             entity.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
         }
 
-        for (var i = startX; i < endX; i++) {
-            for (var j = startY; j < endY; j++) {
-                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
-                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
+        for (let i = startX; i < endX; i++) {
+            for (let j = startY; j < endY; j++) {
+                let x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                let y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
                 var shroudTile = this.gameMap.shroud[i][j];
                 if (shroudTile) {
@@ -103,8 +100,8 @@ export default class Engine {
 
     teardown() {
         if (this.gameMap) {
-            for (var i = 0; i < this.gameMap.width; i++) {
-                for (var j = 0; j < this.gameMap.height; j++) {
+            for (let i = 0; i < this.gameMap.width; i++) {
+                for (let j = 0; j < this.gameMap.height; j++) {
                     var tiles = this.gameMap.locations[i][j].tiles;
                     for (var k = 0; k < tiles.length; k++) {
                         var tile = tiles[k];
@@ -123,7 +120,7 @@ export default class Engine {
                 }
             }
 
-            for (var i = 0; i < this.gameMap.entities.length; i++) {
+            for (let i = 0; i < this.gameMap.entities.length; i++) {
                 var entity = this.gameMap.entities[i];
                 entity.sprite.destroy();
             }
@@ -166,8 +163,8 @@ export default class Engine {
         var gameMaps = [];
 
         if (!this.player || this.player.hasSharedVision) {
-            for (var i = 0; i < this.players.length; i++) {
-                var player = this.players[i];
+            for (let i = 0; i < this.players.length; i++) {
+                let player = this.players[i];
                 var playerGameMap = player.getGameMap();
 
                 if (gameMaps.indexOf(playerGameMap) === -1) {
@@ -178,37 +175,37 @@ export default class Engine {
             gameMaps.push(this.gameMap);
         }
 
-        for (var i = 0; i < gameMaps.length; i++) {
-            var gameMap = gameMaps[i];
+        for (let i = 0; i < gameMaps.length; i++) {
+            let gameMap = gameMaps[i];
             gameMap.newExploredTiles = [];
             gameMap.newLightSources = [];
 
-            for (var j = 0; j < gameMap.lastExploredFovTiles.length; j++) {
-                var tile = gameMap.lastExploredFovTiles[j];
+            for (let j = 0; j < gameMap.lastExploredFovTiles.length; j++) {
+                let tile = gameMap.lastExploredFovTiles[j];
                 tile.resetVisible();
             }
         }
 
         if (!this.player || this.player.hasSharedVision) {
-            for (var i = 0; i < this.players.length; i++) {
-                var player = this.players[i];
+            for (let i = 0; i < this.players.length; i++) {
+                let player = this.players[i];
                 FovAdamMillazo.compute(player.getGameMap(), player.x, player.y, player.lightRadius);
             }
         } else {
             FovAdamMillazo.compute(this.gameMap, this.player.x, this.player.y, this.player.lightRadius);
         }
 
-        for (var i = 0; i < gameMaps.length; i++) {
-            var gameMap = gameMaps[i];
+        for (let i = 0; i < gameMaps.length; i++) {
+            let gameMap = gameMaps[i];
 
             if (gameMap === this.gameMap) {
-                for (var i = 0; i < gameMap.lastExploredFovTiles.length; i++) {
-                    var tile = gameMap.lastExploredFovTiles[i];
+                for (let i = 0; i < gameMap.lastExploredFovTiles.length; i++) {
+                    let tile = gameMap.lastExploredFovTiles[i];
                     tile.render();
                 }
 
-                for (var i = 0; i < gameMap.newExploredTiles.length; i++) {
-                    var tile = gameMap.newExploredTiles[i];
+                for (let i = 0; i < gameMap.newExploredTiles.length; i++) {
+                    let tile = gameMap.newExploredTiles[i];
                     tile.render();
                 }
             }

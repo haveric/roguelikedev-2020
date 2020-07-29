@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
+import RexUIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 import {SceneLobby} from "./scenes/sceneLobby";
 import {SceneSetup} from "./scenes/sceneSetup";
 import {SceneGame} from "./scenes/sceneGame";
@@ -7,15 +7,15 @@ import {SceneGameUI} from "./scenes/sceneGameUI";
 
 var config = {
     type: Phaser.AUTO,
-    parent: 'tethered',
+    parent: "tethered",
     dom: {
         createContainer: true
     },
     plugins: {
         scene: [{
-            key: 'rexUI',
+            key: "rexUI",
             plugin: RexUIPlugin,
-            mapping: 'rexUI'
+            mapping: "rexUI"
         }]
     },
     pixelArt: true,
@@ -50,8 +50,8 @@ function isOdd(num) {
     return num % 2 === 1;
 }
 
-window.addEventListener('load', () => {
-    window.addEventListener('resize', () => {
+window.addEventListener("load", () => {
+    window.addEventListener("resize", () => {
         resize();
     });
 

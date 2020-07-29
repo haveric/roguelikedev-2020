@@ -1,9 +1,9 @@
-import { ItemAction } from '../actions';
-import { Actor } from '../entity';
-import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHandler } from '../eventHandler';
-import BaseComponent from './baseComponent';
-import Inventory from './inventory';
-import { ConfusedEnemy } from './ai';
+import { ItemAction } from "../actions";
+import { Actor } from "../entity";
+import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHandler } from "../eventHandler";
+import BaseComponent from "./baseComponent";
+import Inventory from "./inventory";
+import { ConfusedEnemy } from "./ai";
 
 export class Consumable extends BaseComponent {
     constructor(entity) {
@@ -14,7 +14,7 @@ export class Consumable extends BaseComponent {
         return new ItemAction(actor, inventorySlot);
     }
 
-    activate(action, doAction) {
+    activate(/*action, doAction*/) {
         console.error("Not Implemented");
         return false;
     }
@@ -85,7 +85,6 @@ export class ResurrectionConsumable extends Consumable {
     }
 
     activate(action, doAction) {
-        var consumer = action.entityRef;
         var destXY = action.targetXY;
         var target = this.getGameMap().getPriorityDeadActorAtLocation(destXY.x, destXY.y);
         var messageLog = this.getEngine().ui.messageLog;
@@ -203,7 +202,6 @@ export class GrenadeDamageConsumable extends Consumable {
     }
 
     activate(action, doAction) {
-        var consumer = action.entityRef;
         var targetXY = action.targetXY;
         var messageLog = this.getEngine().ui.messageLog;
         if (!this.getGameMap().shroud[targetXY.x][targetXY.y].visible) {

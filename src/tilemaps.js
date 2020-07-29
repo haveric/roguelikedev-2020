@@ -26,7 +26,7 @@ Tilemaps.getTileMap = () => {
             "stairsDown": 60,
             "stairsUp": 62
         }
-    }
+    };
 
     return tilemap;
-}
+};

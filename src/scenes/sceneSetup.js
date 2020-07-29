@@ -1,9 +1,10 @@
-import { getFrameOf, hexToRgb } from '../../utils';
-import Tilemaps from '../tilemaps';
+import Phaser from "phaser";
+import { getFrameOf, hexToRgb } from "../../utils";
+import Tilemaps from "../tilemaps";
 
 export class SceneSetup extends Phaser.Scene {
     constructor() {
-        super('SceneSetup');
+        super("SceneSetup");
     }
 
     init(data) {
@@ -20,7 +21,7 @@ export class SceneSetup extends Phaser.Scene {
         var title = self.add.text(0, 0, "Setup", {font: "48px Arial", fill: "#fff"}).setOrigin(0.5);
         this.rexUI.add.label({
             anchor: {
-                centerX: 'center'
+                centerX: "center"
             },
             y: 50,
             text: title
@@ -35,11 +36,11 @@ export class SceneSetup extends Phaser.Scene {
             createPlayerSelectorFromLoader(self, player);
         }
 
-        self.socket.on('roomAddPlayer', function(player) {
+        self.socket.on("roomAddPlayer", function(player) {
             createPlayerSelectorFromLoader(self, player);
         });
 
-        self.socket.on('roomUpdatePlayer', function(data) {
+        self.socket.on("roomUpdatePlayer", function(data) {
             if (data.player && data.player.playerId != self.socket.id) {
                 var playerId = data.player.playerId;
 
@@ -55,8 +56,8 @@ export class SceneSetup extends Phaser.Scene {
                         var numChildren = child.children.length;
                         if (numChildren > 0) {
                             var button = child.children[numChildren-1].buttons[0];
-                            var icon = button.getElement('icon');
-                            var text = button.getElement('text');
+                            var icon = button.getElement("icon");
+                            var text = button.getElement("text");
 
                             if (data.player.ready) {
                                 icon.setFillStyle(COLOR_LIGHT);
@@ -85,15 +86,15 @@ export class SceneSetup extends Phaser.Scene {
             }
         });
 
-        self.socket.on('startGame', function(room) {
-            self.scene.start('SceneGameUI');
-            self.scene.start('SceneGame', {room: room, socket: this});
+        self.socket.on("startGame", function(room) {
+            self.scene.start("SceneGameUI");
+            self.scene.start("SceneGame", {room: room, socket: this});
         });
 
-        self.events.on('shutdown', function() {
-            self.socket.off('roomAddPlayer');
-            self.socket.off('roomUpdatePlayer');
-            self.socket.off('startGame');
+        self.events.on("shutdown", function() {
+            self.socket.off("roomAddPlayer");
+            self.socket.off("roomUpdatePlayer");
+            self.socket.off("startGame");
         });
     }
 }
@@ -102,7 +103,7 @@ var createPlayerLoaders = function(scene, numPlayers) {
     for (var i = 0; i < numPlayers; i++) {
         createPlayerLoader(scene, i);
     }
-}
+};
 
 var createPlayerLoader = function(scene, index) {
     var x = 100 * (index + 1) + (250 * (index - 1));
@@ -120,7 +121,7 @@ var createPlayerLoader = function(scene, index) {
     var titleField = scene.add.text(0, 0, "Waiting on Player...");
 
     var playerLoader = scene.rexUI.add.sizer({
-        orientation: 'y',
+        orientation: "y",
         anchor: {
             centerX: centerX
         },
@@ -130,7 +131,7 @@ var createPlayerLoader = function(scene, index) {
     })
     .setOrigin(0)
     .addBackground(background)
-    .add(titleField, 0, 'center', { top: 135, bottom: 10, left: 10, right: 10 }, false)
+    .add(titleField, 0, "center", { top: 135, bottom: 10, left: 10, right: 10 }, false)
     .layout();
 
     if (!scene.playerLoaders) {
@@ -138,7 +139,7 @@ var createPlayerLoader = function(scene, index) {
     }
 
     scene.playerLoaders.push(playerLoader);
-}
+};
 
 var createPlayerSelectorFromLoader = function(scene, player) {
     if (!scene.playerSelectors) {
@@ -155,7 +156,7 @@ var createPlayerSelectorFromLoader = function(scene, player) {
             break;
         }
     }
-}
+};
 
 var createPlayerSelector = function(scene, index, player) {
     var x = 100 * (index + 1) + (250 * (index - 1));
@@ -171,7 +172,7 @@ var createPlayerSelector = function(scene, index, player) {
 
     var background = scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10, 0x4e342e);
     var playerSelector = scene.rexUI.add.sizer({
-        orientation: 'y',
+        orientation: "y",
         anchor: {
             centerX: centerX
         },
@@ -185,12 +186,12 @@ var createPlayerSelector = function(scene, index, player) {
     var isCurrentPlayer = player.playerId == scene.socket.id;
     if (isCurrentPlayer) {
         scene.playerNameField = scene.rexUI.add.label({
-            orientation: 'x',
+            orientation: "x",
             background: scene.rexUI.add.roundRectangle(0, 0, 10, 10, 10).setStrokeStyle(2, 0x7b5e57),
-            text: scene.rexUI.add.BBCodeText(0, 0, player.name, { fixedWidth: 180, fixedHeight: 36, valign: 'center' }),
+            text: scene.rexUI.add.BBCodeText(0, 0, player.name, { fixedWidth: 180, fixedHeight: 36, valign: "center" }),
             space: { top: 5, bottom: 5, left: 5, right: 5, icon: 10, }
         }).setInteractive()
-        .on('pointerdown', function () {
+        .on("pointerdown", function () {
             var config = {
                 onTextChanged: function(textObject, text) {
                     if (!scene.ready) {
@@ -199,14 +200,14 @@ var createPlayerSelector = function(scene, index, player) {
                         scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
                     }
                 }
-            }
-            scene.rexUI.edit(scene.playerNameField.getElement('text'), config);
+            };
+            scene.rexUI.edit(scene.playerNameField.getElement("text"), config);
         });
 
-        playerSelector.add(scene.playerNameField, 0, 'left', { top: 10, bottom: 10, left: 10, right: 10 }, true)
+        playerSelector.add(scene.playerNameField, 0, "left", { top: 10, bottom: 10, left: 10, right: 10 }, true);
     } else {
         var playerField = scene.add.text(0, 0, player.name);
-        playerSelector.add(playerField, 0, 'left', { top: 26, bottom: 20, left: 15, right: 10 }, false);
+        playerSelector.add(playerField, 0, "left", { top: 26, bottom: 20, left: 15, right: 10 }, false);
     }
 
 
@@ -215,7 +216,7 @@ var createPlayerSelector = function(scene, index, player) {
         var playerSprite = scene.add.sprite(0, 0, Tilemaps.getTileMap().name).setFrame(frame).setTint("0x" + player.color);
         playerSprite.displayWidth = 100;
         playerSprite.scaleY = playerSprite.scaleX; // scale evenly
-        playerSelector.add(playerSprite, 0, 'center', { top: 28, bottom: 20, left: 10, right: 10 }, false);
+        playerSelector.add(playerSprite, 0, "center", { top: 28, bottom: 20, left: 10, right: 10 }, false);
 
         if (isCurrentPlayer) {
             self.playerSprite = playerSprite;
@@ -223,7 +224,7 @@ var createPlayerSelector = function(scene, index, player) {
     }
 
     var buttonOptions = scene.rexUI.add.sizer({
-        orientation: 'x'
+        orientation: "x"
     });
 
     if (isCurrentPlayer) {
@@ -232,7 +233,7 @@ var createPlayerSelector = function(scene, index, player) {
 
         buttonOptions.add(scene.colorPicker);
 
-        scene.colorPicker.setInteractive().on('pointerdown', function(pointer, localX, localY, event) {
+        scene.colorPicker.setInteractive().on("pointerdown", function(/*pointer, localX, localY, event*/) {
             if (!scene.ready) {
                 if (scene.colorPickerDialog) {
                     if (scene.rexUI.isShown(scene.colorPickerDialog)) {
@@ -246,7 +247,7 @@ var createPlayerSelector = function(scene, index, player) {
             }
         });
 
-        scene.input.on('pointerdown', function (pointer) {
+        scene.input.on("pointerdown", function (pointer) {
             if (scene.colorPickerDialog && scene.rexUI.isShown(scene.colorPickerDialog) && !scene.rexUI.isInTouching(scene.colorPickerDialog, pointer) && !scene.rexUI.isInTouching(scene.colorPicker, pointer)) {
                 scene.rexUI.hide(scene.colorPickerDialog);
             }
@@ -264,21 +265,21 @@ var createPlayerSelector = function(scene, index, player) {
             left: 10, right: 10, top: 20, bottom: 20,
             line: 10, item: 10
         },
-        type: ((CheckboxesMode) ? 'checkboxes' : 'radio'),
+        type: ((CheckboxesMode) ? "checkboxes" : "radio"),
         setValueCallback: function (button, value) {
             if (isCurrentPlayer) {
                 scene.ready = value;
-                button.getElement('icon').setFillStyle((value) ? COLOR_LIGHT : undefined);
+                button.getElement("icon").setFillStyle((value) ? COLOR_LIGHT : undefined);
                 scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, ready: value });
 
                 if (value) {
-                    scene.playerNameField.off('pointerdown');
+                    scene.playerNameField.off("pointerdown");
 
                     if (scene.colorPickerDialog && scene.rexUI.isShown(scene.colorPickerDialog)) {
                         scene.rexUI.hide(scene.colorPickerDialog);
                     }
                 } else {
-                    scene.playerNameField.on('pointerdown', function () {
+                    scene.playerNameField.on("pointerdown", function () {
                         var config = {
                             onTextChanged: function(textObject, text) {
                                 if (!scene.ready) {
@@ -287,14 +288,14 @@ var createPlayerSelector = function(scene, index, player) {
                                     scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
                                 }
                             }
-                        }
-                        scene.rexUI.edit(scene.playerNameField.getElement('text'), config);
+                        };
+                        scene.rexUI.edit(scene.playerNameField.getElement("text"), config);
                     });
                 }
             }
         }
     });
-    buttonOptions.add(buttons, 0, 'right', { top: 10, bottom: 10, left: 20, right: 10 }, false);
+    buttonOptions.add(buttons, 0, "right", { top: 10, bottom: 10, left: 20, right: 10 }, false);
 
     playerSelector.add(buttonOptions);
     playerSelector.layout();
@@ -303,9 +304,9 @@ var createPlayerSelector = function(scene, index, player) {
     playerSelector.playerId = player.playerId;
 
     scene.playerSelectors.push(playerSelector);
-}
+};
 
-const COLOR_PRIMARY = 0x4e342e;
+//const COLOR_PRIMARY = 0x4e342e;
 const COLOR_LIGHT = 0x7b5e57;
 const COLOR_DARK = 0x260e04;
 var createButton = function (scene, text, isCurrentPlayer) {
@@ -323,10 +324,10 @@ var createButton = function (scene, text, isCurrentPlayer) {
             left: 10, right: 10, top: 10, bottom: 10,
             icon: 10
         },
-        align: 'center',
+        align: "center",
         name: text
     });
-}
+};
 
 var createStartGameButton = function(scene, text) {
     var background = scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10);
@@ -341,7 +342,7 @@ var createStartGameButton = function(scene, text) {
             left: 10, right: 10, top: 10, bottom: 10,
             icon: 10
         },
-        align: 'center',
+        align: "center",
         name: text
     });
 
@@ -357,28 +358,28 @@ var createStartGameButton = function(scene, text) {
         }
     }).layout();
 
-    buttons.on("button.click", function(button, index, pointer, event) {
-        scene.socket.emit('startGame', { roomId: scene.room.roomId, playerId: scene.socket.id } );
+    buttons.on("button.click", function(/*button, index, pointer, event*/) {
+        scene.socket.emit("startGame", { roomId: scene.room.roomId, playerId: scene.socket.id } );
     });
 
     return buttons;
-}
+};
 
 var createColorPickerDialog = function (scene, player) {
     // Create components
     var objectPanel = scene.add.rectangle(0, 0, 200, 200).setStrokeStyle(2, 0xffffff);
     var controller = createController(scene, player.color);
     var mainPanel = scene.rexUI.add.sizer({
-        orientation: 'x',
+        orientation: "x",
     })
-    .add(controller, 0, 'top', 0, false)
-    .add(objectPanel, 0, 'center', 0, false);
+    .add(controller, 0, "top", 0, false)
+    .add(objectPanel, 0, "center", 0, false);
 
     // Connect events
     var updateFillColor = function () {
-        var red = Math.round(controller.getByName('R').getValue(0, 255));
-        var green = Math.round(controller.getByName('G').getValue(0, 255));
-        var blue = Math.round(controller.getByName('B').getValue(0, 255));
+        var red = Math.round(controller.getByName("R").getValue(0, 255));
+        var green = Math.round(controller.getByName("G").getValue(0, 255));
+        var blue = Math.round(controller.getByName("B").getValue(0, 255));
         var newColor = Phaser.Display.Color.GetColor(red, green, blue);
         if (newColor) {
             scene.colorPicker.setFillStyle(newColor);
@@ -396,8 +397,8 @@ var createColorPickerDialog = function (scene, player) {
         } else {
             objectPanel.setFillStyle(Phaser.Display.Color.GetColor(0, 0, 0));
         }
-    }
-    controller.on('valuechange', function () {
+    };
+    controller.on("valuechange", function () {
         updateFillColor();
     });
     updateFillColor();
@@ -412,25 +413,25 @@ var createColorPickerDialog = function (scene, player) {
 var createController = function (scene, color) {
     var convertedColor = hexToRgb(color);
     // Create components
-    var redSlider = createSlider(scene, 'R', 0xd50000, 0x9b0000, 0xff5131, convertedColor.r).setName('R');
-    var greenSlider = createSlider(scene, 'G', 0x00c853, 0x009624, 0x5efc82, convertedColor.g).setName('G');
-    var blueSlider = createSlider(scene, 'B', 0x304ffe, 0x0026ca, 0x7a7cff, convertedColor.b).setName('B');
+    var redSlider = createSlider(scene, "R", 0xd50000, 0x9b0000, 0xff5131, convertedColor.r).setName("R");
+    var greenSlider = createSlider(scene, "G", 0x00c853, 0x009624, 0x5efc82, convertedColor.g).setName("G");
+    var blueSlider = createSlider(scene, "B", 0x304ffe, 0x0026ca, 0x7a7cff, convertedColor.b).setName("B");
     var controlPanel = scene.rexUI.add.sizer({
-        orientation: 'y',
+        orientation: "y",
     })
-    .add(redSlider, 0, 'center', 0, true)
-    .add(greenSlider, 0, 'center', 0, true)
-    .add(blueSlider, 0, 'center', 0, true);
+    .add(redSlider, 0, "center", 0, true)
+    .add(greenSlider, 0, "center", 0, true)
+    .add(blueSlider, 0, "center", 0, true);
 
     // Connect events
-    redSlider.on('valuechange', function () {
-        this.emit('valuechange');
+    redSlider.on("valuechange", function () {
+        this.emit("valuechange");
     }, controlPanel);
-    greenSlider.on('valuechange', function () {
-        this.emit('valuechange');
+    greenSlider.on("valuechange", function () {
+        this.emit("valuechange");
     }, controlPanel);
-    blueSlider.on('valuechange', function () {
-        this.emit('valuechange');
+    blueSlider.on("valuechange", function () {
+        this.emit("valuechange");
     }, controlPanel);
     return controlPanel;
 };
@@ -446,7 +447,7 @@ var createSlider = function (scene, colorText, colorPrimary, colorDark, colorLig
         slider: {
             track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, colorPrimary),
             indicator: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, colorLight),
-            input: 'click',
+            input: "click",
             width: 100, // Fixed width
         },
 
@@ -461,5 +462,5 @@ var createSlider = function (scene, colorText, colorPrimary, colorDark, colorLig
         },
 
         value: value
-    })
-}
+    });
+};

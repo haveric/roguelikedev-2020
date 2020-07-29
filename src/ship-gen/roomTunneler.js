@@ -1,5 +1,5 @@
-import Srand from 'seeded-rand';
-import Tiles from './tilefactories';
+import Srand from "seeded-rand";
+import Tiles from "./tilefactories";
 
 export class RoomTunneler {
     constructor(gameMap, rooms, room1, room2) {
@@ -21,7 +21,7 @@ export class RoomTunneler {
             roomsEntered: [],
             lastX: -1,
             lastY: -1
-        }
+        };
 
         doorData.roomsEntered.push(this.room1);
         if (Srand.intInRange(0, 1) == 1) {
@@ -43,8 +43,6 @@ export class RoomTunneler {
         if (axisEnd < axisStart) {
             direction = -1;
         }
-        const start = Math.min(axisStart, axisEnd);
-        const end =  Math.max(axisStart, axisEnd);
 
         for (var axisCoord = axisStart; axisCoord != axisEnd + direction; axisCoord += direction) {
             var x = isHorizontal ? axisCoord : otherAxis;
@@ -54,21 +52,21 @@ export class RoomTunneler {
 
             if (doorData.lastX != -1 && doorData.lastY != -1) {
                 for (var i = 0; i < doorData.roomsEntered.length; i++) {
-                    var room = doorData.roomsEntered[i];
+                    let room = doorData.roomsEntered[i];
 
                     if (!room.intersectsPoint(x,y)) {
                         doorData.roomsEntered.splice(i, 1);
-                        console.log('  Created door leaving room at ' + doorData.lastX + ',' + doorData.lastY)
+                        console.log("  Created door leaving room at " + doorData.lastX + "," + doorData.lastY);
                         this.gameMap.locations[doorData.lastX][doorData.lastY].addTile(Tiles.greenDoor(doorData.lastX, doorData.lastY));
                     }
                 }
-                for (var i = 0; i < this.rooms.length; i++) {
-                    var room = this.rooms[i];
+                for (i = 0; i < this.rooms.length; i++) {
+                    let room = this.rooms[i];
                     if (room.intersectsPoint(x,y)) {
                         if (!doorData.roomsEntered.includes(room)) {
                             doorData.roomsEntered.push(room);
                             if (room.isOnEdge(x,y)) {
-                                console.log('  Created door entering room at ' + x + ',' + y)
+                                console.log("  Created door entering room at " + x + "," + y);
                                 this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
                             }
                             break;

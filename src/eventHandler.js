@@ -1,5 +1,5 @@
-import { BumpAction, WaitAction, PickupAction, TakeStairsAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from './actions';
-import Tilemaps from './tilemaps';
+import { BumpAction, WaitAction, PickupAction, TakeStairsAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from "./actions";
+import Tilemaps from "./tilemaps";
 
 export class EventHandler {
     constructor(input, engine) {
@@ -21,8 +21,8 @@ export class EventHandler {
 
     initEvents() {
         var self = this;
-        this.input.keyboard.off('keydown').on('keydown', function(event) {
-            var numLockOn = event.getModifierState('NumLock');
+        this.input.keyboard.off("keydown").on("keydown", function(event) {
+            var numLockOn = event.getModifierState("NumLock");
             if (numLockOn && !event.shiftKey && event.code.startsWith("Numpad") && event.keyCode < 90) {
                 event.numLockShiftKey = true;
             }
@@ -33,28 +33,28 @@ export class EventHandler {
             self.addKey(event.code);
         });
 
-        this.input.keyboard.off('keyup').on('keyup', function(event) {
+        this.input.keyboard.off("keyup").on("keyup", function(event) {
             self.removeKey(event.code);
         });
 
-        this.input.off('pointermove').on('pointermove', function(event) {
+        this.input.off("pointermove").on("pointermove", function(event) {
             self.mouseMove(event);
         });
 
-        this.input.off('pointerup').on('pointerup', function(event) {
+        this.input.off("pointerup").on("pointerup", function(event) {
             self.mouseClick(event);
         });
     }
 
-    pressKey(event) {
+    pressKey(/*event*/) {
         // Do nothing for base Event Handler
     }
 
-    mouseMove(event) {
+    mouseMove(/*event*/) {
         // Do nothing for base Event Handler
     }
 
-    mouseClick(event) {
+    mouseClick(/*event*/) {
         // Do nothing for base Event Handler
     }
 
@@ -81,7 +81,7 @@ export class EventHandler {
 
             if (gameMap.shroud[x][y].visible || gameMap.shroud[x][y].explored) {
                 if (!skipBlocking) {
-                    var entity = gameMap.getBlockingEntityAtLocation(x, y);
+                    let entity = gameMap.getBlockingEntityAtLocation(x, y);
                     if (entity) {
                         sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
                         sidePanel.text(entity.description + "\n\n");
@@ -89,8 +89,8 @@ export class EventHandler {
                 }
 
                 var entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);
-                for (var i = 0; i < entities.length; i++) {
-                    var entity = entities[i];
+                for (let i = 0; i < entities.length; i++) {
+                    let entity = entities[i];
                     sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
                     if (entities.length == 1) {
                         sidePanel.text(entity.description + "\n\n");
@@ -101,7 +101,7 @@ export class EventHandler {
                 }
 
                 var tiles = gameMap.locations[x][y].tiles;
-                for (var i = 0; i < tiles.length; i++) {
+                for (let i = 0; i < tiles.length; i++) {
                     var tile = tiles[i];
                     sidePanel.text(tile.name + "\n");
                     sidePanel.text(tile.description + "\n\n");
@@ -145,7 +145,7 @@ export class EventHandler {
             var actionResult = action.perform(false);
             if (actionResult.success) {
                 var scene = this.engineRef.scene;
-                scene.socket.emit('s-performAction', {roomId: scene.room.roomId, playerId: scene.socket.id, useEnergy: actionResult.useEnergy, actionData: actionResult.action.toString()});
+                scene.socket.emit("s-performAction", {roomId: scene.room.roomId, playerId: scene.socket.id, useEnergy: actionResult.useEnergy, actionData: actionResult.action.toString()});
             }
         }
     }
@@ -180,8 +180,8 @@ export class EventHandler {
         player.energyMax = 5000;
         this.engineRef.debugEnabled = true;
 
-        scene.events.emit('ui-updateEnergy', {energy: player.energy, energyMax: player.energyMax });
-        scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+        scene.events.emit("ui-updateEnergy", {energy: player.energy, energyMax: player.energyMax });
+        scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
     }
 
     addEnergy() {
@@ -189,18 +189,18 @@ export class EventHandler {
         var player = this.engineRef.player;
         player.energy = 5000;
         player.energyMax = 5000;
-        scene.events.emit('ui-updateEnergy', {energy: player.energy, energyMax: player.energyMax });
-        scene.socket.emit('updateEnergy', { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax});
+        scene.events.emit("ui-updateEnergy", {energy: player.energy, energyMax: player.energyMax });
+        scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: scene.socket.id, energy: player.energy, energyMax: player.energyMax});
     }
 
     debugRoom() {
         var scene = this.engineRef.scene;
-        scene.socket.emit('s-createDebugRoom', { roomId: scene.room.roomId, playerId: scene.socket.id });
+        scene.socket.emit("s-createDebugRoom", { roomId: scene.room.roomId, playerId: scene.socket.id });
     }
 
     regenMap() {
         var scene = this.engineRef.scene;
-        scene.socket.emit('s-regenMap', { roomId: scene.room.roomId });
+        scene.socket.emit("s-regenMap", { roomId: scene.room.roomId });
     }
 }
 
@@ -212,6 +212,12 @@ export class MainGameEventHandler extends EventHandler {
     pressKey(event) {
         var self = this;
 
+        var player,
+            targets,
+            i,
+            j,
+            x,
+            y;
         switch (event.code) {
             // Left
             case "ArrowLeft":
@@ -263,14 +269,14 @@ export class MainGameEventHandler extends EventHandler {
                 this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
                 break;
             case "KeyO":
-                var player = this.engineRef.player;
-                var targets = [];
+                player = this.engineRef.player;
+                targets = [];
 
-                for (var i = -1; i <= 1; i++) {
-                    for (var j = -1; j <= 1; j++) {
+                for (i = -1; i <= 1; i++) {
+                    for (j = -1; j <= 1; j++) {
                         if (i != 0 || j != 0) {
-                            var x = player.x + i;
-                            var y = player.y + j;
+                            x = player.x + i;
+                            y = player.y + j;
                             var success = this.engineRef.gameMap.locations[x][y].tileComponentCheck("openable", "getIsOpen");
                             if (success === false) {
                                 targets.push({"x": x, "y": y});
@@ -284,14 +290,14 @@ export class MainGameEventHandler extends EventHandler {
                 });
                 break;
             case "KeyC":
-                var player = this.engineRef.player;
-                var targets = [];
+                player = this.engineRef.player;
+                targets = [];
 
-                for (var i = -1; i <= 1; i++) {
-                    for (var j = -1; j <= 1; j++) {
+                for (i = -1; i <= 1; i++) {
+                    for (j = -1; j <= 1; j++) {
                         if (i != 0 || j != 0) {
-                            var x = player.x + i;
-                            var y = player.y + j;
+                            x = player.x + i;
+                            y = player.y + j;
                             if (this.engineRef.gameMap.locations[x][y].tileComponentCheck("openable", "getIsOpen")) {
                                 targets.push({"x": x, "y": y});
                             }
@@ -323,11 +329,11 @@ export class MainGameEventHandler extends EventHandler {
                 self.takeStairs();
                 break;
             case "PageDown":
-                console.log('Entering Debug Room...');
+                console.log("Entering Debug Room...");
                 self.debugRoom();
                 break;
             case "PageUp":
-                console.log('Regenerating map...');
+                console.log("Regenerating map...");
                 self.regenMap();
                 break;
             default:
@@ -344,11 +350,11 @@ export class PlayerDeadEventHandler extends EventHandler {
     constructor(input, engine) {
         super(input, engine);
 
-        engine.scene.events.emit('ui-updateHp', { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.hpMax });
+        engine.scene.events.emit("ui-updateHp", { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.hpMax });
         engine.ui.inventoryMenu.hide();
     }
 
-    pressKey(event) {
+    pressKey(/*event*/) {
 
     }
 }
@@ -373,7 +379,7 @@ export class AskUserEventHandler extends EventHandler {
         }
     }
 
-    mouseClick(event) {
+    mouseClick(/*event*/) {
         this.exit();
     }
 
@@ -411,7 +417,7 @@ export class InventoryEventHandler extends AskUserEventHandler {
     pressKey(event) {
         var player = this.engineRef.player;
         var charAKeyCode = 65;
-        var index = event.keyCode - 65;
+        var index = event.keyCode - charAKeyCode;
 
         if (index >= 0 && index < 26) {
             var selectedItem = player.inventory.items[index];
@@ -424,7 +430,7 @@ export class InventoryEventHandler extends AskUserEventHandler {
         super.pressKey(event);
     }
 
-    selectItem(index, item) {
+    selectItem(/*index, item*/) {
         // Do nothing for base InventoryEventHandler
     }
 
@@ -455,7 +461,7 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
         this.render();
     }
 
-    selectItem(index, item) {
+    selectItem(index/*, item*/) {
         this.dropItem(index);
     }
 }
@@ -680,7 +686,7 @@ export class SelectIndexHandler extends AskUserEventHandler {
         this.updateSidePanelDescriptionsForWorldPosition(event.worldX, event.worldY);
     }
 
-    mouseClick(event) {
+    mouseClick(/*event*/) {
         if (this.engineRef.gameMap.locations[this.x] && this.engineRef.gameMap.locations[this.x][this.y]) {
             this.selectTile();
         }
@@ -765,16 +771,16 @@ export class AreaRangedAttackHandler extends SelectIndexHandler {
     highlightTile(x, y, moveCamera) {
         this.targetX = x;
         this.targetY = y;
-        for (var i = this.lastX - this.radius + 1; i < this.lastX + this.radius; i++) {
-            for (var j = this.lastY - this.radius + 1; j < this.lastY + this.radius; j++) {
+        for (let i = this.lastX - this.radius + 1; i < this.lastX + this.radius; i++) {
+            for (let j = this.lastY - this.radius + 1; j < this.lastY + this.radius; j++) {
                 if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
                     this.engineRef.gameMap.highlight[i][j].setVisible(false);
                 }
             }
         }
 
-        for (var i = x - this.radius + 1; i < x + this.radius; i++) {
-            for (var j = y - this.radius + 1; j < y + this.radius; j++) {
+        for (let i = x - this.radius + 1; i < x + this.radius; i++) {
+            for (let j = y - this.radius + 1; j < y + this.radius; j++) {
                 if (this.engineRef.gameMap.highlight[i] && this.engineRef.gameMap.highlight[i][j]) {
                     this.engineRef.gameMap.highlight[i][j].setVisible(true);
                 }

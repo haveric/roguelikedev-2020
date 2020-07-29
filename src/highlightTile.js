@@ -1,6 +1,6 @@
-import Entity from './entity';
-import Sprite from './sprite';
-import RenderOrder from './renderOrder';
+import Entity from "./entity";
+import Sprite from "./sprite";
+import RenderOrder from "./renderOrder";
 
 export default class HighlightTile extends Entity {
     constructor(x, y, name) {

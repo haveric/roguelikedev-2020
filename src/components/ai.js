@@ -1,9 +1,7 @@
-import { astar, Graph } from 'javascript-astar';
-import Srand from 'seeded-rand';
-import { create2dArray } from '../../utils';
-import { Actor } from '../entity';
-import { MeleeAction, MovementAction, WaitAction, BumpAction } from '../actions';
-import BaseComponent from './baseComponent';
+import { astar, Graph } from "javascript-astar";
+import Srand from "seeded-rand";
+import { MeleeAction, WaitAction, BumpAction } from "../actions";
+import BaseComponent from "./baseComponent";
 
 export class BaseAI extends BaseComponent {
     constructor(entity) {
@@ -18,8 +16,8 @@ export class BaseAI extends BaseComponent {
 
         var cost = Array(gameMap.width).fill().map(() => Array(gameMap.height).fill(0));
 
-        for (var i = 0; i < gameMap.width; i++) {
-            for (var j = 0; j < gameMap.height; j++) {
+        for (let i = 0; i < gameMap.width; i++) {
+            for (let j = 0; j < gameMap.height; j++) {
                 var location = locations[i][j];
                 if (location.isTileWalkable()) {
                     cost[i][j] = 1;
@@ -28,7 +26,7 @@ export class BaseAI extends BaseComponent {
         }
 
         var entities = gameMap.entities;
-        for (var i = 0; i < entities.length; i++) {
+        for (let i = 0; i < entities.length; i++) {
             var entity = entities[i];
             if (entity.blocksMovement && cost[entity.x][entity.y]) {
                 cost[entity.x][entity.y] += 10;

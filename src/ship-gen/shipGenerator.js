@@ -1,10 +1,10 @@
-import Srand from 'seeded-rand';
+import Srand from "seeded-rand";
 import GameMap from "../gameMap";
-import EntityFactories from '../entityFactories';
-import RenderOrder from '../renderOrder';
-import Tiles from './tilefactories';
-import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from './roomTypes';
-import { RoomTunneler } from './roomTunneler.js'
+import EntityFactories from "../entityFactories";
+import RenderOrder from "../renderOrder";
+import Tiles from "./tilefactories";
+import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
+import { RoomTunneler } from "./roomTunneler.js";
 
 export class GeneratorOptions {
     constructor(
@@ -44,7 +44,7 @@ export class Ship {
         this.gameMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height);
 
         // create breach room near center left of map
-        var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2))
+        var breachX2 = Math.floor((this.shipOptions.height / 2) - (RoomConstants.baseBreachHeight / 2));
         var breachRoom = new BreachRoom(0, breachX2);
         this.breachRoom = this._createRoom(this.gameMap, breachRoom);
         this.rooms.push(breachRoom);
@@ -54,19 +54,19 @@ export class Ship {
 
         // generate bridge somewhere on the right side of the map near the middle
         var validBridge = false;
-        console.log('Generating bridge between x: ' + holdGenerationXMin + ' - ' 
-            + this.gameMap.width + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
+        console.log("Generating bridge between x: " + holdGenerationXMin + " - "
+            + this.gameMap.width + " and y: " + holdGenerationYMin + " - " + holdGenerationYMax);
 
         var tries = 0;
         while(!validBridge) {
-            var xLoc = this.gameMap.width - RoomConstants.bridgeWidth - 1;
-            var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
+            let xLoc = this.gameMap.width - RoomConstants.bridgeWidth - 1;
+            let yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
             var bridge = new Bridge(xLoc, yLoc);
             validBridge = !this._doesThisIntersectWithOtherRooms(bridge);
             if(!validBridge) {
                 tries++;
                 if(tries > 20) {
-                    console.log('Unable to generate bridge');
+                    console.log("Unable to generate bridge");
                     break;
                 }
                 continue;
@@ -87,20 +87,20 @@ export class Ship {
         for (var h = 1; h <= this.shipOptions.holds; h++) {
             // generate hold sections in the middle 3rd y-zone of the game area
             var validHold = false;
-            console.log('Generating hold ' + h + ' between x: ' + holdGenerationXMin 
-                + ' - ' + holdGenerationXMax + ' and y: ' + holdGenerationYMin + ' - ' + holdGenerationYMax);
-            var tries = 0;
+            console.log("Generating hold " + h + " between x: " + holdGenerationXMin
+                + " - " + holdGenerationXMax + " and y: " + holdGenerationYMin + " - " + holdGenerationYMax);
+            tries = 0;
             while(!validHold) {
                 // keep trying to generate a hold until it works!
-                var xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationXMax - RoomConstants.holdWidth);
-                var yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax) - RoomConstants.holdHeight;
+                let xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationXMax - RoomConstants.holdWidth);
+                let yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax) - RoomConstants.holdHeight;
                 var hold = RoomTypeFactories.createHold(xLoc, yLoc);
 
                 validHold = !this._doesThisIntersectWithOtherRooms(hold);
                 if(!validHold) {
                     tries++;
                     if(tries > 10) {
-                        console.log('Unable to generate hold ' + h);
+                        console.log("Unable to generate hold " + h);
                         break;
                     }
                     continue;
@@ -111,25 +111,25 @@ export class Ship {
                 this._tunnelBetweenRooms(previousMainRoom, hold);
 
                 // generate 4 side rooms off of each hold
-                console.log('Generating rooms for hold ' + h + '...');
+                console.log("Generating rooms for hold " + h + "...");
                 for (var r = 0; r < 4; r++) {
                     var validRoom = false;
-                    tries = 0
+                    tries = 0;
                     while(!validRoom) {
                         var roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
                         var roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
                 
-                        var xMax = Math.min(this.gameMap.width - roomWidth, holdGenerationXMax)
-                        xLoc = Srand.intInRange(holdGenerationXMin, xMax);
-                        yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
+                        var xMax = Math.min(this.gameMap.width - roomWidth, holdGenerationXMax);
+                        let xLoc = Srand.intInRange(holdGenerationXMin, xMax);
+                        let yLoc = Srand.intInRange(0, this.gameMap.height - roomHeight - 1);
                 
-                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, 'POI' + h + '' + r);
+                        var room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, "POI" + h + "" + r);
 
                         validRoom = !this._doesThisIntersectWithOtherRooms(room);
                         if(!validRoom) {
                             tries++;
                             if(tries > 10) {
-                                console.log('Unable to generate room ' + r);
+                                console.log("Unable to generate room " + r);
                                 break;
                             }
                             continue;
@@ -166,7 +166,7 @@ export class Ship {
     createDebugMap() {
         if (!this.engineRef.hasGameMap("DEBUG")) {
             var debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20);
-            var debugRoom = new RectangularRoom(0, 0, 20, 20, 'DEBUG');
+            var debugRoom = new RectangularRoom(0, 0, 20, 20, "DEBUG");
             debugRoom = this._createRoom(debugGameMap, debugRoom);
             var center = debugRoom.center();
 
@@ -181,13 +181,13 @@ export class Ship {
             debugGameMap.locations[center.x + 1][center.y].addTile(Tiles.stairsUp(center.x + 1, center.y, "DEBUG-UP"));
 
             var debugGameMapDown = new GameMap(this.engineRef, "DEBUG-DOWN", 20, 20, []);
-            var debugRoomDown = new RectangularRoom(6, 6, 6, 6, 'DEBUG');
-            debugRoomDown = this._createRoom(debugGameMapDown, debugRoomDown);
+            var debugRoomDown = new RectangularRoom(6, 6, 6, 6, "DEBUG");
+            this._createRoom(debugGameMapDown, debugRoomDown);
             debugGameMapDown.locations[center.x - 1][center.y].addTile(Tiles.stairsUp(center.x - 1, center.y, "DEBUG"));
 
             var debugGameMapUp = new GameMap(this.engineRef, "DEBUG-UP", 20, 20, []);
-            var debugRoomUp = new RectangularRoom(0, 0, 15, 15, 'DEBUG');
-            debugRoomUp = this._createRoom(debugGameMapUp, debugRoomUp);
+            var debugRoomUp = new RectangularRoom(0, 0, 15, 15, "DEBUG");
+            this._createRoom(debugGameMapUp, debugRoomUp);
             debugGameMapUp.locations[center.x + 1][center.y].addTile(Tiles.stairsDown(center.x + 1, center.y, "DEBUG"));
 
             for (var i = 1; i < 14; i++) {
@@ -227,8 +227,8 @@ export class Ship {
 
     _createRoom(gameMap, newRoom) {
         // Create Room in map
-        for (var x = newRoom.x1; x <= newRoom.x2; x++) {
-            for (var y = newRoom.y1; y <= newRoom.y2; y++) {
+        for (let x = newRoom.x1; x <= newRoom.x2; x++) {
+            for (let y = newRoom.y1; y <= newRoom.y2; y++) {
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
                     if (gameMap.locations[x][y].tiles.length === 0) {
                         gameMap.locations[x][y].addTile(Tiles.wall(x, y));
@@ -241,13 +241,13 @@ export class Ship {
             }
         }
 
-        for (var x = newRoom.x1; x <= newRoom.x2; x++) {
-            for (var y = newRoom.y1; y <= newRoom.y2; y++) {
+        for (let x = newRoom.x1; x <= newRoom.x2; x++) {
+            for (let y = newRoom.y1; y <= newRoom.y2; y++) {
                 if (x == newRoom.x1 || x == newRoom.x2 || y == newRoom.y1 || y == newRoom.y2) {
                     if (gameMap.locations[x][y].isTileWalkable()) {
                         if ((gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
                          || (gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
-                            console.log('Created door on edge of room at ' + x + ',' + y);
+                            console.log("Created door on edge of room at " + x + "," + y);
                             gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
                         }
                     }
@@ -255,7 +255,7 @@ export class Ship {
             }
         }
 
-        console.log('Created room: ' + newRoom);
+        console.log("Created room: " + newRoom);
         return newRoom;
     }
 
@@ -271,13 +271,13 @@ export class Ship {
 
     placeEntitiesInRoom(rectangularRoom) {
         var numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
-        console.log('Spawning ' + numMonstersToSpawn + ' enemies in room: ' + rectangularRoom);
+        console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
     
-        for (var i = 0; i < numMonstersToSpawn; i++) {
-            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
-    
-            var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+        for (let i = 0; i < numMonstersToSpawn; i++) {
+            let x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
+            let y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+
+            let entity = this.gameMap.getBlockingEntityAtLocation(x, y);
             if (!entity) {
                 var random = Srand.random();
     
@@ -292,13 +292,13 @@ export class Ship {
         }
 
         var numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
-        console.log('Spawning ' + numItemsToSpawn + ' items in room: ' + rectangularRoom);
+        console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
 
-        for (var i = 0; i < numItemsToSpawn; i++) {
-            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+        for (let i = 0; i < numItemsToSpawn; i++) {
+            let x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
+            let y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
 
-            var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+            let entity = this.gameMap.getBlockingEntityAtLocation(x, y);
             if (!entity) {
                 var itemChance = Srand.random();
 

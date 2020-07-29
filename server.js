@@ -210,9 +210,8 @@ io.on('connection', function (socket) {
 
     socket.on('s-createDebugRoom', function(data) {
         var roomId = data.roomId;
-        var playerId = data.playerId;
 
-        io.sockets.in("room-" + roomId).emit("c-createDebugRoom", { playerId: playerId });
+        io.sockets.in("room-" + roomId).emit("c-createDebugRoom");
     });
 
     socket.on('s-regenMap', function(data) {

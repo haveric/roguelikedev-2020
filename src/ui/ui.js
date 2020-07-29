@@ -1,6 +1,6 @@
-import MessageLog from './messageLog';
-import SidePanel from './sidePanel';
-import InventoryMenu from './inventoryMenu';
+import MessageLog from "./messageLog";
+import SidePanel from "./sidePanel";
+import InventoryMenu from "./inventoryMenu";
 
 export default class UI {
     constructor(scene) {

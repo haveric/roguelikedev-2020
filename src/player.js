@@ -1,5 +1,4 @@
-import { Actor } from './entity';
-import RenderOrder from './renderOrder';
+import { Actor } from "./entity";
 
 export default class Player extends Actor {
     constructor(socketId, x, y, name, description, sprite, energy, energyMax) {

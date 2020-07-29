@@ -41,10 +41,10 @@ Fov.exploreTile = (gameMap, x, y, lightSource) => {
             }
         }
     }
-}
+};
 
-Fov.exploreLight = (gameMap, x, y, octant, originX, originY) => {
-    switch(octant) {
+Fov.exploreLight = (gameMap, x, y, exploreOctant, originX, originY) => {
+    switch(exploreOctant) {
         case 0:
             originX += x;
             originY -= y;
@@ -97,7 +97,7 @@ Fov.exploreLight = (gameMap, x, y, octant, originX, originY) => {
             }
         }
     }
-}
+};
 
 Fov.blocksLight = (gameMap, x, y, octant, originX, originY)  => {
     switch(octant) {
@@ -143,7 +143,7 @@ Fov.blocksLight = (gameMap, x, y, octant, originX, originY)  => {
         }
     }
     return blocksLight;
-}
+};
 
 Fov.setVisible = (gameMap, x, y, octant, originX, originY, lightSource) => {
     switch(octant) {
@@ -182,7 +182,7 @@ Fov.setVisible = (gameMap, x, y, octant, originX, originY, lightSource) => {
     }
 
     Fov.exploreTile(gameMap, originX, originY, lightSource);
-}
+};
 
 export class FovSimple {}
 FovSimple.compute = (gameMap, x, y, radius) => {
@@ -196,7 +196,7 @@ FovSimple.compute = (gameMap, x, y, radius) => {
             Fov.exploreTile(gameMap, i, j);
         }
     }
-}
+};
 
 /**
 * Credit to Adam Millazo: http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
@@ -208,7 +208,7 @@ FovAdamMillazo.compute = (gameMap, x, y, radius) => {
     for (var octant = 0; octant < 8; octant++) {
         FovAdamMillazo.computeOctant(gameMap, octant, 1, x, y, radius, radius * 2, new Slope(1, 1), new Slope(0, 1));
     }
-}
+};
 
 FovAdamMillazo.computeOctant = (gameMap, octant, x, originX, originY, radius, extendedRadius, top, bottom, lightSource) => {
     for (; x < extendedRadius; x++) {
@@ -261,8 +261,8 @@ FovAdamMillazo.computeOctant = (gameMap, octant, x, originX, originY, radius, ex
                     if (x != radius) {
                         if (isOpaque) {
                             if (wasOpaque == 0) {
-                                var nx = x *2;
-                                var ny = y * 2 + 1;
+                                let nx = x *2;
+                                let ny = y * 2 + 1;
 
                                 if (Fov.blocksLight(gameMap, x, y + 1, octant, originX, originY)) {
                                     nx --;
@@ -285,8 +285,8 @@ FovAdamMillazo.computeOctant = (gameMap, octant, x, originX, originY, radius, ex
                             wasOpaque = 1;
                         } else {
                             if (wasOpaque > 0) {
-                                var nx = x * 2;
-                                var ny = y * 2 + 1;
+                                let nx = x * 2;
+                                let ny = y * 2 + 1;
 
                                 if (Fov.blocksLight(gameMap, x + 1, y + 1, octant, originX, originY)) {
                                     nx ++;
@@ -310,5 +310,5 @@ FovAdamMillazo.computeOctant = (gameMap, octant, x, originX, originY, radius, ex
             break;
         }
     }
-}
+};
 

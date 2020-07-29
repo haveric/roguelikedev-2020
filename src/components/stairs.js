@@ -1,4 +1,4 @@
-import BaseComponent from './baseComponent';
+import BaseComponent from "./baseComponent";
 
 export default class Stairs extends BaseComponent {
     constructor(entity, floor) {

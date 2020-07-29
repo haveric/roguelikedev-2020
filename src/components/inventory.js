@@ -1,4 +1,4 @@
-import BaseComponent from './baseComponent';
+import BaseComponent from "./baseComponent";
 
 export default class Inventory extends BaseComponent {
     constructor(entity, capacity) {

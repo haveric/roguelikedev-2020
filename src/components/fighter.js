@@ -1,7 +1,6 @@
-import RenderOrder from '../renderOrder';
-import Sprite from '../sprite';
-import { PlayerDeadEventHandler, MainGameEventHandler } from '../eventHandler';
-import BaseComponent from './baseComponent';
+import RenderOrder from "../renderOrder";
+import { PlayerDeadEventHandler, MainGameEventHandler } from "../eventHandler";
+import BaseComponent from "./baseComponent";
 
 export default class Fighter extends BaseComponent {
     constructor(entity, hp, defense, power, invulnerable=false) {

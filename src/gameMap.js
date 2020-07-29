@@ -1,8 +1,8 @@
-import { create2dArray } from '../utils';
-import FovTile from './fovTile';
-import HighlightTile from './highlightTile';
-import { Actor, Item } from './entity';
-import Tilemaps from './tilemaps';
+import { create2dArray } from "../utils";
+import FovTile from "./fovTile";
+import HighlightTile from "./highlightTile";
+import { Actor, Item } from "./entity";
+import Tilemaps from "./tilemaps";
 
 export default class GameMap {
     constructor(engine, name, width, height) {
@@ -17,23 +17,23 @@ export default class GameMap {
         this.offsetHeight = this.height * Tilemaps.getTileMap().frameHeight;
 
         this.locations = create2dArray(this.width);
-        for (var i = 0; i < this.width; i++) {
-            for (var j = 0; j < this.height; j++) {
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
                 this.locations[i][j] = new GameMapLocation(this);
             }
         }
 
         this.lastExploredFovTiles = [];
         this.shroud = create2dArray(this.width);
-        for (var i = 0; i < this.width; i++) {
-            for (var j = 0; j < this.height; j++) {
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
                 this.shroud[i][j] = new FovTile(i, j, "shroud");
             }
         }
 
         this.highlight = create2dArray(this.width);
-        for (var i = 0; i < this.width; i++) {
-            for (var j = 0; j < this.height; j++) {
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
                 this.highlight[i][j] = new HighlightTile(i, j, "highlight");
             }
         }
@@ -97,7 +97,7 @@ export default class GameMap {
 
     getPriorityDeadActorAtLocation(x, y) {
         var players = this.engineRef.players;
-        for (var i = 0; i < players.length; i++) {
+        for (let i = 0; i < players.length; i++) {
             var player = players[i];
             if (!player.isAlive() && player.x == x && player.y == y) {
                 return player;
@@ -105,7 +105,7 @@ export default class GameMap {
         }
 
         var entities = this.getGameMap().entities;
-        for (var i = 0; i < entities.length; i++) {
+        for (let i = 0; i < entities.length; i++) {
             var entity = entities[i];
             if (entity instanceof Actor && !entity.isAlive() && entity.x == x && entity.y == y) {
                 return entity;

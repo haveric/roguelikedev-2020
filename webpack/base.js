@@ -15,6 +15,7 @@ module.exports = {
         loader: 'eslint-loader',
         options: {
           cache: true,
+          configFile: path.resolve(__dirname, '../.eslintrc.json'),
         }
       },
       {

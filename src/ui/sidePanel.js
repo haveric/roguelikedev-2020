@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class SidePanel {
     constructor(scene) {
@@ -28,7 +28,7 @@ export default class SidePanel {
             y: 0,
             width: 180,
             height: 500,
-            orientation: 'y',
+            orientation: "y",
             anchor: {
                 left: "100%-200",
             }
@@ -37,7 +37,7 @@ export default class SidePanel {
 
         this.createDescriptionPanel(this.scene);
 
-        this.sidePanel.add(this.descriptionPanel, 0, 'right', { top: 10, bottom: 10, left: 10, right: 10 }, false);
+        this.sidePanel.add(this.descriptionPanel, 0, "right", { top: 10, bottom: 10, left: 10, right: 10 }, false);
         this.sidePanel.setOrigin(0).layout();
     }
 
