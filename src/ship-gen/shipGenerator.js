@@ -257,24 +257,27 @@ export class Ship {
         return players;
     }
 
+    /**
+     * 
+     * @param {RectangularRoom} rectangularRoom 
+     */
     placeEntitiesInRoom(rectangularRoom) {
         var numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
         console.log('Spawning ' + numMonstersToSpawn + ' enemies in room: ' + rectangularRoom);
-    
+
         for (var i = 0; i < numMonstersToSpawn; i++) {
-            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+            var coords = rectangularRoom.getXYInRoom();
     
-            var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+            var entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
             if (!entity) {
                 var random = Srand.random();
     
                 if (random < 0.7) {
-                    new EntityFactories.attackDog(x, y).place(this.gameMap);
+                    new EntityFactories.attackDog(coords.x, coords.y).place(this.gameMap);
                 } else if (random < 0.95) {
-                    new EntityFactories.spacePirate(x, y).place(this.gameMap);
+                    new EntityFactories.spacePirate(coords.x, coords.y).place(this.gameMap);
                 } else {
-                    new EntityFactories.automatedTurret(x, y).place(this.gameMap);
+                    new EntityFactories.automatedTurret(coords.x, coords.y).place(this.gameMap);
                 }
             }
         }
@@ -283,24 +286,16 @@ export class Ship {
         console.log('Spawning ' + numItemsToSpawn + ' items in room: ' + rectangularRoom);
 
         for (var i = 0; i < numItemsToSpawn; i++) {
-            var x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            var y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+            var coords = rectangularRoom.getXYInRoom();
 
-            var entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+            var entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
             if (!entity) {
+
                 var itemChance = Srand.random();
 
-                if (itemChance < 0.6) {
-                    new EntityFactories.medkit(x, y).place(this.gameMap);
-                } else if (itemChance < 0.73) {
-                    new EntityFactories.grenade(x, y).place(this.gameMap);
-                } else if (itemChance < 0.86) {
-                    new EntityFactories.confuseRay(x, y).place(this.gameMap);
-                } else if (itemChance < 0.99) {
-                    new EntityFactories.laserCharge(x, y).place(this.gameMap);
-                } else {
-                    new EntityFactories.resurrectionInjector(x, y).place(this.gameMap);
-                }
+                var itemSpawnedName = EntityFactories.GenerateItem(coords.x, coords.y, itemChance, this.gameMap);
+
+                console.log('Spawning ' + itemSpawnedName + ' using value of ' + itemChance + ' in: ' + rectangularRoom);
             }
         }
     }
