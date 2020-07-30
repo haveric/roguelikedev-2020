@@ -12,7 +12,7 @@ export default class Engine {
         self.debugEnabled = false;
 
         self.eventHandler = new MainGameEventHandler(scene.input, this);
-        self.ui = new UI(scene.scene.get("SceneGameUI"));
+        self.ui = new UI(scene.scene.get("SceneGameUI"), this);
         self.gameMap = null;
         self.gameMaps = {};
         self.player = player;
