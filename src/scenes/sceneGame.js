@@ -152,6 +152,7 @@ export class SceneGame extends Phaser.Scene {
         });
 
         self.engine.ui.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
+        self.engine.ui.showControls();
     }
 
     updateCameraView(objectToFollow) {

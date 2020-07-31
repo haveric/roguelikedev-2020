@@ -51,5 +51,11 @@ export class SceneGameUI extends Phaser.Scene {
                 self.hpText.setText("HP: " + self.hp + " / " + self.hpMax);
             }
         }, this);
+
+        game.events.on("ui-closeDialog", function(engine) {
+            if (self.enabled) {
+                engine.ui.hideDialog();
+            }
+        }, this);
     }
 }
