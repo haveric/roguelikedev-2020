@@ -8,6 +8,6 @@ export const CONTROLS = `
      Use HOME to debug, PAGEDOWN to enter debug room.
      ENTER to take stairs.
      PAGEUP to spawn new ship.
-     \\ For camera look
-     -/= for Zoom
+     \\ For camera look.
+     -/= for Zoom.
 `;
