@@ -151,6 +151,12 @@ export class Ship {
 
         this._tunnelBetweenRooms(previousMainRoom, bridge);
 
+        for (let i = this.breachRoom.x1 + 1; i < this.breachRoom.x2; i++) {
+            for (let j = this.breachRoom.y1 + 1; j < this.breachRoom.y2; j++) {
+                this.gameMap.locations[i][j].addTile(Tiles.leaveShip(i, j));
+            }
+        }
+
         for (let i = 1; i < this.rooms.length; i++) {
             this.placeEntitiesInRoom(this.rooms[i]);
         }
@@ -164,7 +170,7 @@ export class Ship {
     }
 
     generatePlayerShip() {
-        const name = "player-" + Srand.intInRange(100000000, 999999999);
+        const name = "player";
         const playerMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height);
         this.gameMap = playerMap;
 

@@ -5,6 +5,7 @@ import Embark from "../components/interactable/embark";
 import Tile from "../entity/tile";
 import Sprite from "../sprite";
 import RenderOrder from "../renderOrder";
+import LeaveShip from "../components/interactable/leaveShip";
 
 export default class Tiles { }
 
@@ -59,3 +60,10 @@ Tiles.embarkTile = (x, y) => {
     tile.interactable = new Embark(tile);
     return tile;
 };
+
+Tiles.leaveShip = (x, y) => {
+    const tile = new Tile(x, y, "Leave Ship", "Return to your ship.", new Sprite("floor", "6666ee"), true, false, RenderOrder.WALL);
+    tile.interactable = new LeaveShip(tile);
+    return tile;
+};
+

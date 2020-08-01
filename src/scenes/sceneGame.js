@@ -73,7 +73,6 @@ export class SceneGame extends Phaser.Scene {
             Srand.seed(newSeed);
             console.log("New Seed: " + newSeed);
 
-            self.engine.teardown();
             self.generateNewShip();
         });
 
