@@ -1,40 +1,40 @@
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io').listen(server);
-var getRandomInt = require('./utils.js').getRandomInt;
+const express = require("express");
+const app = express();
+const server = require("http").Server(app);
+const io = require("socket.io").listen(server);
+const getRandomInt = require("./utils.js").getRandomInt;
 
-var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-var rooms = {};
-var lobbyStats = {
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const rooms = {};
+const lobbyStats = {
     numUsers: 0,
     numRooms: 0,
     playersInRooms: 0,
     spectatorsInRooms: 0
 };
-var lobby = {
+const lobby = {
     users: { }
 };
 
-app.use(express.static(__dirname + '/src'));
+app.use(express.static(__dirname + "/src"));
 
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
+app.get("/", function (req, res) {
+    res.sendFile(__dirname + "/index.html");
 });
 
-io.on('connection', function (socket) {
-    console.log('User connected: ' + socket.id);
+io.on("connection", function (socket) {
+    console.log("User connected: " + socket.id);
 
     addUserToLobby(socket);
 
-    socket.on('disconnect', function () {
-        console.log('User disconnected: ' + socket.id);
+    socket.on("disconnect", function () {
+        console.log("User disconnected: " + socket.id);
 
         removeUserFromLobby(socket);
     });
 
-    socket.on('createRoom', function(playerName) {
-        var roomId = createRoomId();
+    socket.on("createRoom", function(playerName) {
+        const roomId = createRoomId();
 
         rooms[roomId] = {
             roomId: roomId,
@@ -48,16 +48,16 @@ io.on('connection', function (socket) {
 
         moveUserToRoomCreate(socket, roomId);
 
-        var newPlayer = createNewPlayer(socket, playerName);
+        const newPlayer = createNewPlayer(socket, playerName);
         rooms[roomId].players.push(newPlayer);
 
         socket.emit("roomJoin", rooms[roomId]);
         socket.join("room-" + roomId);
     });
 
-    socket.on('joinRoom', function(data) {
-        var playerName = data.playerName;
-        var roomId = data.roomId;
+    socket.on("joinRoom", function(data) {
+        const playerName = data.playerName;
+        let roomId = data.roomId;
         if (roomId) {
             roomId = roomId.toUpperCase();
         } else {
@@ -65,12 +65,12 @@ io.on('connection', function (socket) {
             return;
         }
 
-        var room = rooms[roomId];
+        const room = rooms[roomId];
         if (!room) {
             socket.emit("roomJoinFailed", "Room " + roomId + " does not exist.");
         } else {
             if (room.players.length < 2) {
-                var newPlayer = createNewPlayer(socket, playerName);
+                const newPlayer = createNewPlayer(socket, playerName);
                 room.players.push(newPlayer);
 
                 moveUserToRoomJoin(socket, roomId);
@@ -83,9 +83,9 @@ io.on('connection', function (socket) {
                 moveSpectatorToRoom(socket, roomId);
             }
 
-            if (room.gameState == "setup") {
+            if (room.gameState === "setup") {
                 socket.emit("roomJoin", room);
-            } else if (room.gameState == "play") {
+            } else if (room.gameState === "play") {
                 socket.emit("startSpectatingGame", room);
             }
 
@@ -93,17 +93,17 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('roomUpdatePlayer', function(data) {
-        var roomId = data.roomId;
-        var playerId = data.playerId;
+    socket.on("roomUpdatePlayer", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
 
-        var room = rooms[roomId];
-        var players = room.players;
+        const room = rooms[roomId];
+        const players = room.players;
 
-        var player;
-        for (var i = 0; i < players.length; i++) {
-            var playerCheck = players[i];
-            if (playerCheck.playerId == playerId) {
+        let player;
+        for (let i = 0; i < players.length; i++) {
+            const playerCheck = players[i];
+            if (playerCheck.playerId === playerId) {
                 player = playerCheck;
                 break;
             }
@@ -122,13 +122,13 @@ io.on('connection', function (socket) {
                 player.icon = data.icon;
             }
 
-            if (data.ready != null) {
+            if (data.ready !== null) {
                 player.ready = data.ready;
 
-                var allPlayersReady = true;
+                let allPlayersReady = true;
                 if (players.length >= 2) {
-                    for (var i = 0; i < players.length; i++) {
-                        if (players[i].ready == false) {
+                    for (let i = 0; i < players.length; i++) {
+                        if (players[i].ready === false) {
                             allPlayersReady = false;
                             break;
                         }
@@ -144,14 +144,14 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('startGame', function(data) {
-        var roomId = data.roomId;
-        var playerId = data.playerId;
+    socket.on("startGame", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
 
-        var room = rooms[roomId];
-        var players = room.players;
+        const room = rooms[roomId];
+        const players = room.players;
 
-        if (players[0].playerId == playerId) {
+        if (players[0].playerId === playerId) {
             room.gameState = "play";
 
             // TODO: Remove to let client handle positioning?
@@ -164,21 +164,21 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('s-performAction', function(data) {
-        var roomId = data.roomId;
-        var playerId = data.playerId;
-        var actionData = data.actionData;
-        var useEnergy = data.useEnergy;
+    socket.on("s-performAction", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
+        const actionData = data.actionData;
+        const useEnergy = data.useEnergy;
 
-        var room = rooms[roomId];
-        var players = room.players;
+        const room = rooms[roomId];
+        const players = room.players;
 
-        var playerHasEnergy = false;
+        let playerHasEnergy = false;
         if (useEnergy) {
-            for (var i = 0; i < players.length; i++) {
-                var player = players[i];
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
 
-                if (player.playerId == playerId) {
+                if (player.playerId === playerId) {
                     if (player.energy > 0) {
                         playerHasEnergy = true;
                         break;
@@ -189,10 +189,10 @@ io.on('connection', function (socket) {
 
         if (!useEnergy || playerHasEnergy) {
             if (useEnergy) {
-                for (var i = 0; i < players.length; i++) {
-                    var player = players[i];
+                for (let i = 0; i < players.length; i++) {
+                    const player = players[i];
 
-                    if (player.playerId == playerId) {
+                    if (player.playerId === playerId) {
                         player.energy -= 1;
                     } else {
                         if (player.energy < player.energyMax) {
@@ -207,34 +207,31 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('s-createDebugRoom', function(data) {
-        var roomId = data.roomId;
+    socket.on("s-createDebugRoom", function(data) {
+        const roomId = data.roomId;
 
         io.sockets.in("room-" + roomId).emit("c-createDebugRoom");
     });
 
-    socket.on('s-regenMap', function(data) {
-        var roomId = data.roomId;
-        var room = rooms[roomId];
+    socket.on("s-regenMap", function(data) {
+        const roomId = data.roomId;
+        const room = rooms[roomId];
         room.seed = generateRandomSeed();
         io.sockets.in("room-" + roomId).emit("c-regenMap", { seed: room.seed });
     });
 
-    socket.on('updateEnergy', function(data) {
-        var roomId = data.roomId;
-        var playerId = data.playerId;
-        var giveEnergy = data.giveEnergy;
+    socket.on("updateEnergy", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
+        const giveEnergy = data.giveEnergy;
 
-        var room = rooms[roomId];
-        var players = room.players;
+        const room = rooms[roomId];
+        const players = room.players;
 
-        var updatedPlayer;
-        for (var i = 0; i < players.length; i++) {
-            var player = players[i];
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
 
-            if (player.playerId == playerId) {
-                updatedPlayer = player;
-
+            if (player.playerId === playerId) {
                 if (data.energyMax) {
                     player.energyMax = data.energyMax;
                 }
@@ -262,30 +259,30 @@ server.listen(8081, function () {
 function addUserToLobby(socket) {
     lobby.users[socket.id] = {
         userId: socket.id
-    }
+    };
 
     lobbyStats.numUsers += 1;
 
-    socket.emit('lobbyUpdate', lobbyStats);
-    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    socket.emit("lobbyUpdate", lobbyStats);
+    socket.broadcast.emit("lobbyUpdate", lobbyStats);
 }
 
 function removeUserFromLobby(socket) {
-    var user = lobby.users[socket.id];
+    const user = lobby.users[socket.id];
     if (user.roomId) {
         lobbyStats.playersInRooms -= 1;
 
-        var room = rooms[user.roomId];
-        var indexToDelete = -1;
-        for (var i = 0; i < room.players.length; i++) {
-            var player = room.players[i];
-            if (player.playerId == socket.id) {
+        const room = rooms[user.roomId];
+        let indexToDelete = -1;
+        for (let i = 0; i < room.players.length; i++) {
+            const player = room.players[i];
+            if (player.playerId === socket.id) {
                 indexToDelete = i;
                 break;
             }
         }
 
-        if (indexToDelete != -1) {
+        if (indexToDelete !== -1) {
             room.players.splice(indexToDelete, 1);
         }
 
@@ -293,17 +290,17 @@ function removeUserFromLobby(socket) {
     } else if (user.spectatorRoomId) {
         lobbyStats.spectatorsInRooms -= 1;
 
-        var room = rooms[user.spectatorRoomId];
-        var indexToDelete = -1;
-        for (var i = 0; i < room.spectators.length; i++) {
-            var player = room.spectators[i];
-            if (player.playerId == socket.id) {
+        const room = rooms[user.spectatorRoomId];
+        let indexToDelete = -1;
+        for (let i = 0; i < room.spectators.length; i++) {
+            const player = room.spectators[i];
+            if (player.playerId === socket.id) {
                 indexToDelete = i;
                 break;
             }
         }
 
-        if (indexToDelete != -1) {
+        if (indexToDelete !== -1) {
             room.spectators.splice(indexToDelete, 1);
         }
 
@@ -313,7 +310,7 @@ function removeUserFromLobby(socket) {
     }
 
     delete lobby.users[socket.id];
-    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    socket.broadcast.emit("lobbyUpdate", lobbyStats);
 }
 
 function moveUserToRoomCreate(socket, roomId) {
@@ -328,7 +325,7 @@ function moveUserToRoomJoin(socket, roomId) {
 
     lobby.users[socket.id].roomId = roomId;
 
-    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    socket.broadcast.emit("lobbyUpdate", lobbyStats);
 }
 
 function moveSpectatorToRoom(socket, roomId) {
@@ -337,27 +334,27 @@ function moveSpectatorToRoom(socket, roomId) {
 
     lobby.users[socket.id].spectatorRoomId = roomId;
 
-    socket.broadcast.emit('lobbyUpdate', lobbyStats);
+    socket.broadcast.emit("lobbyUpdate", lobbyStats);
 }
 
 function killRoom(socket, roomId) {
-    var room = rooms[roomId];
+    const room = rooms[roomId];
 
-    if (room.players.length == 0 && room.spectators.length == 0) {
+    if (room.players.length === 0 && room.spectators.length === 0) {
         delete rooms[roomId];
         lobbyStats.numRooms -= 1;
 
-        socket.broadcast.emit('lobbyUpdate', lobbyStats);
+        socket.broadcast.emit("lobbyUpdate", lobbyStats);
     }
 }
 
 function createRoomId() {
-    var roomId;
+    let roomId;
 
-    var success = false;
+    let success = false;
     while (!success) {
         roomId = generateRandomRoomId();
-        if (!rooms.hasOwnProperty(roomId)) {
+        if (!Object.prototype.hasOwnProperty.call(rooms, roomId)) {
             success = true;
         }
     }
@@ -366,17 +363,17 @@ function createRoomId() {
 }
 
 function generateRandomRoomId() {
-   var roomId = "";
-   for (var i = 0; i < 4; i++) {
-       roomId += characters.charAt(Math.floor(Math.random() * characters.length));
-   }
+    let roomId = "";
+    for (let i = 0; i < 4; i++) {
+        roomId += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
 
-   return roomId;
+    return roomId;
 }
 
 function generateRandomSeed() {
-    var num = "";
-    for (var i = 0; i < 9; i++) {
+    let num = "";
+    for (let i = 0; i < 9; i++) {
         num += getRandomInt(0, 9);
     }
     return num;
@@ -391,5 +388,5 @@ function createNewPlayer(socket, playerName) {
         ready: false,
         energy: 5,
         energyMax: 10
-    }
+    };
 }
