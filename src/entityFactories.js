@@ -1,3 +1,4 @@
+import Srand from "seeded-rand";
 import Player from "./entity/player";
 import Sprite from "./sprite";
 import Fighter from "./components/fighter";
@@ -8,6 +9,10 @@ import Actor from "./entity/actor";
 import Item from "./entity/item";
 
 export default class EntityFactories {}
+
+EntityFactories.credits = (x, y, amount) => {
+    return new Item(x, y, "Credits", "Used to buy things.", new Sprite("credits"), 10000, amount);
+};
 
 EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
     const entity = new Player(socketId, x, y, name, "This is you or your companion, tethered together.", new Sprite("player", color), energy, energyMax);
@@ -28,6 +33,12 @@ EntityFactories.spacePirate = (x, y) => {
     const entity = new Actor(x, y, "Space Pirate", "A Pirate. In space! He has a menacing look.", new Sprite("spacePirate"));
     entity.setComponent("fighter", new Fighter(entity, 16, 1, 4));
     entity.setComponent("ai", new HostileEnemy(entity));
+    const inventory = new Inventory(entity, 10);
+    const creditsAmount = Srand.intInRange(0, 100);
+    if (creditsAmount > 0) {
+        inventory.add(new EntityFactories.credits(-1, -1, creditsAmount));
+    }
+    entity.setComponent("inventory", inventory);
     return entity;
 };
 
@@ -46,25 +57,25 @@ EntityFactories.automatedTurret = (x, y) => {
 };
 
 EntityFactories.medkit = (x, y) => {
-    const entity = new Item(x, y, "Medkit", "Can be used to heal a small amount of health.", new Sprite("medkit"));
+    const entity = new Item(x, y, "Medkit", "Can be used to heal a small amount of health.", new Sprite("medkit"), 4);
     entity.setComponent("consumable", new HealingConsumable(entity, 4, "use"));
     return entity;
 };
 
 EntityFactories.laserCharge = (x, y) => {
-    const entity = new Item(x, y, "Laser Charge", "Shoots a laser at the nearest visible enemy.", new Sprite("laserCharge"));
+    const entity = new Item(x, y, "Laser Charge", "Shoots a laser at the nearest visible enemy.", new Sprite("laserCharge"), 4);
     entity.setComponent("consumable", new LaserDamageConsumable(entity, 20, 5));
     return entity;
 };
 
 EntityFactories.confuseRay = (x, y) => {
-    const entity = new Item(x, y, "Confuse Ray", "Confuses the weak-minded temporarily.", new Sprite("confuseRay"));
+    const entity = new Item(x, y, "Confuse Ray", "Confuses the weak-minded temporarily.", new Sprite("confuseRay"), 4);
     entity.setComponent("consumable", new ConfusionConsumable(entity, 10));
     return entity;
 };
 
 EntityFactories.grenade = (x, y) => {
-    const entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade"));
+    const entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade"), 4);
     entity.setComponent("consumable", new GrenadeDamageConsumable(entity, 12, 3));
     return entity;
 };

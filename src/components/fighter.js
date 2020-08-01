@@ -72,6 +72,9 @@ export default class Fighter extends BaseComponent {
         this.parent.blocksMovement = false;
         this.parent.ai = null;
         this.parent.name = this.parent.name + "'s corpse";
+        if (this.parent.inventory) {
+            this.parent.inventory.dropAll();
+        }
     }
 
     revive() {

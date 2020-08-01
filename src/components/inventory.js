@@ -20,6 +20,13 @@ export default class Inventory extends BaseComponent {
         }
     }
 
+    dropAll() {
+        while(this.items.length) {
+            const item = this.items.pop();
+            item.place(this.getGameMap(), this.parent.x, this.parent.y);
+        }
+    }
+
     removeByIndex(index) {
         if (this.items.length > index) {
             const item = this.items[index];
@@ -28,6 +35,10 @@ export default class Inventory extends BaseComponent {
         }
 
         return null;
+    }
+
+    add(item) {
+        this.items.push(item);
     }
 
     remove(item) {

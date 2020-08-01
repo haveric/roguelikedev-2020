@@ -378,7 +378,7 @@ export class PickupAction extends Action {
                             this.getGameMap().entities.splice(index, 1);
                             item.parent = this.entityRef.inventory;
                             item.sprite.destroy();
-                            inventory.items.push(item);
+                            inventory.add(item);
 
                             let playerString;
                             if (this.isCurrentPlayer()) {

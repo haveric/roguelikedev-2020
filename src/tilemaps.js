@@ -69,6 +69,10 @@ Tilemaps.getTileMap = () => {
             },
             "resurrectionInjector": {
                 color: "00ee00"
+            },
+            "credits": {
+                frame: 237,
+                color: "000000"
             }
         }
     };
