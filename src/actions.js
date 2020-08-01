@@ -313,7 +313,7 @@ export class WarpAction extends Action {
     }
 }
 
-export class TakeStairsAction extends Action {
+export class InteractWithTileAction extends Action {
     constructor(entity) {
         super(entity);
     }
@@ -324,18 +324,18 @@ export class TakeStairsAction extends Action {
 
         let success;
         if (doAction) {
-            this.getGameMap().locations[actorX][actorY].tileComponentRun("stairs", "take");
+            this.getGameMap().locations[actorX][actorY].tileComponentRun("interactable", "interact");
 
             success = true;
         } else {
-            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("stairs");
+            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
         }
 
         return new ActionResult(this, success);
     }
 
     toString() {
-        return { action: "TakeStairsAction" };
+        return { action: "InteractWithTileAction" };
     }
 }
 

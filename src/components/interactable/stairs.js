@@ -1,12 +1,12 @@
-import BaseComponent from "./baseComponent";
+import Interactable from "../interactable";
 
-export default class Stairs extends BaseComponent {
+export default class Stairs extends Interactable {
     constructor(entity, floor) {
         super(entity);
         this.floor = floor;
     }
 
-    take() {
+    interact() {
         const actor = this.getGameMap().getActorAtLocation(this.parent.x, this.parent.y);
         if (actor) {
             const engine = this.getEngine();

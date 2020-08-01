@@ -1,6 +1,7 @@
 import LightSource from "../components/lightSource";
 import Openable from "../components/openable";
-import Stairs from "../components/stairs";
+import Stairs from "../components/interactable/stairs";
+import Embark from "../components/interactable/embark";
 import Tile from "../entity/tile";
 import Sprite from "../sprite";
 import RenderOrder from "../renderOrder";
@@ -43,12 +44,18 @@ Tiles.greenDoor = (x, y) => {
 
 Tiles.stairsDown = (x, y, level) => {
     const tile = new Tile(x, y, "Stairs (Down)", "There must be something below.", new Sprite("stairsDown"), true, false, RenderOrder.WALL);
-    tile.stairs = new Stairs(tile, level);
+    tile.interactable = new Stairs(tile, level);
     return tile;
 };
 
 Tiles.stairsUp = (x, y, level) => {
     const tile = new Tile(x, y, "Stairs (Up)", "There must be something above.", new Sprite("stairsUp"), true, false, RenderOrder.WALL);
-    tile.stairs = new Stairs(tile, level);
+    tile.interactable = new Stairs(tile, level);
+    return tile;
+};
+
+Tiles.embarkTile = (x, y) => {
+    const tile = new Tile(x, y, "Embark", "You can embark to other ships from here.", new Sprite("floor", "66ee66"), true, false, RenderOrder.WALL);
+    tile.interactable = new Embark(tile);
     return tile;
 };

@@ -4,7 +4,7 @@ import Engine from "../engine";
 import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
 import EntityFactories from "../entityFactories";
 import { InventoryEventHandler } from "../eventHandler";
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, TakeStairsAction, ItemAction, DropItemAction, DebugAction } from "../actions";
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, InteractWithTileAction, ItemAction, DropItemAction, DebugAction } from "../actions";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -107,8 +107,8 @@ export class SceneGame extends Phaser.Scene {
                         case "PickupAction":
                             new PickupAction(player).perform(true);
                             break;
-                        case "TakeStairsAction":
-                            new TakeStairsAction(player).perform(true);
+                        case "InteractWithTileAction":
+                            new InteractWithTileAction(player).perform(true);
                             break;
                         case "ItemAction":
                             new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);

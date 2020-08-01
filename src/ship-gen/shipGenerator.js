@@ -194,8 +194,15 @@ export class Ship {
         this._tunnelBetweenRooms(roomSide, roomHub, 2, 0);
         this._tunnelBetweenRooms(roomHub, roomHelm, 2);
 
+        for (let i = roomLaunch.x1 + 1; i < roomLaunch.x2; i++) {
+            for (let j = roomLaunch.y1 + 1; j < roomLaunch.y2; j++) {
+                playerMap.locations[i][j].addTile(Tiles.embarkTile(i, j));
+            }
+        }
+
         return this.engineRef.addGameMap(playerMap);
     }
+
     createDebugMap() {
         if (!this.engineRef.hasGameMap("DEBUG")) {
             const debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20);

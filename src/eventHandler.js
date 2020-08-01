@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, PickupAction, TakeStairsAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from "./actions";
+import { BumpAction, WaitAction, PickupAction, InteractWithTileAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from "./actions";
 import Tilemaps from "./tilemaps";
 import Item from "./entity/item";
 
@@ -138,8 +138,8 @@ export class EventHandler {
         this.performAction(new PickupAction(this.engineRef.player));
     }
 
-    takeStairs() {
-        this.performAction(new TakeStairsAction(this.engineRef.player));
+    interactWithTile() {
+        this.performAction(new InteractWithTileAction(this.engineRef.player));
     }
 
     dropItem(inventorySlot) {
@@ -332,7 +332,7 @@ export class MainGameEventHandler extends EventHandler {
                 break;
             case "Enter":
             case "NumpadEnter":
-                self.takeStairs();
+                self.interactWithTile();
                 break;
             case "PageDown":
                 console.log("Entering Debug Room...");
