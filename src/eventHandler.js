@@ -406,7 +406,10 @@ export class InventoryEventHandler extends AskUserEventHandler {
         } else {
             for (let i = 0; i < itemsLength; i++) {
                 const itemKey = String.fromCharCode(65 + i);
-                const itemLine = "(" + itemKey + ") " + items[i].name;
+                let itemLine = "(" + itemKey + ") " + items[i].name;
+                if (items[i].amount > 1) {
+                    itemLine += " x" + items[i].amount;
+                }
                 inventoryMenu.text(itemLine + "\n");
             }
         }
