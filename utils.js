@@ -30,8 +30,12 @@ const getSpriteDetails = (tilemap, spriteName, color) => {
             color: "ffffff"
         };
     } else if (spriteDetails.frame === undefined) {
-        spriteDetails.frame = tilemap.tiles["unknown"].frame || tilemap.tiles["unknown"];
-        console.log("Tilemap '" + tilemap.name + "' missing frame for sprite: " + spriteName);
+        if (tilemap.tiles["unknown"]) {
+            spriteDetails.frame = tilemap.tiles["unknown"].frame || tilemap.tiles["unknown"];
+            console.log("Tilemap '" + tilemap.name + "' missing frame for sprite: " + spriteName);
+        } else {
+            console.log("Tilemap '" + tilemap.name + "' missing default 'unknown' sprite");
+        }
     }
 
     if (color !== undefined) {
