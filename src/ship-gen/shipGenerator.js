@@ -206,6 +206,12 @@ export class Ship {
             }
         }
 
+        for (let i = roomSide.x1 + 1; i < roomSide.x2; i++) {
+            for (let j = roomSide.y1 + 1; j < roomSide.y2; j++) {
+                playerMap.locations[i][j].addTile(Tiles.teleporterDebugRoom(i, j));
+            }
+        }
+
         return this.engineRef.addGameMap(playerMap);
     }
 
@@ -225,6 +231,12 @@ export class Ship {
 
             debugGameMap.locations[center.x - 1][center.y].addTile(Tiles.stairsDown(center.x - 1, center.y, "DEBUG-DOWN"));
             debugGameMap.locations[center.x + 1][center.y].addTile(Tiles.stairsUp(center.x + 1, center.y, "DEBUG-UP"));
+
+            for (let i = 8; i < 12; i++) {
+                for (let j = 3; j < 7; j++) {
+                    debugGameMap.locations[i][j].addTile(Tiles.leaveShip(i, j));
+                }
+            }
 
             const debugGameMapDown = new GameMap(this.engineRef, "DEBUG-DOWN", 20, 20, []);
             const debugRoomDown = new RectangularRoom(6, 6, 6, 6, "DEBUG");

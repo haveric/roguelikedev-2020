@@ -45,6 +45,7 @@ export class SceneGame extends Phaser.Scene {
         this.engine = new Engine(this, self.player, self.players);
 
         self.generatePlayerShip();
+        self.createDebugMap();
 
         if (self.player) {
             self.events.emit("ui-enable", self.engine);
@@ -53,8 +54,7 @@ export class SceneGame extends Phaser.Scene {
         }
 
         self.socket.on("c-createDebugRoom", function () {
-            const debugMap = self.shipGenerator.createDebugMap();
-
+            const debugMap = self.engine.getGameMap("DEBUG");
             self.engine.setGameMap(debugMap);
             self.engine.createSprites();
 
@@ -166,6 +166,10 @@ export class SceneGame extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
         this.cameras.main.startFollow(objectToFollow, true);
         this.cameras.main.followOffset.set(-100, -50);
+    }
+
+    createDebugMap() {
+        this.shipGenerator.createDebugMap();
     }
 
     generatePlayerShip() {
