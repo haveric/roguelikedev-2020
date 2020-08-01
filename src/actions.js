@@ -364,7 +364,7 @@ export class PickupAction extends Action {
                 const item = items[i];
 
                 if (actorX === item.x && actorY === item.y) {
-                    if (inventory.items.length >= inventory.capacity) {
+                    if (!inventory.canAdd(item)) {
                         if (this.isCurrentPlayer()) {
                             messageLog.text("Your inventory is full.").build();
                         }

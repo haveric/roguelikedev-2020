@@ -24,7 +24,7 @@ export class Consumable extends BaseComponent {
         const inventory = entity.parent;
         if (inventory instanceof Inventory) {
             if (doAction) {
-                inventory.remove(entity);
+                inventory.use(entity);
             }
             return true;
         }
