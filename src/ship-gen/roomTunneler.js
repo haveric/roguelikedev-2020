@@ -1,37 +1,44 @@
 import Srand from "seeded-rand";
 import Tiles from "./tilefactories";
+import RenderOrder from "../renderOrder";
 
 export class RoomTunneler {
-    constructor(gameMap, rooms, room1, room2) {
+    constructor(gameMap, rooms, room1, room2, width) {
         this.gameMap = gameMap;
         this.rooms = rooms;
         this.room1 = room1;
         this.room2 = room2;
+        this.width = width || 1;
     }
 
-    tunnelBetweenRooms() {
+    tunnelBetweenRooms(direction) {
         const lastRoomCenter = this.room1.center();
         const newRoomCenter = this.room2.center();
-        this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y);
+        this._tunnelBetween(lastRoomCenter.x, lastRoomCenter.y, newRoomCenter.x, newRoomCenter.y, direction);
     }
 
-    _tunnelBetween(x1, y1, x2, y2) {
+    _tunnelBetween(x1, y1, x2, y2, direction) {
         console.log("=== Start Tunnel (" + x1 + "," + y1 +")->(" + x2 + "," + y2 + ")");
-        let doorData = {
-            roomsEntered: [],
-            lastX: -1,
-            lastY: -1
-        };
+        if (direction === undefined) {
+            direction = Srand.intInRange(0, 1);
+        }
 
-        doorData.roomsEntered.push(this.room1);
-        if (Srand.intInRange(0, 1) === 1) {
-            // horizontal first, then vertical
-            doorData = this._createTunnel(x1, x2, y1, true, doorData);
-            this._createTunnel(y1, y2, x2, false, doorData);
-        } else {
-            // vertical first, then horizontal
-            doorData = this._createTunnel(y1, y2, x1, false, doorData);
-            this._createTunnel(x1, x2, y2, true, doorData);
+        for (let i = 0; i < this.width; i++) {
+            let doorData = {
+                roomsEntered: [],
+                lastX: -1,
+                lastY: -1
+            };
+            doorData.roomsEntered.push(this.room1);
+            if (direction === 1) {
+                // horizontal first, then vertical
+                doorData = this._createTunnel(x1, x2, y1 + i, true, doorData);
+                this._createTunnel(y1, y2, x2 + i, false, doorData);
+            } else {
+                // vertical first, then horizontal
+                doorData = this._createTunnel(y1, y2, x1 + i, false, doorData);
+                this._createTunnel(x1, x2, y2 + i, true, doorData);
+            }
         }
 
         console.log("=== End Tunnel");
@@ -56,8 +63,10 @@ export class RoomTunneler {
 
                     if (!room.intersectsPoint(x,y)) {
                         doorData.roomsEntered.splice(i, 1);
-                        console.log("  Created door leaving room at " + doorData.lastX + "," + doorData.lastY);
-                        this.gameMap.locations[doorData.lastX][doorData.lastY].addTile(Tiles.greenDoor(doorData.lastX, doorData.lastY));
+                        if (!this.gameMap.locations[doorData.lastX][doorData.lastY].isTileAtDepth(RenderOrder.WALL)) {
+                            console.log("  Created door leaving room at " + doorData.lastX + "," + doorData.lastY);
+                            this.gameMap.locations[doorData.lastX][doorData.lastY].addTile(Tiles.greenDoor(doorData.lastX, doorData.lastY));
+                        }
                     }
                 }
                 for (let i = 0; i < this.rooms.length; i++) {
@@ -66,8 +75,10 @@ export class RoomTunneler {
                         if (!doorData.roomsEntered.includes(room)) {
                             doorData.roomsEntered.push(room);
                             if (room.isOnEdge(x,y)) {
-                                console.log("  Created door entering room at " + x + "," + y);
-                                this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                                if (!this.gameMap.locations[x][y].isTileAtDepth(RenderOrder.WALL)) {
+                                    console.log("  Created door entering room at " + x + "," + y);
+                                    this.gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                                }
                             }
                             break;
                         }

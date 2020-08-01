@@ -44,7 +44,7 @@ export class SceneGame extends Phaser.Scene {
         // let isHost = self.room.players[0].playerId == self.socket.id;
         this.engine = new Engine(this, self.player, self.players);
 
-        self.generateNewShip();
+        self.generatePlayerShip();
 
         if (self.player) {
             self.events.emit("ui-enable", self.engine);
@@ -167,6 +167,20 @@ export class SceneGame extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
         this.cameras.main.startFollow(objectToFollow, true);
         this.cameras.main.followOffset.set(-100, -50);
+    }
+
+    generatePlayerShip() {
+        const width = 70;
+        const height = 40;
+        const genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
+
+        this.shipGenerator = new Ship(this.engine, genOptions);
+        this.engine.setGameMap(this.shipGenerator.generatePlayerShip());
+        this.shipGenerator.setPlayerCoordinates(this.players);
+        this.engine.createSprites();
+        this.engine.updateFov();
+
+        this.updateCameraView();
     }
 
     generateNewShip() {

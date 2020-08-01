@@ -158,11 +158,44 @@ export class Ship {
         return this.gameMap;
     }
 
-    _tunnelBetweenRooms(room1, room2) {
-        const tunneler = new RoomTunneler(this.gameMap, this.rooms, room1, room2);
-        tunneler.tunnelBetweenRooms();
+    _tunnelBetweenRooms(room1, room2, width, direction) {
+        const tunneler = new RoomTunneler(this.gameMap, this.rooms, room1, room2, width);
+        tunneler.tunnelBetweenRooms(direction);
     }
 
+    generatePlayerShip() {
+        const name = "player-" + Srand.intInRange(100000000, 999999999);
+        const playerMap = new GameMap(this.engineRef, name, this.shipOptions.width, this.shipOptions.height);
+        this.gameMap = playerMap;
+
+        const roomHub = new RectangularRoom(12, 11, 12, 8, "Hub");
+        this._createRoom(playerMap, roomHub);
+
+        const roomHelm = new RectangularRoom(23, 10, 6, 10, "Helm");
+        this._createRoom(playerMap, roomHelm);
+
+        const roomStorage = new RectangularRoom(0, 10, 10, 10, "Storage");
+        this._createRoom(playerMap, roomStorage);
+
+        const roomLaunch = new RectangularRoom(14, 8, 6, 4, "Launch");
+        this._createRoom(playerMap, roomLaunch);
+
+        const roomSide = new RectangularRoom(14, 18, 6, 4, "Side");
+        this._createRoom(playerMap, roomSide);
+
+        this.rooms.push(roomHub);
+        this.rooms.push(roomHelm);
+        this.rooms.push(roomStorage);
+        this.rooms.push(roomLaunch);
+        this.rooms.push(roomSide);
+
+        this._tunnelBetweenRooms(roomStorage, roomHub, 2);
+        this._tunnelBetweenRooms(roomLaunch, roomHub, 2, 0);
+        this._tunnelBetweenRooms(roomSide, roomHub, 2, 0);
+        this._tunnelBetweenRooms(roomHub, roomHelm, 2);
+
+        return this.engineRef.addGameMap(playerMap);
+    }
     createDebugMap() {
         if (!this.engineRef.hasGameMap("DEBUG")) {
             const debugGameMap = new GameMap(this.engineRef, "DEBUG", 20, 20);
@@ -247,8 +280,10 @@ export class Ship {
                     if (gameMap.locations[x][y].isTileWalkable()) {
                         if ((gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
                          || (gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
-                            console.log("Created door on edge of room at " + x + "," + y);
-                            gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                            if (!this.gameMap.locations[x][y].isTileAtDepth(RenderOrder.WALL)) {
+                                console.log("Created door on edge of room at " + x + "," + y);
+                                gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
+                            }
                         }
                     }
                 }
