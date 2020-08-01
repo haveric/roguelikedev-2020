@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { getFrameOf, hexToRgb } from "../../utils";
+import { getSpriteDetails, hexToRgb } from "../../utils";
 import Tilemaps from "../tilemaps";
 import { COLORS } from "../constants/colors";
 
@@ -212,9 +212,9 @@ const createPlayerSelector = function(scene, index, player) {
     }
 
 
-    const frame = getFrameOf(Tilemaps.getTileMap(), player.sprite);
-    if (frame !== null) {
-        const playerSprite = scene.add.sprite(0, 0, Tilemaps.getTileMap().name).setFrame(frame).setTint("0x" + player.color);
+    const spriteDetails = getSpriteDetails(Tilemaps.getTileMap(), player.sprite, player.color);
+    if (spriteDetails !== null) {
+        const playerSprite = scene.add.sprite(0, 0, Tilemaps.getTileMap().name).setFrame(spriteDetails.frame).setTint("0x" + spriteDetails.color);
         playerSprite.displayWidth = 100;
         playerSprite.scaleY = playerSprite.scaleX; // scale evenly
         playerSelector.add(playerSprite, 0, "center", { top: 28, bottom: 20, left: 10, right: 10 }, false);

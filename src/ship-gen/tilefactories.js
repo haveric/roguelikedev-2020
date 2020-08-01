@@ -9,7 +9,7 @@ export default class Tiles { }
 
 Tiles.darkFloor = (x, y) => new Tile(x, y, "Floor", "It looks like a floor. Nothing special about it.", new Sprite("floor", "333333"), true, false, RenderOrder.FLOOR);
 Tiles.lightFloor = (x, y) =>  new Tile(x, y, "Floor", "It looks like a floor. Nothing special about it.", new Sprite("floor", "999999"), true, false, RenderOrder.FLOOR);
-Tiles.wall = (x, y) => new Tile(x, y, "Wall", "It's a wall. Likely in your way", new Sprite("wall", "666666"), false, true, RenderOrder.WALL);
+Tiles.wall = (x, y) => new Tile(x, y, "Wall", "It's a wall. Likely in your way", new Sprite("wall"), false, true, RenderOrder.WALL);
 
 Tiles.torch = (x, y) => {
     const tile = new Tile(x, y, "Standing Torch", "Lights up an area.", new Sprite("torch", "ffa500"), false, false, RenderOrder.WALL);
@@ -36,19 +36,19 @@ Tiles.blueTorch = (x, y) => {
 };
 
 Tiles.greenDoor = (x, y) => {
-    const tile = new Tile(x, y, "Door", "Typical door that opens and closes.", new Sprite("door", "009933"), false, true, RenderOrder.WALL);
+    const tile = new Tile(x, y, "Door", "Typical door that opens and closes.", new Sprite("door"), false, true, RenderOrder.WALL);
     tile.openable = new Openable(tile, false, "door", "doorOpen");
     return tile;
 };
 
 Tiles.stairsDown = (x, y, level) => {
-    const tile = new Tile(x, y, "Stairs (Down)", "There must be something below.", new Sprite("stairsDown", "eeeeee"), true, false, RenderOrder.WALL);
+    const tile = new Tile(x, y, "Stairs (Down)", "There must be something below.", new Sprite("stairsDown"), true, false, RenderOrder.WALL);
     tile.stairs = new Stairs(tile, level);
     return tile;
 };
 
 Tiles.stairsUp = (x, y, level) => {
-    const tile = new Tile(x, y, "Stairs (Up)", "There must be something above.", new Sprite("stairsUp", "eeeeee"), true, false, RenderOrder.WALL);
+    const tile = new Tile(x, y, "Stairs (Up)", "There must be something above.", new Sprite("stairsUp"), true, false, RenderOrder.WALL);
     tile.stairs = new Stairs(tile, level);
     return tile;
 };

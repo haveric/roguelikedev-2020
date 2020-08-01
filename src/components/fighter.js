@@ -68,7 +68,7 @@ export default class Fighter extends BaseComponent {
 
         this.getEngine().ui.messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has died!").build();
 
-        this.parent.sprite.updateSprite("corpse", "BF0000");
+        this.parent.sprite.updateSprite("corpse");
         this.parent.blocksMovement = false;
         this.parent.ai = null;
         this.parent.name = this.parent.name + "'s corpse";
