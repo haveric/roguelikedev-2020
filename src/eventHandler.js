@@ -1,5 +1,6 @@
 import { BumpAction, WaitAction, PickupAction, TakeStairsAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from "./actions";
 import Tilemaps from "./tilemaps";
+import Item from "./entity/item";
 
 export class EventHandler {
     constructor(input, engine) {
@@ -91,7 +92,12 @@ export class EventHandler {
                 const entities = gameMap.getNonBlockingEntitiesAtLocation(x, y);
                 for (let i = 0; i < entities.length; i++) {
                     const entity = entities[i];
-                    sidePanel.text(entity.name + "\n", "#" + entity.sprite.color);
+                    sidePanel.text(entity.name, "#" + entity.sprite.color);
+                    if (entity instanceof Item && entity.amount > 1) {
+                        sidePanel.text(" x" + entity.amount);
+                    }
+                    sidePanel.text("\n");
+
                     if (entities.length === 1) {
                         sidePanel.text(entity.description + "\n\n");
                     }
@@ -452,7 +458,11 @@ export class InventoryActivateEventHandler extends InventoryEventHandler {
     }
 
     selectItem(index, item) {
-        this.performAction(item.consumable.getAction(this.engineRef.player, index));
+        if (item.consumable) {
+            this.performAction(item.consumable.getAction(this.engineRef.player, index));
+        } else {
+            this.engineRef.ui.messageLog.text("You're not really sure what to do with " + item.name + ".").build();
+        }
     }
 }
 
