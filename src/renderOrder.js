@@ -8,6 +8,6 @@ const RenderOrder = {
     ACTOR: 6,
     FOV: 100,
     HIGHLIGHT: 200
-}
+};
 
 export default RenderOrder;

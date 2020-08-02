@@ -1,5 +1,5 @@
-import { getFrameOf } from '../utils';
-import Tilemaps from './tilemaps';
+import { getSpriteDetails } from "../utils";
+import Tilemaps from "./tilemaps";
 
 export default class Sprite {
     constructor(name, color) {
@@ -9,21 +9,11 @@ export default class Sprite {
         this.spriteObject = null;
     }
 
-    clone() {
-        return new Sprite(this.name, this.color, this.spriteObject);
-    }
-
     create(scene, x, y) {
-        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
-        if (frame != null) {
-            this.destroy();
-            this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
-            this.spriteObject.setFrame(frame);
-            this.spriteObject.setTint("0x" + this.color);
-            if (this.parent) {
-                this.spriteObject.setDepth(this.parent.renderOrder);
-            }
-        }
+        this.destroy();
+        this.spriteObject = scene.add.sprite(x, y, Tilemaps.getTileMap().name).setOrigin(0, 0);
+
+        this.updateSprite(this.name);
     }
 
     destroy() {
@@ -32,16 +22,17 @@ export default class Sprite {
         }
     }
 
-    updateSprite(name, color) {
+    updateSprite(name) {
         this.name = name;
-        var frame = getFrameOf(Tilemaps.getTileMap(), this.name);
-        if (frame != null) {
-            this.spriteObject.setFrame(frame);
-        }
-
-        if (color) {
-            this.color = color;
-            this.spriteObject.setTint("0x" + this.color);
+        const spriteDetails = getSpriteDetails(Tilemaps.getTileMap(), this.name, this.color);
+        if (spriteDetails !== null) {
+            this.spriteObject.setFrame(spriteDetails.frame);
+            if (spriteDetails.color) {
+                this.color = spriteDetails.color;
+                this.spriteObject.setTint("0x" + spriteDetails.color);
+            } else {
+                this.spriteObject.clearTint();
+            }
         }
 
         this.spriteObject.setDepth(this.parent.renderOrder);

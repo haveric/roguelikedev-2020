@@ -1,21 +1,18 @@
-import { MainGameEventHandler } from './eventHandler';
-import { FovAdamMillazo } from './fov';
-import { MessageLog } from './ui/messageLog';
-import { SidePanel } from './ui/sidePanel';
-import { InventoryMenu } from './ui/inventoryMenu';
-import Tilemaps from './tilemaps';
-import UI from './ui/ui';
+import { MainGameEventHandler } from "./eventHandler";
+import { FovAdamMillazo } from "./fov";
+import Tilemaps from "./tilemaps";
+import UI from "./ui/ui";
 
 export default class Engine {
     constructor(scene, player, players) {
-        var self = this;
+        const self = this;
 
         self.scene = scene;
         self.zoomLevel = 1;
         self.debugEnabled = false;
 
         self.eventHandler = new MainGameEventHandler(scene.input, this);
-        self.ui = new UI(scene.scene.get('SceneGameUI'));
+        self.ui = new UI(scene.scene.get("SceneGameUI"), this);
         self.gameMap = null;
         self.gameMaps = {};
         self.player = player;
@@ -29,39 +26,39 @@ export default class Engine {
         startY = startY || 0;
         endX = endX || this.gameMap.width;
         endY = endY || this.gameMap.height;
-        for (var i = startX; i < endX; i++) {
-            for (var j = startY; j < endY; j++) {
-                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
-                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
+        for (let i = startX; i < endX; i++) {
+            for (let j = startY; j < endY; j++) {
+                const x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                const y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
-                var tiles = this.gameMap.locations[i][j].tiles;
-                for (var k = 0; k < tiles.length; k++) {
-                    var tile = tiles[k];
+                const tiles = this.gameMap.locations[i][j].tiles;
+                for (let k = 0; k < tiles.length; k++) {
+                    const tile = tiles[k];
                     tile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                 }
             }
         }
 
-        for (var i = 0; i < this.gameMap.entities.length; i++) {
-            var entity = this.gameMap.entities[i];
+        for (let i = 0; i < this.gameMap.entities.length; i++) {
+            const entity = this.gameMap.entities[i];
 
-            var x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
-            var y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
+            const x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
+            const y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
 
             entity.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
         }
 
-        for (var i = startX; i < endX; i++) {
-            for (var j = startY; j < endY; j++) {
-                var x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
-                var y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
+        for (let i = startX; i < endX; i++) {
+            for (let j = startY; j < endY; j++) {
+                const x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
+                const y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
 
-                var shroudTile = this.gameMap.shroud[i][j];
+                const shroudTile = this.gameMap.shroud[i][j];
                 if (shroudTile) {
                     shroudTile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                 }
 
-                var highlightTile = this.gameMap.highlight[i][j];
+                const highlightTile = this.gameMap.highlight[i][j];
                 if (highlightTile) {
                     highlightTile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
                     highlightTile.render();
@@ -87,7 +84,7 @@ export default class Engine {
     }
 
     hasGameMap(name) {
-        var gameMap = this.gameMaps[name];
+        const gameMap = this.gameMaps[name];
         return gameMap !== undefined;
     }
 
@@ -103,28 +100,28 @@ export default class Engine {
 
     teardown() {
         if (this.gameMap) {
-            for (var i = 0; i < this.gameMap.width; i++) {
-                for (var j = 0; j < this.gameMap.height; j++) {
-                    var tiles = this.gameMap.locations[i][j].tiles;
-                    for (var k = 0; k < tiles.length; k++) {
-                        var tile = tiles[k];
+            for (let i = 0; i < this.gameMap.width; i++) {
+                for (let j = 0; j < this.gameMap.height; j++) {
+                    const tiles = this.gameMap.locations[i][j].tiles;
+                    for (let k = 0; k < tiles.length; k++) {
+                        const tile = tiles[k];
                         tile.sprite.destroy();
                     }
 
-                    var shroudTile = this.gameMap.shroud[i][j];
+                    const shroudTile = this.gameMap.shroud[i][j];
                     if (shroudTile) {
                         shroudTile.sprite.destroy();
                     }
 
-                    var highlightTile = this.gameMap.highlight[i][j];
+                    const highlightTile = this.gameMap.highlight[i][j];
                     if (highlightTile) {
                         highlightTile.sprite.destroy();
                     }
                 }
             }
 
-            for (var i = 0; i < this.gameMap.entities.length; i++) {
-                var entity = this.gameMap.entities[i];
+            for (let i = 0; i < this.gameMap.entities.length; i++) {
+                const entity = this.gameMap.entities[i];
                 entity.sprite.destroy();
             }
         }
@@ -133,12 +130,12 @@ export default class Engine {
     }
 
     handleEnemyTurns() {
-        for (var i = 0; i < this.gameMap.entities.length; i++) {
-            var entity = this.gameMap.entities[i];
+        for (let i = 0; i < this.gameMap.entities.length; i++) {
+            const entity = this.gameMap.entities[i];
 
-            var isPlayer = false;
-            for (var j = 0; j < this.players.length; j++) {
-                var player = this.players[j];
+            let isPlayer = false;
+            for (let j = 0; j < this.players.length; j++) {
+                const player = this.players[j];
 
                 if (entity === player) {
                     isPlayer = true;
@@ -155,7 +152,7 @@ export default class Engine {
             }
         }
 
-        if (this.enemyTurn == 0) {
+        if (this.enemyTurn === 0) {
             this.enemyTurn = 1;
         } else {
             this.enemyTurn = 0;
@@ -163,39 +160,64 @@ export default class Engine {
     }
 
     updateFov() {
-        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
-            var tile = this.gameMap.lastExploredFovTiles[i];
-            tile.resetVisible();
-        }
+        const gameMaps = [];
 
-        var newExploredTiles = [];
-        var newLightSources = [];
         if (!this.player || this.player.hasSharedVision) {
-            for (var i = 0; i < this.players.length; i++) {
-                var player = this.players[i];
-                FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, player.x, player.y, player.lightRadius);
+            for (let i = 0; i < this.players.length; i++) {
+                const player = this.players[i];
+                const playerGameMap = player.getGameMap();
+
+                if (gameMaps.indexOf(playerGameMap) === -1) {
+                    gameMaps.push(playerGameMap);
+                }
             }
         } else {
-            FovAdamMillazo.compute(this.gameMap, newExploredTiles, newLightSources, this.player.x, this.player.y, this.player.lightRadius);
+            gameMaps.push(this.gameMap);
         }
 
-        for (var i = 0; i < this.gameMap.lastExploredFovTiles.length; i++) {
-            var tile = this.gameMap.lastExploredFovTiles[i];
-            tile.render();
+        for (let i = 0; i < gameMaps.length; i++) {
+            const gameMap = gameMaps[i];
+            gameMap.newExploredTiles = [];
+            gameMap.newLightSources = [];
+
+            for (let j = 0; j < gameMap.lastExploredFovTiles.length; j++) {
+                const tile = gameMap.lastExploredFovTiles[j];
+                tile.resetVisible();
+            }
         }
 
-        for (var i = 0; i < newExploredTiles.length; i++) {
-            var tile = newExploredTiles[i];
-            tile.render();
+        if (!this.player || this.player.hasSharedVision) {
+            for (let i = 0; i < this.players.length; i++) {
+                const player = this.players[i];
+                FovAdamMillazo.compute(player.getGameMap(), player.x, player.y, player.lightRadius);
+            }
+        } else {
+            FovAdamMillazo.compute(this.gameMap, this.player.x, this.player.y, this.player.lightRadius);
         }
 
-        this.gameMap.lastExploredFovTiles = newExploredTiles;
+        for (let i = 0; i < gameMaps.length; i++) {
+            const gameMap = gameMaps[i];
+
+            if (gameMap === this.gameMap) {
+                for (let i = 0; i < gameMap.lastExploredFovTiles.length; i++) {
+                    const tile = gameMap.lastExploredFovTiles[i];
+                    tile.render();
+                }
+
+                for (let i = 0; i < gameMap.newExploredTiles.length; i++) {
+                    const tile = gameMap.newExploredTiles[i];
+                    tile.render();
+                }
+            }
+
+            gameMap.lastExploredFovTiles = gameMap.newExploredTiles;
+        }
     }
 
     clearFov() {
         this.gameMap.lastExploredFovTiles = [];
-        for (var i = 0; i < this.gameMap.width; i++) {
-            for (var j = 0; j < this.gameMap.height; j++) {
+        for (let i = 0; i < this.gameMap.width; i++) {
+            for (let j = 0; j < this.gameMap.height; j++) {
                 this.gameMap.shroud[i][j].explore();
                 this.gameMap.shroud[i][j].render();
                 this.gameMap.lastExploredFovTiles.push(this.gameMap.shroud[i][j]);

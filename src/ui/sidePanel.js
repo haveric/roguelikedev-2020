@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class SidePanel {
     constructor(scene) {
@@ -17,18 +17,18 @@ export default class SidePanel {
     }
 
     setDescription(subMessages) {
-        var message = new Message(subMessages);
+        const message = new Message(subMessages);
         this.descriptionPanel.setText(message.getBBCodeFullText());
     }
 
     createSidePanel() {
-        var background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
+        const background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
         this.sidePanel = this.scene.rexUI.add.sizer({
             x: 0,
             y: 0,
             width: 180,
             height: 500,
-            orientation: 'y',
+            orientation: "y",
             anchor: {
                 left: "100%-200",
             }
@@ -37,7 +37,7 @@ export default class SidePanel {
 
         this.createDescriptionPanel(this.scene);
 
-        this.sidePanel.add(this.descriptionPanel, 0, 'right', { top: 10, bottom: 10, left: 10, right: 10 }, false);
+        this.sidePanel.add(this.descriptionPanel, 0, "right", { top: 10, bottom: 10, left: 10, right: 10 }, false);
         this.sidePanel.setOrigin(0).layout();
     }
 

@@ -1,76 +1,65 @@
-import Srand from 'seeded-rand';
-import { create2dArray } from '../../utils';
-import Engine from '../engine';
-import { Fov } from '../fov';
-import Player from '../player';
-import Sprite from '../sprite';
-import { GeneratorOptions, Ship } from '../ship-gen/shipGenerator';
-import GameMap from '../gameMap';
-import EntityFactories from '../entityFactories';
-import { InventoryEventHandler } from '../eventHandler';
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, TakeStairsAction, ItemAction, DropItemAction, DebugAction } from '../actions';
-import Fighter from '../components/fighter';
+import Phaser from "phaser";
+import Srand from "seeded-rand";
+import Engine from "../engine";
+import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
+import EntityFactories from "../entityFactories";
+import { InventoryEventHandler } from "../eventHandler";
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, InteractWithTileAction, ItemAction, DropItemAction, DebugAction } from "../actions";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
-        super('SceneGame');
+        super("SceneGame");
     }
 
     init(data) {
         this.room = data.room;
         this.socket = data.socket;
 
-        this.mapOffsetWidth = 400;
-        this.mapOffsetHeight = 300;
-
-        this.keysDown = [];
         this.player;
         this.otherPlayers = [];
         this.players = [];
-        this.entities = [];
 
         Srand.seed(this.room.seed);
         console.log("Seed: " + this.room.seed);
     }
 
     create() {
-        var self = this;
+        const self = this;
 
         Object.keys(self.room.players).forEach(function(index) {
-            var player = self.room.players[index];
+            const player = self.room.players[index];
 
-            var newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
-            if (player.playerId == self.socket.id) {
+            const newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
+            if (player.playerId === self.socket.id) {
                 self.player = newPlayer;
                 self.players.push(self.player);
             } else {
-                var otherPlayer = newPlayer;
+                const otherPlayer = newPlayer;
 
                 self.otherPlayers.push(otherPlayer);
                 self.players.push(otherPlayer);
             }
         });
 
-        // var isHost = self.room.players[0].playerId == self.socket.id;
+        // let isHost = self.room.players[0].playerId == self.socket.id;
         this.engine = new Engine(this, self.player, self.players);
 
-        self.generateNewShip();
+        self.generatePlayerShip();
+        self.createDebugMap();
 
         if (self.player) {
-            self.events.emit('ui-enable', self.engine);
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
-            self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+            self.events.emit("ui-enable", self.engine);
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
         }
 
-        self.socket.on('c-createDebugRoom', function (data) {
-            var playerId = data.playerId;
-            var debugMap = self.shipGenerator.createDebugMap();
-
+        self.socket.on("c-createDebugRoom", function () {
+            const debugMap = self.engine.getGameMap("DEBUG");
             self.engine.setGameMap(debugMap);
             self.engine.createSprites();
 
-            for (var i = 0; i < self.players.length; i++) {
-                var player = self.players[i];
+            for (let i = 0; i < self.players.length; i++) {
+                const player = self.players[i];
                 player.place(debugMap, 10 + i, 10);
             }
 
@@ -78,23 +67,22 @@ export class SceneGame extends Phaser.Scene {
             self.updateCameraView();
         });
 
-        self.socket.on('c-regenMap', function (data) {
-            var newSeed = data.seed;
+        self.socket.on("c-regenMap", function (data) {
+            const newSeed = data.seed;
             self.room.seed = newSeed;
             Srand.seed(newSeed);
             console.log("New Seed: " + newSeed);
 
-            self.engine.teardown();
             self.generateNewShip();
         });
 
-        self.socket.on('c-performAction', function (data) {
-            var playerId = data.playerId;
-            var actionData = data.actionData;
-            var args = actionData.args;
+        self.socket.on("c-performAction", function (data) {
+            const playerId = data.playerId;
+            const actionData = data.actionData;
+            const args = actionData.args;
 
-            for (var i = 0; i < self.players.length; i++) {
-                var player = self.players[i];
+            for (let i = 0; i < self.players.length; i++) {
+                const player = self.players[i];
                 if (playerId === player.playerId) {
                     switch (actionData.action) {
                         case "WaitAction":
@@ -118,8 +106,8 @@ export class SceneGame extends Phaser.Scene {
                         case "PickupAction":
                             new PickupAction(player).perform(true);
                             break;
-                        case "TakeStairsAction":
-                            new TakeStairsAction(player).perform(true);
+                        case "InteractWithTileAction":
+                            new InteractWithTileAction(player).perform(true);
                             break;
                         case "ItemAction":
                             new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
@@ -145,44 +133,63 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
-            self.events.emit('ui-updateHp', { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
 
             self.engine.handleEnemyTurns();
             self.engine.updateFov();
         });
 
-        self.socket.on('updatePlayerData', function (players) {
-            for (var i = 0; i < players.length; i++) {
-                var player = players[i];
-                if (player.playerId == self.socket.id) {
+        self.socket.on("updatePlayerData", function (players) {
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
+                if (player.playerId === self.socket.id) {
                     self.player.energy = player.energy;
-                    self.events.emit('ui-updateEnergy', {energy: self.player.energy, energyMax: self.player.energyMax });
+                    self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
                     break;
                 }
             }
         });
 
         self.engine.ui.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
+        self.engine.ui.showControls();
     }
 
     updateCameraView(objectToFollow) {
         if (!objectToFollow) {
             if (this.player) {
-                objectToFollow = this.player.sprite.spriteObject
+                objectToFollow = this.player.sprite.spriteObject;
             } else {
                 objectToFollow = this.otherPlayers[0].sprite.spriteObject;
             }
         }
 
         this.cameras.main.setBounds(0, 0, this.displayWidth, this.displayHeight);
-        this.cameras.main.startFollow(objectToFollow);
+        this.cameras.main.startFollow(objectToFollow, true);
         this.cameras.main.followOffset.set(-100, -50);
     }
 
+    createDebugMap() {
+        this.shipGenerator.createDebugMap();
+    }
+
+    generatePlayerShip() {
+        const width = 70;
+        const height = 40;
+        const genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
+
+        this.shipGenerator = new Ship(this.engine, genOptions);
+        this.engine.setGameMap(this.shipGenerator.generatePlayerShip());
+        this.shipGenerator.setPlayerCoordinates(this.players);
+        this.engine.createSprites();
+        this.engine.updateFov();
+
+        this.updateCameraView();
+    }
+
     generateNewShip() {
-        var width = 70;
-        var height = 40;
-        var genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
+        const width = 70;
+        const height = 40;
+        const genOptions = new GeneratorOptions(1, 30, 6, 10, width, height, 4, 3, 3);
 
         this.shipGenerator = new Ship(this.engine, genOptions);
         this.engine.setGameMap(this.shipGenerator.generateDungeon());

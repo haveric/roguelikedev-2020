@@ -1,7 +1,6 @@
-import RenderOrder from '../renderOrder';
-import Sprite from '../sprite';
-import { PlayerDeadEventHandler, MainGameEventHandler } from '../eventHandler';
-import BaseComponent from './baseComponent';
+import RenderOrder from "../renderOrder";
+import { PlayerDeadEventHandler, MainGameEventHandler } from "../eventHandler";
+import BaseComponent from "./baseComponent";
 
 export default class Fighter extends BaseComponent {
     constructor(entity, hp, defense, power, invulnerable=false) {
@@ -23,7 +22,7 @@ export default class Fighter extends BaseComponent {
         if (!this.invulnerable) {
             this._hp = Math.max(0, Math.min(hp, this.hpMax));
 
-            if (this._hp == 0 && this.parent.ai) {
+            if (this._hp === 0 && this.parent.ai) {
                 this.die();
             }
         }
@@ -33,24 +32,28 @@ export default class Fighter extends BaseComponent {
         this.setHp(this._hp - amount);
     }
 
+    isAtMaxHp() {
+        return this._hp === this.hpMax;
+    }
+
     heal(amount) {
-        if (this._hp == this.hpMax) {
+        if (this.isAtMaxHp()) {
             return 0;
         }
 
-        var newHp = this._hp + amount;
+        let newHp = this._hp + amount;
         if (newHp > this.hpMax) {
             newHp = this.hpMax;
         }
 
-        var amountRecovered = newHp - this._hp;
+        const amountRecovered = newHp - this._hp;
         this._hp = newHp;
 
         return amountRecovered;
     }
 
     die() {
-        var engine = this.getEngine();
+        const engine = this.getEngine();
         if (this.parent === engine.player) {
             engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
         }
@@ -65,14 +68,17 @@ export default class Fighter extends BaseComponent {
 
         this.getEngine().ui.messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has died!").build();
 
-        this.parent.sprite.updateSprite("corpse", "BF0000");
+        this.parent.sprite.updateSprite("corpse");
         this.parent.blocksMovement = false;
         this.parent.ai = null;
         this.parent.name = this.parent.name + "'s corpse";
+        if (this.parent.inventory) {
+            this.parent.inventory.dropAll();
+        }
     }
 
     revive() {
-        var engine = this.getEngine();
+        const engine = this.getEngine();
         if (this._hp <= 0) {
             this.parent.renderOrder = RenderOrder.ACTOR;
             this.parent.sprite.updateSprite(this.parent.originalSpriteName, this.parent.originalColor);

@@ -1,10 +1,14 @@
-import Entity from './entity';
-import Sprite from './sprite';
-import RenderOrder from './renderOrder';
+import Entity from "./entity";
+import Sprite from "../sprite";
+import RenderOrder from "../renderOrder";
 
 export default class HighlightTile extends Entity {
-    constructor(x, y, name) {
-        super(x, y, name);
+    /**
+     * @param x {integer} - X tile coordinate of the HighlightTile (from left->right).
+     * @param y {integer} - Y tile coordinate of the HighlightTile (from top->bottom).
+     */
+    constructor(x, y) {
+        super(x, y, "highlight");
 
         this.visible = false;
         this.renderOrder = RenderOrder.HIGHLIGHT;

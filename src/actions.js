@@ -23,10 +23,10 @@ export class Action {
     }
 
     isCurrentPlayer() {
-        return this.entityRef == this.getEngine().player;
+        return this.entityRef === this.getEngine().player;
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         console.error("Not Implemented");
     }
 }
@@ -55,7 +55,7 @@ export class WaitAction extends Action {
         super(entity);
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         return new ActionResult(this, true);
     }
 
@@ -77,16 +77,16 @@ export class ActionWithDirection extends Action {
     }
 
     _getBlockingEntity() {
-        var destXY = this._getDestXY();
+        const destXY = this._getDestXY();
         return this.getGameMap().getBlockingEntityAtLocation(destXY.x, destXY.y);
     }
 
     getTargetActor() {
-        var destXY = this._getDestXY();
+        const destXY = this._getDestXY();
         return this.getGameMap().getActorAtLocation(destXY.x, destXY.y);
     }
 
-    perform(doAction) {
+    perform(/*doAction*/) {
         console.error("Not Implemented");
     }
 }
@@ -97,14 +97,13 @@ export class MeleeAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var target = this.getTargetActor();
-        var success = false;
-        var messageLog = this.getEngine().ui.messageLog;
+        const target = this.getTargetActor();
+        let success;
+        const messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
-                var damage = this.entityRef.fighter.power - target.fighter.defense;
+                const damage = this.entityRef.fighter.power - target.fighter.defense;
                 messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
-                var attackDesc = this.entityRef.name + " attacks " + target.name;
 
                 if (damage > 0) {
                     messageLog.text(" for " + damage + " hit points.").build();
@@ -133,11 +132,11 @@ export class MovementAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var success = false;
-        var destXY = this._getDestXY();
-        var destX = destXY.x;
-        var destY = destXY.y;
-        var messageLog = this.getEngine().ui.messageLog;
+        let success;
+        const destXY = this._getDestXY();
+        const destX = destXY.x;
+        const destY = destXY.y;
+        const messageLog = this.getEngine().ui.messageLog;
         if (!this.getGameMap().locations[destX][destY].isTileWalkable() || this._getBlockingEntity()) {
             if (this.isCurrentPlayer()) {
                 messageLog.text("That way is blocked.").build();
@@ -165,17 +164,16 @@ export class OpenAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var success = false;
-        var destXY = this._getDestXY();
-        var destX = destXY.x;
-        var destY = destXY.y;
+        const destXY = this._getDestXY();
+        const destX = destXY.x;
+        const destY = destXY.y;
 
-        var messageLog = this.getEngine().ui.messageLog;
-        var success;
+        const messageLog = this.getEngine().ui.messageLog;
+        let success;
         if (doAction) {
             success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
         } else {
-            var check = this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
+            const check = this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
 
             if (check === null) {
                 if (this.isCurrentPlayer()) {
@@ -201,13 +199,12 @@ export class CloseAction extends ActionWithDirection {
     }
 
     perform(doAction) {
-        var success = false;
-        var destXY = this._getDestXY();
-        var destX = destXY.x;
-        var destY = destXY.y;
+        const destXY = this._getDestXY();
+        const destX = destXY.x;
+        const destY = destXY.y;
 
-        var messageLog = this.getEngine().ui.messageLog;
-        var success;
+        const messageLog = this.getEngine().ui.messageLog;
+        let success;
         if (doAction) {
             success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "close");
         } else {
@@ -218,7 +215,7 @@ export class CloseAction extends ActionWithDirection {
                     messageLog.text("There is nothing there to close.").build();
                 }
             } else {
-                var blockingEntity = this._getBlockingEntity();
+                const blockingEntity = this._getBlockingEntity();
 
                 if (blockingEntity) {
                     messageLog.text(blockingEntity.name, "#" + blockingEntity.sprite.color).text(" is blocking the door.").build();
@@ -238,17 +235,32 @@ export class CloseAction extends ActionWithDirection {
 export class BumpAction extends ActionWithDirection {
     constructor(entity, dx, dy) {
         super(entity, dx, dy);
+        this.friendlyFire = false;
     }
 
     perform(doAction) {
-        var destXY = this._getDestXY();
-        var destX = destXY.x;
-        var destY = destXY.y;
+        const destXY = this._getDestXY();
+        const destX = destXY.x;
+        const destY = destXY.y;
 
-        var tiles = this.getGameMap().locations[destX][destY].tiles;
-        var target = this.getTargetActor();
+        const tiles = this.getGameMap().locations[destX][destY].tiles;
+        const target = this.getTargetActor();
 
-        if (target) {
+        let entityIsPlayer = false;
+        let targetIsPlayer = false;
+        for (let i = 0; i < this.getEngine().players.length; i++) {
+            const player = this.getEngine().players[i];
+            if (this.entityRef === player) {
+                entityIsPlayer = true;
+            }
+
+            if (target === player) {
+                targetIsPlayer = true;
+            }
+        }
+
+
+        if ((this.friendlyFire || entityIsPlayer !== targetIsPlayer) && target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
         } else if (this.entityRef.canOpenDoors && _isClosedOpenable(tiles)) {
             return new OpenAction(this.entityRef, this.dx, this.dy).perform(doAction);
@@ -259,8 +271,8 @@ export class BumpAction extends ActionWithDirection {
 }
 
 function _isClosedOpenable(tiles) {
-    for (var i = 0; i < tiles.length; i++) {
-        var tile = tiles[i];
+    for (let i = 0; i < tiles.length; i++) {
+        const tile = tiles[i];
         if (tile.openable && !tile.openable.isOpen) {
             return true;
         }
@@ -277,9 +289,9 @@ export class WarpAction extends Action {
     }
 
     perform(doAction) {
-        var success = false;
+        let success;
 
-        var messageLog = this.getEngine().ui.messageLog;
+        const messageLog = this.getEngine().ui.messageLog;
         if (this.getGameMap().locations[this.x][this.y].isTileWalkable()) {
             if (doAction) {
                 this.entityRef.moveTo(this.getEngine(), this.x, this.x);
@@ -301,27 +313,29 @@ export class WarpAction extends Action {
     }
 }
 
-export class TakeStairsAction extends Action {
+export class InteractWithTileAction extends Action {
     constructor(entity) {
         super(entity);
     }
 
     perform(doAction) {
-        var actorX = this.entityRef.x;
-        var actorY = this.entityRef.y;
+        const actorX = this.entityRef.x;
+        const actorY = this.entityRef.y;
 
-        var success = false;
+        let success;
         if (doAction) {
-            this.getGameMap().locations[actorX][actorY].tileComponentRun("stairs", "take")
+            this.getGameMap().locations[actorX][actorY].tileComponentRun("interactable", "interact");
+
+            success = true;
         } else {
-            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("stairs");
+            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
         }
 
         return new ActionResult(this, success);
     }
 
     toString() {
-        return { action: "TakeStairsAction" };
+        return { action: "InteractWithTileAction" };
     }
 }
 
@@ -331,26 +345,26 @@ export class PickupAction extends Action {
     }
 
     perform(doAction) {
-        var actorX = this.entityRef.x;
-        var actorY = this.entityRef.y;
+        const actorX = this.entityRef.x;
+        const actorY = this.entityRef.y;
 
-        var inventory = this.entityRef.inventory;
+        const inventory = this.entityRef.inventory;
 
-        var items = this.getGameMap().getItems();
-        var messageLog = this.getEngine().ui.messageLog;
-        if (items.length == 0) {
+        const items = this.getGameMap().getItems();
+        const messageLog = this.getEngine().ui.messageLog;
+        if (items.length === 0) {
             if (this.isCurrentPlayer()) {
                 messageLog.text("There is nothing here to pick up.").build();
             }
 
             return new ActionResult(this, false);
         } else {
-            var success = false;
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
+            let success = false;
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
 
-                if (actorX == item.x && actorY == item.y) {
-                    if (inventory.items.length >= inventory.capacity) {
+                if (actorX === item.x && actorY === item.y) {
+                    if (!inventory.canAdd(item)) {
                         if (this.isCurrentPlayer()) {
                             messageLog.text("Your inventory is full.").build();
                         }
@@ -358,15 +372,15 @@ export class PickupAction extends Action {
                         break;
                     }
 
-                    var index = this.getGameMap().entities.indexOf(item);
-                    if (index != -1) {
+                    const index = this.getGameMap().entities.indexOf(item);
+                    if (index !== -1) {
                         if (doAction) {
                             this.getGameMap().entities.splice(index, 1);
                             item.parent = this.entityRef.inventory;
                             item.sprite.destroy();
-                            inventory.items.push(item);
+                            inventory.add(item);
 
-                            var playerString;
+                            let playerString;
                             if (this.isCurrentPlayer()) {
                                 playerString = "You";
                             } else {
@@ -408,8 +422,8 @@ export class ItemAction extends Action {
     }
 
     perform(doAction) {
-        var item = this.entityRef.inventory.items[this.inventorySlot];
-        var success = item.consumable.activate(this, doAction);
+        const item = this.entityRef.inventory.items[this.inventorySlot];
+        const success = item.consumable.activate(this, doAction);
 
         return new ActionResult(this, success);
     }

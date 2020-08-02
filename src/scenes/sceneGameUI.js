@@ -1,7 +1,9 @@
+import Phaser from "phaser";
+
 export class SceneGameUI extends Phaser.Scene {
     constructor() {
-        super('SceneGameUI');
-        this.coordinates = '';
+        super("SceneGameUI");
+        this.coordinates = "";
         this.hp = 0;
         this.hpMax = 0;
         this.energy = 0;
@@ -10,10 +12,10 @@ export class SceneGameUI extends Phaser.Scene {
     }
 
     create() {
-        var self = this;
-        var game = self.scene.get('SceneGame');
+        const self = this;
+        const game = self.scene.get("SceneGame");
 
-        game.events.on('ui-enable', function(engine) {
+        game.events.on("ui-enable", function(engine) {
             self.enabled = true;
 
             self.healthBarMax = self.add.rectangle(30, 20, 200, 30).setFillStyle(0xff9898).setOrigin(0);
@@ -25,12 +27,12 @@ export class SceneGameUI extends Phaser.Scene {
             self.hpText = self.add.text(35, 22, "HP: 0 / 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true } });
             self.energyText = self.add.text(35, 62, "Energy: 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true  } });
 
-            engine.ui.messageLog.createScrollablePanel(self)
+            engine.ui.messageLog.createScrollablePanel(self);
             engine.ui.sidePanel.createSidePanel(self);
             engine.ui.inventoryMenu.createInventoryMenu(self);
         }, this);
 
-        game.events.on('ui-updateEnergy', function(data) {
+        game.events.on("ui-updateEnergy", function(data) {
             if (self.enabled) {
                 self.energy = data.energy;
                 self.energyMax = data.energyMax;
@@ -40,13 +42,19 @@ export class SceneGameUI extends Phaser.Scene {
             }
         }, this);
 
-        game.events.on('ui-updateHp', function(data) {
+        game.events.on("ui-updateHp", function(data) {
             if (self.enabled) {
                 self.hp = data.hp;
-                self.hpMax = data.hpMax
+                self.hpMax = data.hpMax;
 
                 self.healthBar.width = self.hp / self.hpMax * self.healthBarMax.width;
                 self.hpText.setText("HP: " + self.hp + " / " + self.hpMax);
+            }
+        }, this);
+
+        game.events.on("ui-closeDialog", function(engine) {
+            if (self.enabled) {
+                engine.ui.hideDialog();
             }
         }, this);
     }

@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class MessageLog {
     constructor(scene) {
@@ -19,7 +19,7 @@ export default class MessageLog {
 
     addSplitMessage(subMessages, stack=true) {
         if (stack && this.messages.length > 0) {
-            var lastMessage = this.messages[this.messages.length - 1];
+            const lastMessage = this.messages[this.messages.length - 1];
             if (lastMessage.isEqual(subMessages)) {
                 lastMessage.count += 1;
             } else {
@@ -33,9 +33,9 @@ export default class MessageLog {
     }
 
     updateMessageLog() {
-        var fullLog = "";
-        for (var i = 0; i < this.messages.length; i++) {
-            var message = this.messages[i];
+        let fullLog = "";
+        for (let i = 0; i < this.messages.length; i++) {
+            const message = this.messages[i];
             fullLog += message.getBBCodeFullText();
         }
 

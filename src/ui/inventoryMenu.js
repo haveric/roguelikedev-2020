@@ -1,4 +1,4 @@
-import { SubMessage, Message } from './message';
+import { SubMessage, Message } from "./message";
 
 export default class InventoryMenu {
     constructor(scene) {
@@ -17,7 +17,7 @@ export default class InventoryMenu {
     }
 
     setDescription(subMessages) {
-        var message = new Message(subMessages);
+        const message = new Message(subMessages);
         this.descriptionPanel.setText(message.getBBCodeFullText());
     }
 
@@ -30,13 +30,13 @@ export default class InventoryMenu {
     }
 
     createInventoryMenu() {
-        var background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
+        const background = this.scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, 0x4e342e);
         this.inventoryMenu = this.scene.rexUI.add.sizer({
             x: 0,
             y: 0,
             width: 300,
             height: 500,
-            orientation: 'y',
+            orientation: "y",
             anchor: {
                 left: "50%-150",
             }
@@ -45,7 +45,7 @@ export default class InventoryMenu {
 
         this.createDescriptionPanel();
 
-        this.inventoryMenu.add(this.descriptionPanel, 0, 'right', { top: 10, bottom: 10, left: 10, right: 10 }, false);
+        this.inventoryMenu.add(this.descriptionPanel, 0, "right", { top: 10, bottom: 10, left: 10, right: 10 }, false);
         this.inventoryMenu.setOrigin(0).layout();
         this.inventoryMenu.visible = false;
     }

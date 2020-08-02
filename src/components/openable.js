@@ -3,7 +3,7 @@ export default class Openable {
         this.tile = tile;
         this.isOpen = isOpen;
         this.spriteName = spriteName;
-        this.spriteOpenName = spriteOpenName
+        this.spriteOpenName = spriteOpenName;
     }
 
     getIsOpen() {

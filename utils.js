@@ -1,7 +1,7 @@
 const create2dArray = (rows) => {
-    var array = [];
+    const array = [];
 
-    for (var i = 0; i < rows; i++) {
+    for (let i = 0; i < rows; i++) {
         array[i] = [];
     }
 
@@ -12,20 +12,41 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getFrameOf = (tilemap, sprite) => {
-    var frame = null;
-    if (tilemap.tiles[sprite]) {
-        frame = tilemap.tiles[sprite];
+const getSpriteDetails = (tilemap, spriteName, color) => {
+    let spriteDetails;
+    if (tilemap.tiles[spriteName]) {
+        spriteDetails = tilemap.tiles[spriteName];
+    } else if (tilemap.tiles["unknown"]) {
+        spriteDetails = tilemap.tiles["unknown"];
+        console.log("Tilemap '" + tilemap.name + "' missing sprite: " + spriteName);
     } else {
-        frame = tilemap.tiles["unknown"];
-        console.log("Tilemap missing sprites! " + sprite);
+        console.log("Tilemap '" + tilemap.name + "' missing default 'unknown' sprite");
     }
 
-    return frame;
+    if (typeof spriteDetails === "number") {
+        // Move shorthand to full format
+        spriteDetails = {
+            frame: spriteDetails,
+            color: "ffffff"
+        };
+    } else if (spriteDetails.frame === undefined) {
+        if (tilemap.tiles["unknown"]) {
+            spriteDetails.frame = tilemap.tiles["unknown"].frame || tilemap.tiles["unknown"];
+            console.log("Tilemap '" + tilemap.name + "' missing frame for sprite: " + spriteName);
+        } else {
+            console.log("Tilemap '" + tilemap.name + "' missing default 'unknown' sprite");
+        }
+    }
+
+    if (color !== undefined) {
+        spriteDetails.color = color;
+    }
+
+    return spriteDetails;
 };
 
 const hexToRgb = (hex) => {
-    var result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? {
         r: parseInt(result[1], 16),
         g: parseInt(result[2], 16),
@@ -35,5 +56,5 @@ const hexToRgb = (hex) => {
 
 exports.create2dArray = create2dArray;
 exports.getRandomInt = getRandomInt;
-exports.getFrameOf = getFrameOf;
+exports.getSpriteDetails = getSpriteDetails;
 exports.hexToRgb = hexToRgb;

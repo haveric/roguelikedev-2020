@@ -12,9 +12,9 @@ export class Message {
     }
 
     getBBCodeFullText() {
-        var fullText = "";
-        for (var i = 0; i < this.subMessages.length; i++) {
-            var subMessage = this.subMessages[i];
+        let fullText = "";
+        for (let i = 0; i < this.subMessages.length; i++) {
+            const subMessage = this.subMessages[i];
             fullText += "[color=" + subMessage.color + "]" + subMessage.text + "[/color]";
         }
 
@@ -27,15 +27,15 @@ export class Message {
     }
 
     isEqual(subMessages) {
-        if (subMessages.length != this.subMessages.length) {
+        if (subMessages.length !== this.subMessages.length) {
             return false;
         }
 
-        for (var i = 0; i < this.subMessages.length; i++) {
-            var sub = this.subMessages[i];
-            var sub2 = subMessages[i];
+        for (let i = 0; i < this.subMessages.length; i++) {
+            const sub = this.subMessages[i];
+            const sub2 = subMessages[i];
 
-            if (sub.text != sub2.text || sub.color != sub2.color) {
+            if (sub.text !== sub2.text || sub.color !== sub2.color) {
                 return false;
             }
         }
