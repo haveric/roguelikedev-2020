@@ -5,6 +5,7 @@ import RenderOrder from "../renderOrder";
 import Tiles from "./tilefactories";
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
 import { RoomTunneler } from "./roomTunneler.js";
+import ItemGenerator from "../item-gen/itemGeneration";
 
 export class GeneratorOptions {
     constructor(
@@ -358,18 +359,10 @@ export class Ship {
         const numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
         console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
 
+        const itemGenerator = new ItemGenerator(rectangularRoom, this.gameMap);
+
         for (let i = 0; i < numItemsToSpawn; i++) {
-            const coords = rectangularRoom.getXYInRoom();
-
-            const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
-            if (!entity) {
-
-                const itemChance = Srand.random();
-
-                const itemSpawnedName = EntityFactories.GenerateItem(coords.x, coords.y, itemChance, this.gameMap);
-
-                console.log("Spawning " + itemSpawnedName + " using value of " + itemChance + " in: " + rectangularRoom);
-            }
+            itemGenerator.spawnItem();
         }
     }
 }
