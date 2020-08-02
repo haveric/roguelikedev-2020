@@ -1,4 +1,3 @@
-import GameMap from "./gameMap";
 import Player from "./entity/player";
 import Sprite from "./sprite";
 import Fighter from "./components/fighter";
@@ -6,6 +5,8 @@ import Srand from "seeded-rand";
 import Actor from "./entity/actor";
 import Inventory from "./components/inventory";
 import Item from "./entity/item";
+import { BaseAI, HostileEnemy } from "./components/ai";
+
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
 
 export default class EntityFactories { }
@@ -111,8 +112,8 @@ EntityFactories.ItemList = {
 };
 
 /**
- * 
- * @param {number} itemChance 
+ *
+ * @param {number} itemChance
  */
 EntityFactories.SelectItemListByChance = (itemChance) => {
     if (itemChance <= ItemRarity.Junk.spawnChance) { return EntityFactories.ItemList[ItemRarity.Junk.name]; }
@@ -122,20 +123,20 @@ EntityFactories.SelectItemListByChance = (itemChance) => {
 };
 
 /**
- * 
+ *
  * @param {integer} x - X tile location
  * @param {integer} y - Y tile location
  * @param {number} itemChance - random gen number (0-1)
  * @param {GameMap} gameMap - GameMap to place item on
- * 
+ *
  * @returns {string} itemName
  */
 EntityFactories.GenerateItem = (x, y, itemChance, gameMap) => {
 
-    var itemList = EntityFactories.SelectItemListByChance(itemChance);
-    var itemObj = itemList[Srand.intInRange(0, itemList.length-1)];
+    const itemList = EntityFactories.SelectItemListByChance(itemChance);
+    const itemObj = itemList[Srand.intInRange(0, itemList.length - 1)];
 
-    itemObj.spawnFunc(x,y).place(gameMap);
+    itemObj.spawnFunc(x, y).place(gameMap);
     return itemObj.name;
 };
 

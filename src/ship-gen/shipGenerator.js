@@ -330,15 +330,15 @@ export class Ship {
     }
 
     /**
-     * 
-     * @param {RectangularRoom} rectangularRoom 
+     *
+     * @param {RectangularRoom} rectangularRoom
      */
     placeEntitiesInRoom(rectangularRoom) {
         const numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
-        console.log('Spawning ' + numMonstersToSpawn + ' enemies in room: ' + rectangularRoom);
+        console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
-        for (var i = 0; i < numMonstersToSpawn; i++) {
-            var coords = rectangularRoom.getXYInRoom();
+        for (let i = 0; i < numMonstersToSpawn; i++) {
+            const coords = rectangularRoom.getXYInRoom();
 
             const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
 
@@ -358,7 +358,7 @@ export class Ship {
         const numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
         console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
 
-        for (var i = 0; i < numItemsToSpawn; i++) {
+        for (let i = 0; i < numItemsToSpawn; i++) {
             const coords = rectangularRoom.getXYInRoom();
 
             const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
@@ -366,9 +366,9 @@ export class Ship {
 
                 const itemChance = Srand.random();
 
-                var itemSpawnedName = EntityFactories.GenerateItem(coords.x, coords.y, itemChance, this.gameMap);
+                const itemSpawnedName = EntityFactories.GenerateItem(coords.x, coords.y, itemChance, this.gameMap);
 
-                console.log('Spawning ' + itemSpawnedName + ' using value of ' + itemChance + ' in: ' + rectangularRoom);
+                console.log("Spawning " + itemSpawnedName + " using value of " + itemChance + " in: " + rectangularRoom);
             }
         }
     }
