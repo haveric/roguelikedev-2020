@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack-dev-server --config webpack/base.js --open",
     "prod": "webpack --config webpack/prod.js",
-    "server": "node server.js"
+    "server": "node server.js",
+    "server-dev": "node server.js devmode"
   },
   "keywords": [],
   "author": "",

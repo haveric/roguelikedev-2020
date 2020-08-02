@@ -16,6 +16,25 @@ const lobby = {
     users: { }
 };
 
+let isDevMode = false;
+
+// Command line arguments
+var myArgs = process.argv.slice(2);
+
+switch (myArgs[0]) {
+case 'devmode':
+    isDevMode = true;
+    break;
+default:
+    console.log('Bad command line arg sent to server.');
+}
+
+let minPlayersAllowed = 2;
+
+if( isDevMode ){
+    minPlayersAllowed = 1;
+}
+
 app.use(express.static(__dirname + "/src"));
 
 app.get("/", function (req, res) {
@@ -126,7 +145,8 @@ io.on("connection", function (socket) {
                 player.ready = data.ready;
 
                 let allPlayersReady = true;
-                if (players.length >= 2) {
+
+                if (players.length >= minPlayersAllowed) {
                     for (let i = 0; i < players.length; i++) {
                         if (players[i].ready === false) {
                             allPlayersReady = false;
