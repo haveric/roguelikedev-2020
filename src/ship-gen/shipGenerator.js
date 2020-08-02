@@ -158,8 +158,11 @@ export class Ship {
             }
         }
 
+        const itemGenerator = new ItemGenerator(this.gameMap);
+
         for (let i = 1; i < this.rooms.length; i++) {
-            this.placeEntitiesInRoom(this.rooms[i]);
+            itemGenerator.setRoom(this.rooms[i]);
+            this.placeEntitiesInRoom(this.rooms[i], itemGenerator);
         }
 
         return this.gameMap;
@@ -333,8 +336,9 @@ export class Ship {
     /**
      *
      * @param {RectangularRoom} rectangularRoom
+     * @param {ItemGenerator} itemGenerator
      */
-    placeEntitiesInRoom(rectangularRoom) {
+    placeEntitiesInRoom(rectangularRoom, itemGenerator) {
         const numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
         console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
@@ -358,8 +362,6 @@ export class Ship {
 
         const numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
         console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
-
-        const itemGenerator = new ItemGenerator(rectangularRoom, this.gameMap);
 
         for (let i = 0; i < numItemsToSpawn; i++) {
             itemGenerator.spawnItem();

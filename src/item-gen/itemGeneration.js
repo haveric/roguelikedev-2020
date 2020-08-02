@@ -8,14 +8,11 @@ export default class ItemGenerator {
 
     /**
      *
-     * @param {RectangularRoom} rectangularRoom
      * @param {GameMap} gameMap
      */
     constructor(
-        rectangularRoom,
         gameMap
     ) {
-        this.rectangularRoom = rectangularRoom;
         this.gameMap = gameMap;
 
         this._loaded = false;
@@ -24,10 +21,16 @@ export default class ItemGenerator {
         this._sumItemWeights = 0;
     }
 
+    /**
+     * Spawn an item in the generators currently definied room
+     */
     spawnItem() {
-
         if (this._loaded === false) {
             this.loadWeights();
+        }
+
+        if (this.rectangularRoom === null) {
+            console.log("Room not definied, cannot spawn item.");
         }
 
         const coords = this.rectangularRoom.getXYInRoom();
@@ -38,6 +41,14 @@ export default class ItemGenerator {
 
             console.log("Spawning " + itemSpawnedName + " in: " + this.rectangularRoom);
         }
+    }
+
+    /**
+     *
+     * @param {RectangularRoom} rectangularRoom
+     */
+    setRoom(rectangularRoom) {
+        this.rectangularRoom = rectangularRoom;
     }
 
     /**
@@ -92,6 +103,8 @@ export default class ItemGenerator {
      * Load up the total weights based on adjustments and room info (TODO)
      */
     loadWeights() {
+        console.log("Loading up item weights!");
+
         const chances = [];
         const items = [];
         let runningSum = 0;
