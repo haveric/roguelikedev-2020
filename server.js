@@ -27,6 +27,7 @@ case 'devmode':
     break;
 default:
     console.log('Bad command line arg sent to server.');
+    break;
 }
 
 let minPlayersAllowed = 2;
