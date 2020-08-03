@@ -45,6 +45,15 @@ export class RectangularRoom {
             && this.y2 >= y;
     }
 
+    /**
+     * @returns {{x: integer, y: integer}} coordinates
+     */
+    getRandomXYInRoom() {
+        const x = Srand.intInRange(this.x1 + 1, this.x2 - 1);
+        const y = Srand.intInRange(this.y1 + 1, this.y2 - 1);
+        return {x: x, y: y};
+    }
+
     toString() {
         return (this.name || "unnamed") + " { x1: " + this.x1
             + ", y1: " + this.y1

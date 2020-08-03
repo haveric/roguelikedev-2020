@@ -5,6 +5,7 @@ import RenderOrder from "../renderOrder";
 import Tiles from "./tilefactories";
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
 import { RoomTunneler } from "./roomTunneler.js";
+import ItemGenerator from "../item-gen/itemGeneration";
 
 export class GeneratorOptions {
     constructor(
@@ -59,14 +60,14 @@ export class Ship {
 
         let tries = 0;
         let bridge;
-        while(!validBridge) {
+        while (!validBridge) {
             const xLoc = this.gameMap.width - RoomConstants.bridgeWidth - 1;
             const yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax);
             bridge = new Bridge(xLoc, yLoc);
             validBridge = !this._doesThisIntersectWithOtherRooms(bridge);
-            if(!validBridge) {
+            if (!validBridge) {
                 tries++;
-                if(tries > 20) {
+                if (tries > 20) {
                     console.log("Unable to generate bridge");
                     break;
                 }
@@ -91,16 +92,16 @@ export class Ship {
             console.log("Generating hold " + h + " between x: " + holdGenerationXMin
                 + " - " + holdGenerationXMax + " and y: " + holdGenerationYMin + " - " + holdGenerationYMax);
             tries = 0;
-            while(!validHold) {
+            while (!validHold) {
                 // keep trying to generate a hold until it works!
                 const xLoc = Srand.intInRange(holdGenerationXMin, holdGenerationXMax - RoomConstants.holdWidth);
                 const yLoc = Srand.intInRange(holdGenerationYMin, holdGenerationYMax) - RoomConstants.holdHeight;
                 const hold = RoomTypeFactories.createHold(xLoc, yLoc);
 
                 validHold = !this._doesThisIntersectWithOtherRooms(hold);
-                if(!validHold) {
+                if (!validHold) {
                     tries++;
-                    if(tries > 10) {
+                    if (tries > 10) {
                         console.log("Unable to generate hold " + h);
                         break;
                     }
@@ -116,7 +117,7 @@ export class Ship {
                 for (let r = 0; r < 4; r++) {
                     let validRoom = false;
                     tries = 0;
-                    while(!validRoom) {
+                    while (!validRoom) {
                         const roomWidth = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
                         const roomHeight = Srand.intInRange(this.shipOptions.roomMinSize, this.shipOptions.roomMaxSize);
 
@@ -127,9 +128,9 @@ export class Ship {
                         const room = new RectangularRoom(xLoc, yLoc, roomWidth, roomHeight, "POI" + h + "" + r);
 
                         validRoom = !this._doesThisIntersectWithOtherRooms(room);
-                        if(!validRoom) {
+                        if (!validRoom) {
                             tries++;
-                            if(tries > 10) {
+                            if (tries > 10) {
                                 console.log("Unable to generate room " + r);
                                 break;
                             }
@@ -157,8 +158,11 @@ export class Ship {
             }
         }
 
+        const itemGenerator = new ItemGenerator(this.gameMap);
+
         for (let i = 1; i < this.rooms.length; i++) {
-            this.placeEntitiesInRoom(this.rooms[i]);
+            itemGenerator.setRoom(this.rooms[i]);
+            this.placeEntitiesInRoom(this.rooms[i], itemGenerator);
         }
 
         return this.gameMap;
@@ -276,7 +280,7 @@ export class Ship {
     _doesThisIntersectWithOtherRooms(roomToCheck) {
         for (let j = 0; j < this.rooms.length; j++) {
             const otherRoom = this.rooms[j];
-            if(roomToCheck.intersects(otherRoom)) {
+            if (roomToCheck.intersects(otherRoom)) {
                 return true;
             }
         }
@@ -329,24 +333,29 @@ export class Ship {
         return players;
     }
 
-    placeEntitiesInRoom(rectangularRoom) {
+    /**
+     *
+     * @param {RectangularRoom} rectangularRoom
+     * @param {ItemGenerator} itemGenerator
+     */
+    placeEntitiesInRoom(rectangularRoom, itemGenerator) {
         const numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
         console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
         for (let i = 0; i < numMonstersToSpawn; i++) {
-            const x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            const y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
+            const coords = rectangularRoom.getRandomXYInRoom();
 
-            const entity = this.gameMap.getBlockingEntityAtLocation(x, y);
+            const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
+
             if (!entity) {
                 const random = Srand.random();
 
                 if (random < 0.7) {
-                    new EntityFactories.attackDog(x, y).place(this.gameMap);
+                    new EntityFactories.attackDog(coords.x, coords.y).place(this.gameMap);
                 } else if (random < 0.95) {
-                    new EntityFactories.spacePirate(x, y).place(this.gameMap);
+                    new EntityFactories.spacePirate(coords.x, coords.y).place(this.gameMap);
                 } else {
-                    new EntityFactories.automatedTurret(x, y).place(this.gameMap);
+                    new EntityFactories.automatedTurret(coords.x, coords.y).place(this.gameMap);
                 }
             }
         }
@@ -355,25 +364,7 @@ export class Ship {
         console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
 
         for (let i = 0; i < numItemsToSpawn; i++) {
-            const x = Srand.intInRange(rectangularRoom.x1 + 1, rectangularRoom.x2 - 1);
-            const y = Srand.intInRange(rectangularRoom.y1 + 1, rectangularRoom.y2 - 1);
-
-            const entity = this.gameMap.getBlockingEntityAtLocation(x, y);
-            if (!entity) {
-                const itemChance = Srand.random();
-
-                if (itemChance < 0.6) {
-                    new EntityFactories.medkit(x, y).place(this.gameMap);
-                } else if (itemChance < 0.73) {
-                    new EntityFactories.grenade(x, y).place(this.gameMap);
-                } else if (itemChance < 0.86) {
-                    new EntityFactories.confuseRay(x, y).place(this.gameMap);
-                } else if (itemChance < 0.99) {
-                    new EntityFactories.laserCharge(x, y).place(this.gameMap);
-                } else {
-                    new EntityFactories.resurrectionInjector(x, y).place(this.gameMap);
-                }
-            }
+            itemGenerator.spawnItem();
         }
     }
 }

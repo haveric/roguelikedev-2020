@@ -1,14 +1,15 @@
-import Srand from "seeded-rand";
 import Player from "./entity/player";
 import Sprite from "./sprite";
 import Fighter from "./components/fighter";
-import { BaseAI, HostileEnemy } from "./components/ai";
-import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
-import Inventory from "./components/inventory";
+import Srand from "seeded-rand";
 import Actor from "./entity/actor";
+import Inventory from "./components/inventory";
 import Item from "./entity/item";
+import { BaseAI, HostileEnemy } from "./components/ai";
 
-export default class EntityFactories {}
+import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
+
+export default class EntityFactories { }
 
 EntityFactories.credits = (x, y, amount) => {
     return new Item(x, y, "Credits", "Used to buy things.", new Sprite("credits"), 10000, amount);
