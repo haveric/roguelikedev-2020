@@ -10,9 +10,7 @@ export default class ItemGenerator {
      *
      * @param {GameMap} gameMap
      */
-    constructor(
-        gameMap
-    ) {
+    constructor(gameMap) {
         this.gameMap = gameMap;
 
         this._loaded = false;
@@ -30,10 +28,10 @@ export default class ItemGenerator {
         }
 
         if (this.rectangularRoom === null) {
-            console.log("Room not definied, cannot spawn item.");
+            console.log("Room not defined, cannot spawn item.");
         }
 
-        const coords = this.rectangularRoom.getXYInRoom();
+        const coords = this.rectangularRoom.getRandomXYInRoom();
 
         const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
         if (!entity) {
@@ -67,7 +65,6 @@ export default class ItemGenerator {
      * @returns {string} itemName
      */
     _generateItem(x, y, gameMap) {
-
         const itemObj = this._selectItem();
 
         itemObj.spawnFunc(x, y).place(gameMap);
@@ -75,7 +72,6 @@ export default class ItemGenerator {
     }
 
     _choiceIndex() {
-
         if (this._loaded === false) {
             this.loadWeights();
         }

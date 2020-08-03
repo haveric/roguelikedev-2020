@@ -11,7 +11,6 @@ export default class Entity {
      * @param sprite {Sprite} - Sprite of the Entity.
      * @param blocksMovement {boolean} - Whether this Entity blocks other Entities' movement.
      * @param renderOrder {RenderOrder} - Visual depth to render the Sprite.
-
      */
     constructor(x, y, name, description, sprite, blocksMovement, renderOrder) {
         this.x = x;

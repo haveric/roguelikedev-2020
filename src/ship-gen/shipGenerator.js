@@ -343,7 +343,7 @@ export class Ship {
         console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
         for (let i = 0; i < numMonstersToSpawn; i++) {
-            const coords = rectangularRoom.getXYInRoom();
+            const coords = rectangularRoom.getRandomXYInRoom();
 
             const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
 
