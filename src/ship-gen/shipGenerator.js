@@ -308,7 +308,7 @@ export class Ship {
                 if (x === newRoom.x1 || x === newRoom.x2 || y === newRoom.y1 || y === newRoom.y2) {
                     if (gameMap.locations[x][y].isTileWalkable()) {
                         if ((gameMap.locations[x-1][y].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x+1][y].isTileAtDepth(RenderOrder.WALL))
-                            || (gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
+                         || (gameMap.locations[x][y-1].isTileAtDepth(RenderOrder.WALL) && gameMap.locations[x][y+1].isTileAtDepth(RenderOrder.WALL))) {
                             if (!this.gameMap.locations[x][y].isTileAtDepth(RenderOrder.WALL)) {
                                 console.log("Created door on edge of room at " + x + "," + y);
                                 gameMap.locations[x][y].addTile(Tiles.greenDoor(x, y));
