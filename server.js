@@ -22,17 +22,17 @@ let isDevMode = false;
 var myArgs = process.argv.slice(2);
 
 switch (myArgs[0]) {
-case 'devmode':
-    isDevMode = true;
-    break;
-default:
-    console.log('Bad command line arg sent to server.');
-    break;
+    case 'devmode':
+        isDevMode = true;
+        break;
+    default:
+        console.log('Bad command line arg sent to server.');
+        break;
 }
 
 let minPlayersAllowed = 2;
 
-if( isDevMode ){
+if (isDevMode) {
     minPlayersAllowed = 1;
 }
 
