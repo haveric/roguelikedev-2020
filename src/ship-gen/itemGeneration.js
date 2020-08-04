@@ -1,8 +1,8 @@
 import ItemPrefab from "./itemPrefab";
-import Srand from "seeded-rand";
 import EntityFactories from "../entityFactories";
 import GameMap from "../gameMap"; // eslint-disable-line no-unused-vars
 import { RectangularRoom } from "./roomTypes"; // eslint-disable-line no-unused-vars
+import ChoiceIndex from "../utils/choiceIndex";
 
 export default class ItemGenerator {
 
@@ -53,7 +53,7 @@ export default class ItemGenerator {
      * @returns {ItemPrefab} prefab
      */
     _selectItem() {
-        return this._items[this._choiceIndex()];
+        return this._items[ChoiceIndex.select(this._chances, this._sumItemWeights)];
     }
 
     /**
@@ -69,30 +69,6 @@ export default class ItemGenerator {
 
         itemObj.spawnFunc(x, y).place(gameMap);
         return itemObj.name;
-    }
-
-    _choiceIndex() {
-        if (this._loaded === false) {
-            this.loadWeights();
-        }
-
-        const randomChance = Srand.intInRange(1, this._sumItemWeights);
-        let runningSum = 0;
-        let choiceIndex = 0;
-
-        console.log("RandomChance selected value of:" + randomChance);
-
-        for (let i = 0; i < this._chances.length; i++) {
-            const weight = this._chances[i];
-            runningSum += weight;
-
-            if (randomChance <= runningSum) {
-                break;
-            }
-            choiceIndex += 1;
-        }
-
-        return choiceIndex;
     }
 
     /**

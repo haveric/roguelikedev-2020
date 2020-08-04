@@ -6,6 +6,7 @@ import Tiles from "./tilefactories";
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
 import { RoomTunneler } from "./roomTunneler.js";
 import ItemGenerator from "./itemGeneration";
+import EnemyGenerator from "./enemyGeneration";
 
 export class GeneratorOptions {
     constructor(
@@ -159,10 +160,13 @@ export class Ship {
         }
 
         const itemGenerator = new ItemGenerator(this.gameMap);
+        const enemyGenerator = new EnemyGenerator(this.gameMap);
 
         for (let i = 1; i < this.rooms.length; i++) {
             itemGenerator.setRoom(this.rooms[i]);
-            this.placeEntitiesInRoom(this.rooms[i], itemGenerator);
+            enemyGenerator.setRoom(this.rooms[i]);
+            this.placeEntitiesInRoom(this.rooms[i], itemGenerator, enemyGenerator);
+
         }
 
         return this.gameMap;
@@ -337,27 +341,14 @@ export class Ship {
      *
      * @param {RectangularRoom} rectangularRoom
      * @param {ItemGenerator} itemGenerator
+     * @param {EnemyGenerator} enemyGenerator
      */
-    placeEntitiesInRoom(rectangularRoom, itemGenerator) {
+    placeEntitiesInRoom(rectangularRoom, itemGenerator, enemyGenerator) {
         const numMonstersToSpawn = Srand.intInRange(0, this.shipOptions.maxMonstersPerRoom);
         console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
         for (let i = 0; i < numMonstersToSpawn; i++) {
-            const coords = rectangularRoom.getRandomXYInRoom();
-
-            const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
-
-            if (!entity) {
-                const random = Srand.random();
-
-                if (random < 0.7) {
-                    new EntityFactories.attackDog(coords.x, coords.y).place(this.gameMap);
-                } else if (random < 0.95) {
-                    new EntityFactories.spacePirate(coords.x, coords.y).place(this.gameMap);
-                } else {
-                    new EntityFactories.automatedTurret(coords.x, coords.y).place(this.gameMap);
-                }
-            }
+            enemyGenerator.spawnEnemy();
         }
 
         const numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
