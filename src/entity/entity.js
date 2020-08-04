@@ -27,6 +27,8 @@ export default class Entity {
         // Components
         this.fighter = null;
         this.ai = null;
+        this.equipment = null;
+        this.equippable = null;
     }
 
     getGameMap() {

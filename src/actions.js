@@ -440,7 +440,14 @@ export class DropItemAction extends ItemAction {
 
     perform(doAction) {
         if (doAction) {
-            this.entityRef.inventory.dropByIndex(this.inventorySlot);
+            const item = this.entityRef.inventory.dropByIndex(this.inventorySlot);
+
+            // handle de-equipping dropped items automatically
+            if (item.equippable && this.entityRef.equipment) {
+                if(this.entityRef.equipment.mainHand === item || this.entityRef.equipment.offHand === item) {
+                    this.entityRef.equipment.toggleEquip(item);
+                }
+            }
         }
 
         return new ActionResult(this, true);
@@ -448,5 +455,49 @@ export class DropItemAction extends ItemAction {
 
     toString() {
         return { action: "DropItemAction", args: { inventorySlot: this.inventorySlot }};
+    }
+}
+
+export class EquipAction extends Action {
+    constructor(entity, equippable) {
+        super(entity);
+        this.equippable = equippable;
+    }
+
+    perform(doAction) {
+        if (doAction) {
+            // check if entity has equipment
+            const messageLog = this.getEngine().ui.messageLog;
+            if(this.entityRef.equipment) {
+                this.results = this.entityRef.equipment.toggleEquip(this.equippable);
+                const self = this;
+                this.results.forEach(function (result) {
+                    const equipped = result.equipped;
+                    const dequipped = result.dequipped;
+                    let playerString;
+                    if (self.isCurrentPlayer()) {
+                        playerString = "You";
+                    } else {
+                        playerString = self.entityRef.name;
+                    }
+                    if (equipped) {
+                        messageLog.text(playerString + " equipped the " + self.equippable.parent.name + "!").build();
+                    }
+                    if (dequipped) {
+                        messageLog.text(playerString + " dequipped the " + self.equippable.parent.name + "!").build();
+                    }
+                });
+            } else {
+                if (this.isCurrentPlayer()) {
+                    messageLog.text("You are unable to equip this item.").build();
+                }
+            }
+        }
+
+        return new ActionResult(this, true);
+    }
+
+    toString() {
+        return { action: "EquipAction", args: { entity: this.entityRef, equippable: this.equippable}};
     }
 }
