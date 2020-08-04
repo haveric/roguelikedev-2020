@@ -468,8 +468,8 @@ export class EquipAction extends Action {
         if (doAction) {
             // check if entity has equipment
             const messageLog = this.getEngine().ui.messageLog;
-            if(this.entityRef.equipment) {
-                const equippable = this.entityRef.inventory.items[this.inventorySlot];
+            const equippable = this.entityRef.inventory.items[this.inventorySlot];
+            if(this.entityRef.equipment && equippable.equippable) {
                 this.results = this.entityRef.equipment.toggleEquip(equippable);
                 const self = this;
                 this.results.forEach(function (result) {
@@ -492,7 +492,7 @@ export class EquipAction extends Action {
                 if (this.isCurrentPlayer()) {
                     messageLog.text("You are unable to equip this item.").build();
                 }
-                return new ActionResult(this, false);
+                return new ActionResult(this, false, false);
             }
         }
 

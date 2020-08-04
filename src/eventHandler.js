@@ -423,6 +423,11 @@ export class InventoryEventHandler extends AskUserEventHandler {
                 if (items[i].amount > 1) {
                     itemLine += " x" + items[i].amount;
                 }
+                if (this.engineRef.player.equipment.mainHand === items[i]) {
+                    itemLine += " (on main hand)";
+                } else if (this.engineRef.player.equipment.offHand === items[i]) {
+                    itemLine += " (on off hand)";
+                }
                 inventoryMenu.text(itemLine + "\n");
             }
         }
