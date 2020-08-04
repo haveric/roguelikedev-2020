@@ -102,7 +102,7 @@ export class MeleeAction extends ActionWithDirection {
         const messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
-                const damage = this.entityRef.fighter.power - target.fighter.defense;
+                const damage = this.entityRef.fighter.getPower() - target.fighter.getDefense();
                 messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
 
                 if (damage > 0) {

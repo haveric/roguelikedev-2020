@@ -79,7 +79,7 @@ Tilemaps.getTileMap = () => {
                 color: "0000cc"
             },
             "dust": {
-                frame: 235,
+                frame: 230,
                 color: "ffc0cb"
             },
             "blaster": {

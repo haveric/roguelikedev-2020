@@ -49,7 +49,7 @@ export class SceneGame extends Phaser.Scene {
 
         if (self.player) {
             self.events.emit("ui-enable", self.engine);
-            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
             self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
         }
 
@@ -136,7 +136,7 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
-            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
 
             self.engine.handleEnemyTurns();
             self.engine.updateFov();

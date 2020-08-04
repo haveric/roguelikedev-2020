@@ -12,11 +12,11 @@ export default class Equipment extends BaseComponent {
         let bonus = 0;
 
         if(this.mainHand && this.mainHand.equippable) {
-            bonus += this.mainHand.equippable.getMaxHpBonus();
+            bonus += this.mainHand.equippable.maxHpBonus;
         }
 
         if(this.offHand && this.offHand.equippable) {
-            bonus += this.offHand.equippable.getMaxHpBonus();
+            bonus += this.offHand.equippable.maxHpBonus;
         }
 
         return bonus;
@@ -26,11 +26,11 @@ export default class Equipment extends BaseComponent {
         let bonus = 0;
 
         if(this.mainHand && this.mainHand.equippable) {
-            bonus += this.mainHand.equippable.getPowerBonus();
+            bonus += this.mainHand.equippable.powerBonus;
         }
 
         if(this.offHand && this.offHand.equippable) {
-            bonus += this.offHand.equippable.getPowerBonus();
+            bonus += this.offHand.equippable.powerBonus;
         }
 
         return bonus;
@@ -40,11 +40,11 @@ export default class Equipment extends BaseComponent {
         let bonus = 0;
 
         if(this.mainHand && this.mainHand.equippable) {
-            bonus += this.mainHand.equippable.getDefenseBonus();
+            bonus += this.mainHand.equippable.defenseBonus;
         }
 
         if(this.offHand && this.offHand.equippable) {
-            bonus += this.offHand.equippable.getDefenseBonus();
+            bonus += this.offHand.equippable.defenseBonus;
         }
 
         return bonus;

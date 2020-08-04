@@ -7,11 +7,35 @@ export default class Fighter extends BaseComponent {
         super(entity);
 
         this._hp = hp;
-
-        this.hpMax = hp;
-        this.defense = defense;
+        this.baseHpMax = hp;
+        this.baseDefense = defense;
+        this.basePower = power;
         this.power = power;
         this.invulnerable = invulnerable;
+    }
+
+    getMaxHp() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.getMaxHpBonus();
+        }
+        return this.baseHpMax + bonus;
+    }
+
+    getPower() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.getPowerBonus();
+        }
+        return this.basePower + bonus;
+    }
+
+    getDefense() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.defenseBonus();
+        }
+        return this.baseDefense + bonus;
     }
 
     getHp() {
@@ -20,7 +44,7 @@ export default class Fighter extends BaseComponent {
 
     setHp(hp) {
         if (!this.invulnerable) {
-            this._hp = Math.max(0, Math.min(hp, this.hpMax));
+            this._hp = Math.max(0, Math.min(hp, this.getMaxHp()));
 
             if (this._hp === 0 && this.parent.ai) {
                 this.die();
@@ -33,7 +57,7 @@ export default class Fighter extends BaseComponent {
     }
 
     isAtMaxHp() {
-        return this._hp === this.hpMax;
+        return this._hp === this.getMaxHp();
     }
 
     heal(amount) {
@@ -42,8 +66,8 @@ export default class Fighter extends BaseComponent {
         }
 
         let newHp = this._hp + amount;
-        if (newHp > this.hpMax) {
-            newHp = this.hpMax;
+        if (newHp > this.getMaxHp()) {
+            newHp = this.getMaxHp();
         }
 
         const amountRecovered = newHp - this._hp;
@@ -93,6 +117,6 @@ export default class Fighter extends BaseComponent {
             this.getEngine().ui.messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has been revived!").build();
         }
 
-        this.setHp(this.hpMax);
+        this.setHp(this.getMaxHp());
     }
 }
