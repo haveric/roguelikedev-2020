@@ -166,7 +166,6 @@ export class Ship {
             itemGenerator.setRoom(this.rooms[i]);
             enemyGenerator.setRoom(this.rooms[i]);
             this.placeEntitiesInRoom(this.rooms[i], itemGenerator, enemyGenerator);
-
         }
 
         return this.gameMap;

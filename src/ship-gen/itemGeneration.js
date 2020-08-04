@@ -14,9 +14,13 @@ export default class ItemGenerator {
         this.gameMap = gameMap;
 
         this._loaded = false;
-        this._chances = [];
-        this._items = [];
-        this._sumItemWeights = 0;
+        this._itemChances = {};
+        this._items = {};
+        this._sumItemWeights = {};
+
+        this._rarityChances = [];
+        this._itemRarities = [];
+        this._sumItemRarityWeights = 0;
     }
 
     /**
@@ -53,7 +57,8 @@ export default class ItemGenerator {
      * @returns {ItemPrefab} prefab
      */
     _selectItem() {
-        return this._items[ChoiceIndex.select(this._chances, this._sumItemWeights)];
+        const rarity = this._itemRarities[ChoiceIndex.select(this._rarityChances, this._sumItemRarityWeights)];
+        return this._items[rarity][ChoiceIndex.select(this._itemChances[rarity], this._sumItemWeights[rarity])];
     }
 
     /**
@@ -79,23 +84,39 @@ export default class ItemGenerator {
 
         const chances = [];
         const items = [];
+        const rarityChances = [];
+        const itemRarities = [];
         let runningSum = 0;
+        let runningRaritySum = 0;
 
         Object.keys(ItemRarity).forEach(itemRarityKey => {
             const itemsForRarity = ItemGenerator.ItemList[ItemRarity[itemRarityKey].name];
-            const spawnWeight = ItemRarity[itemRarityKey].spawnWeight;
+            const raritySpawnWeight = ItemRarity[itemRarityKey].spawnWeight;
+
+            runningRaritySum += raritySpawnWeight;
+            itemRarities.push(ItemRarity[itemRarityKey].name);
+            rarityChances.push(raritySpawnWeight);
+
+            items[itemRarityKey] = [];
+            chances[itemRarityKey] = [];
+
+            // Reset sum
+            runningSum = 0;
 
             itemsForRarity.forEach(item => {
-                runningSum += spawnWeight;
-                chances.push(spawnWeight);
-                items.push(item);
+                runningSum += item.weight;
+                chances[itemRarityKey].push(item.weight);
+                items[itemRarityKey].push(item);
             });
+
+            this._sumItemWeights[itemRarityKey] = runningSum;
         });
 
         this._loaded = true;
         this._items = items;
-        this._chances = chances;
-        this._sumItemWeights = runningSum;
+        this._itemRarities = itemRarities;
+        this._itemChances = chances;
+        this._sumItemRarityWeights = runningRaritySum;
     }
 }
 
@@ -108,16 +129,16 @@ export const ItemRarity = {
 
 ItemGenerator.ItemList = {
     "Junk": [
-        new ItemPrefab("Medkit", (x, y) => EntityFactories.medkit(x, y)),
-        new ItemPrefab("Grenade", (x, y) => EntityFactories.grenade(x, y)),
+        new ItemPrefab("Medkit", 10, (x, y) => EntityFactories.medkit(x, y)),
+        new ItemPrefab("Grenade", 5, (x, y) => EntityFactories.grenade(x, y)),
     ],
     "Common": [
-        new ItemPrefab("LaserCharge", (x, y) => EntityFactories.laserCharge(x, y)),
+        new ItemPrefab("LaserCharge", 10, (x, y) => EntityFactories.laserCharge(x, y)),
     ],
     "Uncommon": [
-        new ItemPrefab("ConfuseRay", (x, y) => EntityFactories.confuseRay(x, y)),
+        new ItemPrefab("ConfuseRay", 10, (x, y) => EntityFactories.confuseRay(x, y)),
     ],
     "Rare": [
-        new ItemPrefab("ResurrectionInjector", (x, y) => EntityFactories.resurrectionInjector(x, y)),
+        new ItemPrefab("ResurrectionInjector", 10, (x, y) => EntityFactories.resurrectionInjector(x, y)),
     ]
 };
