@@ -52,7 +52,7 @@ EntityFactories.attackDog = (x, y) => {
 
 EntityFactories.automatedTurret = (x, y) => {
     const entity = new Actor(x, y, "Automated Turret", "Deadly Turret, pointing straight at you and defending whatever is nearby from you.", new Sprite("automatedTurret"));
-    entity.setComponent("fighter", new Fighter(entity, 20, 2, 2));
+    entity.setComponent("fighter", new Fighter(entity, 20, 2, 6));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
 };
