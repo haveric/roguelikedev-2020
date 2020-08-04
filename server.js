@@ -303,6 +303,19 @@ io.on("connection", function (socket) {
             }
         }
 
+        let numExhaustedPlayers = 0;
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
+
+            if (!player.alive || player.energy === 0) {
+                numExhaustedPlayers += 1;
+            }
+        }
+
+        if (numExhaustedPlayers === players.length) {
+            // TODO: Game Over
+        }
+
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
     });
 });
