@@ -246,19 +246,8 @@ export class BumpAction extends ActionWithDirection {
         const tiles = this.getGameMap().locations[destX][destY].tiles;
         const target = this.getTargetActor();
 
-        let entityIsPlayer = false;
-        let targetIsPlayer = false;
-        for (let i = 0; i < this.getEngine().players.length; i++) {
-            const player = this.getEngine().players[i];
-            if (this.entityRef === player) {
-                entityIsPlayer = true;
-            }
-
-            if (target === player) {
-                targetIsPlayer = true;
-            }
-        }
-
+        const entityIsPlayer = this.getEngine().isEntityAPlayer(this.entityRef);
+        const targetIsPlayer = this.getEngine().isEntityAPlayer(target);
 
         if ((this.friendlyFire || entityIsPlayer !== targetIsPlayer) && target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
@@ -328,7 +317,28 @@ export class InteractWithTileAction extends Action {
 
             success = true;
         } else {
-            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
+            const allPlayersRequired = this.getGameMap().locations[actorX][actorY].tileComponentRun("interactable", "isAllPlayersRequired");
+            if (this.getEngine().isEntityAPlayer(this.entityRef) && allPlayersRequired) {
+                const players = this.getEngine().players;
+                let numSuccesses = 0;
+
+                for (let i = 0; i < players.length; i++) {
+                    const player = players[i];
+                    if (this.getGameMap().locations[player.x][player.y].tileHasComponent("interactable")) {
+                        numSuccesses += 1;
+                    }
+                }
+
+                if (numSuccesses === players.length) {
+                    success = true;
+                } else {
+                    const messageLog = this.getEngine().ui.messageLog;
+                    messageLog.text("You must gather your party before leaving.").build();
+                    success = false;
+                }
+            } else {
+                success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
+            }
         }
 
         return new ActionResult(this, success);

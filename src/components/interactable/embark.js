@@ -2,7 +2,7 @@ import Interactable from "../interactable";
 
 export default class Embark extends Interactable {
     constructor(entity) {
-        super(entity);
+        super(entity, true);
     }
 
     interact() {

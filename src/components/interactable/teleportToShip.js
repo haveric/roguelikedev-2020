@@ -2,7 +2,7 @@ import Interactable from "../interactable";
 
 export default class TeleportToShip extends Interactable {
     constructor(entity, shipName) {
-        super(entity);
+        super(entity, true);
         this.shipName = shipName;
     }
 

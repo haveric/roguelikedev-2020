@@ -129,21 +129,21 @@ export default class Engine {
         this.lastExploredFovTiles = [];
     }
 
+    isEntityAPlayer(entity) {
+        for (let i = 0; i < this.players.length; i++) {
+            if (entity === this.players[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     handleEnemyTurns() {
         for (let i = 0; i < this.gameMap.entities.length; i++) {
             const entity = this.gameMap.entities[i];
 
-            let isPlayer = false;
-            for (let j = 0; j < this.players.length; j++) {
-                const player = this.players[j];
-
-                if (entity === player) {
-                    isPlayer = true;
-                    break;
-                }
-            }
-
-            if (!isPlayer) {
+            if (!this.isEntityAPlayer(entity)) {
                 if (i % 2 === this.enemyTurn) {
                     if (entity.ai) {
                         entity.ai.perform(true);
