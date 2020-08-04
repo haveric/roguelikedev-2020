@@ -104,7 +104,7 @@ EntityFactories.ferventDust = (x, y) => {
 };
 
 EntityFactories.masterBlaster = (x, y) => {
-    const entity = new Item(x, y, "Master Blaster", "Equips in the main hand to provide a minor damage bonus.", new Sprite("dust"), 2);
+    const entity = new Item(x, y, "Master Blaster", "Equips in the main hand to provide a minor damage bonus.", new Sprite("blaster"), 2);
     entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.MAIN_HAND, 5, 0, 0));
     return entity;
 };

@@ -73,6 +73,18 @@ Tilemaps.getTileMap = () => {
             "credits": {
                 frame: 237,
                 color: "000000"
+            },
+            "shield": {
+                frame: 213,
+                color: "0000cc"
+            },
+            "dust": {
+                frame: 235,
+                color: "ffc0cb"
+            },
+            "blaster": {
+                frame: 182,
+                color: "800080"
             }
         }
     };

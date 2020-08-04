@@ -459,9 +459,9 @@ export class DropItemAction extends ItemAction {
 }
 
 export class EquipAction extends Action {
-    constructor(entity, equippable) {
+    constructor(entity, inventorySlot) {
         super(entity);
-        this.equippable = equippable;
+        this.equippable = this.entityRef.inventory.items[inventorySlot];
     }
 
     perform(doAction) {
@@ -471,7 +471,7 @@ export class EquipAction extends Action {
             if(this.entityRef.equipment) {
                 this.results = this.entityRef.equipment.toggleEquip(this.equippable);
                 const self = this;
-                this.results.forEach(function (result) {
+                this.results.forEach(new function (result) {
                     const equipped = result.equipped;
                     const dequipped = result.dequipped;
                     let playerString;
