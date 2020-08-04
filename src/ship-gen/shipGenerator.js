@@ -5,7 +5,7 @@ import RenderOrder from "../renderOrder";
 import Tiles from "./tilefactories";
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
 import { RoomTunneler } from "./roomTunneler.js";
-import ItemGenerator from "../item-gen/itemGeneration";
+import ItemGenerator from "./itemGeneration";
 
 export class GeneratorOptions {
     constructor(

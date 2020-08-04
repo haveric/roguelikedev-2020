@@ -2,7 +2,7 @@ import ItemPrefab from "./itemPrefab";
 import Srand from "seeded-rand";
 import EntityFactories from "../entityFactories";
 import GameMap from "../gameMap"; // eslint-disable-line no-unused-vars
-import RectangularRoom from "../ship-gen/roomTypes"; // eslint-disable-line no-unused-vars
+import { RectangularRoom } from "./roomTypes"; // eslint-disable-line no-unused-vars
 
 export default class ItemGenerator {
 
@@ -20,7 +20,7 @@ export default class ItemGenerator {
     }
 
     /**
-     * Spawn an item in the generators currently definied room
+     * Spawn an item in the generators currently defined room
      */
     spawnItem() {
         if (this._loaded === false) {
