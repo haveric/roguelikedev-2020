@@ -461,7 +461,7 @@ export class DropItemAction extends ItemAction {
 export class EquipAction extends Action {
     constructor(entity, inventorySlot) {
         super(entity);
-        this.equippable = this.entityRef.inventory.items[inventorySlot];
+        this.inventorySlot = inventorySlot;
     }
 
     perform(doAction) {
@@ -469,9 +469,10 @@ export class EquipAction extends Action {
             // check if entity has equipment
             const messageLog = this.getEngine().ui.messageLog;
             if(this.entityRef.equipment) {
-                this.results = this.entityRef.equipment.toggleEquip(this.equippable);
+                const equippable = this.entityRef.inventory.items[this.inventorySlot];
+                this.results = this.entityRef.equipment.toggleEquip(equippable);
                 const self = this;
-                this.results.forEach(new function (result) {
+                this.results.forEach(function (result) {
                     const equipped = result.equipped;
                     const dequipped = result.dequipped;
                     let playerString;
@@ -481,16 +482,17 @@ export class EquipAction extends Action {
                         playerString = self.entityRef.name;
                     }
                     if (equipped) {
-                        messageLog.text(playerString + " equipped the " + self.equippable.parent.name + "!").build();
+                        messageLog.text(playerString + " equipped the " + equippable.name + "!").build();
                     }
                     if (dequipped) {
-                        messageLog.text(playerString + " dequipped the " + self.equippable.parent.name + "!").build();
+                        messageLog.text(playerString + " dequipped the " + equippable.name + "!").build();
                     }
                 });
             } else {
                 if (this.isCurrentPlayer()) {
                     messageLog.text("You are unable to equip this item.").build();
                 }
+                return new ActionResult(this, false);
             }
         }
 
@@ -498,6 +500,6 @@ export class EquipAction extends Action {
     }
 
     toString() {
-        return { action: "EquipAction", args: { entity: this.entityRef, equippable: this.equippable}};
+        return { action: "EquipAction", args: { inventorySlot: this.inventorySlot }};
     }
 }
