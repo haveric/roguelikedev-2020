@@ -102,7 +102,7 @@ export class MeleeAction extends ActionWithDirection {
         const messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
-                const damage = this.entityRef.fighter.power - target.fighter.defense;
+                const damage = this.entityRef.fighter.getPower() - target.fighter.getDefense();
                 messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
 
                 if (damage > 0) {
@@ -450,7 +450,14 @@ export class DropItemAction extends ItemAction {
 
     perform(doAction) {
         if (doAction) {
-            this.entityRef.inventory.dropByIndex(this.inventorySlot);
+            const item = this.entityRef.inventory.dropByIndex(this.inventorySlot);
+
+            // handle de-equipping dropped items automatically
+            if (item.equippable && this.entityRef.equipment) {
+                if(this.entityRef.equipment.mainHand === item || this.entityRef.equipment.offHand === item) {
+                    this.entityRef.equipment.toggleEquip(item);
+                }
+            }
         }
 
         return new ActionResult(this, true);
@@ -458,5 +465,51 @@ export class DropItemAction extends ItemAction {
 
     toString() {
         return { action: "DropItemAction", args: { inventorySlot: this.inventorySlot }};
+    }
+}
+
+export class EquipAction extends Action {
+    constructor(entity, inventorySlot) {
+        super(entity);
+        this.inventorySlot = inventorySlot;
+    }
+
+    perform(doAction) {
+        if (doAction) {
+            // check if entity has equipment
+            const messageLog = this.getEngine().ui.messageLog;
+            const equippable = this.entityRef.inventory.items[this.inventorySlot];
+            if(this.entityRef.equipment && equippable.equippable) {
+                this.results = this.entityRef.equipment.toggleEquip(equippable);
+                const self = this;
+                this.results.forEach(function (result) {
+                    const equipped = result.equipped;
+                    const dequipped = result.dequipped;
+                    let playerString;
+                    if (self.isCurrentPlayer()) {
+                        playerString = "You";
+                    } else {
+                        playerString = self.entityRef.name;
+                    }
+                    if (equipped) {
+                        messageLog.text(playerString + " equipped the " + equippable.name + "!").build();
+                    }
+                    if (dequipped) {
+                        messageLog.text(playerString + " dequipped the " + equippable.name + "!").build();
+                    }
+                });
+            } else {
+                if (this.isCurrentPlayer()) {
+                    messageLog.text("You are unable to equip this item.").build();
+                }
+                return new ActionResult(this, false, false);
+            }
+        }
+
+        return new ActionResult(this, true);
+    }
+
+    toString() {
+        return { action: "EquipAction", args: { inventorySlot: this.inventorySlot }};
     }
 }

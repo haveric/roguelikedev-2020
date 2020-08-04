@@ -4,7 +4,7 @@ import Engine from "../engine";
 import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
 import EntityFactories from "../entityFactories";
 import { InventoryEventHandler } from "../eventHandler";
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, InteractWithTileAction, ItemAction, DropItemAction, DebugAction } from "../actions";
+import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, InteractWithTileAction, ItemAction, DropItemAction, DebugAction, EquipAction } from "../actions";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -49,7 +49,7 @@ export class SceneGame extends Phaser.Scene {
 
         if (self.player) {
             self.events.emit("ui-enable", self.engine);
-            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
             self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
         }
 
@@ -112,6 +112,9 @@ export class SceneGame extends Phaser.Scene {
                         case "ItemAction":
                             new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
                             break;
+                        case "EquipAction":
+                            new EquipAction(player, args.inventorySlot).perform(true);
+                            break;
                         case "DropItemAction":
                             new DropItemAction(player, args.inventorySlot).perform(true);
                             break;
@@ -133,7 +136,7 @@ export class SceneGame extends Phaser.Scene {
                 }
             }
 
-            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.hpMax });
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
 
             self.engine.handleEnemyTurns();
             self.engine.updateFov();

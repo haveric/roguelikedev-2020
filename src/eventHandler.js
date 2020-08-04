@@ -1,4 +1,4 @@
-import { BumpAction, WaitAction, PickupAction, InteractWithTileAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction } from "./actions";
+import { BumpAction, WaitAction, PickupAction, InteractWithTileAction, WarpAction, DropItemAction, DebugAction, OpenAction, CloseAction, EquipAction } from "./actions";
 import Tilemaps from "./tilemaps";
 import Item from "./entity/item";
 
@@ -146,6 +146,10 @@ export class EventHandler {
         this.performAction(new DropItemAction(this.engineRef.player, inventorySlot));
     }
 
+    equipItem(inventorySlot) {
+        this.performAction(new EquipAction(this.engineRef.player, inventorySlot));
+    }
+
     performAction(action) {
         if (action && this.engineRef.player) {
             const actionResult = action.perform(false);
@@ -274,6 +278,9 @@ export class MainGameEventHandler extends EventHandler {
             case "KeyD":
                 this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
                 break;
+            case "KeyE":
+                this.engineRef.eventHandler = new InventoryEquipEventHandler(this.engineRef.scene.input, this.engineRef);
+                break;
             case "KeyO":
                 player = this.engineRef.player;
                 targets = [];
@@ -356,7 +363,7 @@ export class PlayerDeadEventHandler extends EventHandler {
     constructor(input, engine) {
         super(input, engine);
 
-        engine.scene.events.emit("ui-updateHp", { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.hpMax });
+        engine.scene.events.emit("ui-updateHp", { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.getMaxHp() });
         engine.ui.inventoryMenu.hide();
     }
 
@@ -415,6 +422,11 @@ export class InventoryEventHandler extends AskUserEventHandler {
                 let itemLine = "(" + itemKey + ") " + items[i].name;
                 if (items[i].amount > 1) {
                     itemLine += " x" + items[i].amount;
+                }
+                if (this.engineRef.player.equipment.mainHand === items[i]) {
+                    itemLine += " (on main hand)";
+                } else if (this.engineRef.player.equipment.offHand === items[i]) {
+                    itemLine += " (on off hand)";
                 }
                 inventoryMenu.text(itemLine + "\n");
             }
@@ -476,6 +488,19 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
 
     selectItem(index/*, item*/) {
         this.dropItem(index);
+    }
+}
+
+export class InventoryEquipEventHandler extends InventoryEventHandler {
+    constructor(input, engine) {
+        super(input, engine);
+
+        this.title = "Select an item to equip";
+        this.render();
+    }
+
+    selectItem(index/*, item*/) {
+        this.equipItem(index);
     }
 }
 

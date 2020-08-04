@@ -8,6 +8,9 @@ import Item from "./entity/item";
 import { BaseAI, HostileEnemy } from "./components/ai";
 
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
+import Equipment from "./components/equipment/equipment";
+import { Equippable } from "./components/equipment/equippable";
+import { EquipmentSlots } from "./components/equipment/equipmentSlots";
 
 export default class EntityFactories { }
 
@@ -20,6 +23,7 @@ EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
     entity.setComponent("fighter", new Fighter(entity, 30, 2, 5));
     entity.setComponent("ai", new BaseAI(entity));
     entity.setComponent("inventory", new Inventory(entity, 26));
+    entity.setComponent("equipment", new Equipment());
     return entity;
 };
 
@@ -84,5 +88,23 @@ EntityFactories.grenade = (x, y) => {
 EntityFactories.resurrectionInjector = (x, y) => {
     const entity = new Item(x, y, "Resurrection Injector", "Brings dead things back to life. What looks like possible side effects has been scratched out.", new Sprite("resurrectionInjector"));
     entity.setComponent("consumable", new ResurrectionConsumable(entity));
+    return entity;
+};
+
+EntityFactories.directionalShield = (x, y) => {
+    const entity = new Item(x, y, "Directional Shield", "Equips in the off hand to provide a minor defense bonus.", new Sprite("shield"), 2);
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, 0, 3, 0));
+    return entity;
+};
+
+EntityFactories.ferventDust = (x, y) => {
+    const entity = new Item(x, y, "Fervent Dust", "Equips in the off hand to provide a minor health bonus.", new Sprite("dust"), 2);
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, 0, 0, 20));
+    return entity;
+};
+
+EntityFactories.masterBlaster = (x, y) => {
+    const entity = new Item(x, y, "Master Blaster", "Equips in the main hand to provide a minor damage bonus.", new Sprite("blaster"), 2);
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.MAIN_HAND, 5, 0, 0));
     return entity;
 };

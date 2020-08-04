@@ -18,6 +18,7 @@ export default class Inventory extends BaseComponent {
         if (item) {
             this._dropItem(item);
         }
+        return item;
     }
 
     dropAll() {
