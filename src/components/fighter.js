@@ -54,8 +54,22 @@ export default class Fighter extends BaseComponent {
 
     die() {
         const engine = this.getEngine();
+        const scene = engine.scene;
         if (this.parent === engine.player) {
             engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
+
+            engine.player.energy = 0;
+            const players = engine.players;
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
+                if (player !== engine.player) {
+                    player.deathBoost();
+                }
+
+                scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+            }
+
+            scene.socket.emit("s-playerDied", { roomId: scene.room.roomId, playerId: engine.player.playerId});
         }
 
         this.parent.renderOrder = RenderOrder.CORPSE;
@@ -79,6 +93,7 @@ export default class Fighter extends BaseComponent {
 
     revive() {
         const engine = this.getEngine();
+        const scene = engine.scene;
         if (this._hp <= 0) {
             this.parent.renderOrder = RenderOrder.ACTOR;
             this.parent.sprite.updateSprite(this.parent.originalSpriteName, this.parent.originalColor);
@@ -86,6 +101,18 @@ export default class Fighter extends BaseComponent {
             this.parent.ai = this.parent.originalAI;
             if (this.parent === engine.player) {
                 engine.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
+
+                scene.socket.emit("s-playerRevived", { roomId: scene.room.roomId, playerId: engine.player.playerId});
+                engine.player.energy = 5;
+                const players = engine.players;
+                for (let i = 0; i < players.length; i++) {
+                    const player = players[i];
+                    if (player !== engine.player) {
+                        player.reviveDrain();
+                    }
+
+                    scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+                }
             }
 
             this.parent.blocksMovement = true;

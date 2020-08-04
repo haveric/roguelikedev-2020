@@ -37,7 +37,7 @@ export class SceneGameUI extends Phaser.Scene {
                 self.energy = data.energy;
                 self.energyMax = data.energyMax;
 
-                self.energyBar.width = self.energy / self.energyMax * self.energyBarMax.width;
+                self.energyBar.width = Math.min(1, self.energy / self.energyMax) * self.energyBarMax.width;
                 self.energyText.setText("Energy: " + self.energy);
             }
         }, this);
@@ -47,7 +47,7 @@ export class SceneGameUI extends Phaser.Scene {
                 self.hp = data.hp;
                 self.hpMax = data.hpMax;
 
-                self.healthBar.width = self.hp / self.hpMax * self.healthBarMax.width;
+                self.healthBar.width = Math.min(1, self.hp / self.hpMax) * self.healthBarMax.width;
                 self.hpText.setText("HP: " + self.hp + " / " + self.hpMax);
             }
         }, this);
