@@ -317,7 +317,7 @@ export class InteractWithTileAction extends Action {
 
             success = true;
         } else {
-            const allPlayersRequired = this.getGameMap().locations[actorX][actorY].tileComponentRun("interactable", "isAllPlayersRequired");
+            const allPlayersRequired = this.getGameMap().locations[actorX][actorY].tileComponentCheck("interactable", "isAllPlayersRequired");
             if (this.getEngine().isEntityAPlayer(this.entityRef) && allPlayersRequired) {
                 const players = this.getEngine().players;
                 let numSuccesses = 0;
