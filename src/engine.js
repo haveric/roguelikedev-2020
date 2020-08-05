@@ -21,7 +21,7 @@ export default class Engine {
     }
 
     setMainEventHandler() {
-        this.eventHandler = new MainGameEventHandler(this.scene.input, this);
+        this.eventHandler = new MainGameEventHandler(this);
     }
 
     createSprites(startX, startY, endX, endY) {

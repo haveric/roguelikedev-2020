@@ -3,10 +3,10 @@ import Tilemaps from "./tilemaps";
 import Item from "./entity/item";
 
 export class EventHandler {
-    constructor(input, engine) {
+    constructor(engine) {
         this.engineRef = engine;
 
-        this.input = input;
+        this.input = this.engineRef.scene.input;
         this.keysDown = {};
 
         this.initEvents();
@@ -215,8 +215,8 @@ export class EventHandler {
 }
 
 export class MainGameEventHandler extends EventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
     }
 
     pressKey(event) {
@@ -273,13 +273,13 @@ export class MainGameEventHandler extends EventHandler {
                 self.pickup();
                 break;
             case "KeyI":
-                this.engineRef.eventHandler = new InventoryActivateEventHandler(this.engineRef.scene.input, this.engineRef);
+                this.engineRef.eventHandler = new InventoryActivateEventHandler(this.engineRef);
                 break;
             case "KeyD":
-                this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef.scene.input, this.engineRef);
+                this.engineRef.eventHandler = new InventoryDropEventHandler(this.engineRef);
                 break;
             case "KeyE":
-                this.engineRef.eventHandler = new InventoryEquipEventHandler(this.engineRef.scene.input, this.engineRef);
+                this.engineRef.eventHandler = new InventoryEquipEventHandler(this.engineRef);
                 break;
             case "KeyO":
                 player = this.engineRef.player;
@@ -298,7 +298,7 @@ export class MainGameEventHandler extends EventHandler {
                     }
                 }
 
-                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef.scene.input, this.engineRef, targets, function(dx, dy) {
+                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef, targets, function(dx, dy) {
                     return new OpenAction(player, dx, dy);
                 });
                 break;
@@ -318,12 +318,12 @@ export class MainGameEventHandler extends EventHandler {
                     }
                 }
 
-                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef.scene.input, this.engineRef, targets, function(dx, dy) {
+                this.engineRef.eventHandler = new SelectDirectionHandler(this.engineRef, targets, function(dx, dy) {
                     return new CloseAction(player, dx, dy);
                 });
                 break;
             case "Backslash":
-                this.engineRef.eventHandler = new LookHandler(this.engineRef.scene.input, this.engineRef);
+                this.engineRef.eventHandler = new LookHandler(this.engineRef);
                 break;
             case "Minus":
                 self.zoom(-1);
@@ -360,8 +360,8 @@ export class MainGameEventHandler extends EventHandler {
 }
 
 export class PlayerDeadEventHandler extends EventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         engine.scene.events.emit("ui-updateHp", { hp: engine.player.fighter.getHp(), hpMax: engine.player.fighter.getMaxHp() });
         engine.ui.inventoryMenu.hide();
@@ -373,8 +373,8 @@ export class PlayerDeadEventHandler extends EventHandler {
 }
 
 export class AskUserEventHandler extends EventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
     }
 
     pressKey(event) {
@@ -397,13 +397,13 @@ export class AskUserEventHandler extends EventHandler {
     }
 
     exit() {
-        this.engineRef.eventHandler = new MainGameEventHandler(this.engineRef.scene.input, this.engineRef);
+        this.engineRef.eventHandler = new MainGameEventHandler(this.engineRef);
     }
 }
 
 export class InventoryEventHandler extends AskUserEventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         this.title = "<missing title>";
     }
@@ -462,8 +462,8 @@ export class InventoryEventHandler extends AskUserEventHandler {
 }
 
 export class InventoryActivateEventHandler extends InventoryEventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         this.title = "Select an item to use";
         this.render();
@@ -479,8 +479,8 @@ export class InventoryActivateEventHandler extends InventoryEventHandler {
 }
 
 export class InventoryDropEventHandler extends InventoryEventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         this.title = "Select an item to drop";
         this.render();
@@ -492,8 +492,8 @@ export class InventoryDropEventHandler extends InventoryEventHandler {
 }
 
 export class InventoryEquipEventHandler extends InventoryEventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         this.title = "Select an item to equip";
         this.render();
@@ -505,8 +505,8 @@ export class InventoryEquipEventHandler extends InventoryEventHandler {
 }
 
 export class SelectDirectionHandler extends AskUserEventHandler {
-    constructor(input, engine, validTargets, callback) {
-        super(input, engine);
+    constructor(engine, validTargets, callback) {
+        super(engine);
         const player = this.engineRef.player;
         this.x = player.x;
         this.y = player.y;
@@ -616,8 +616,8 @@ export class SelectDirectionHandler extends AskUserEventHandler {
 }
 
 export class SelectIndexHandler extends AskUserEventHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
 
         const player = this.engineRef.player;
         this.x = player.x;
@@ -766,8 +766,8 @@ export class SelectIndexHandler extends AskUserEventHandler {
 }
 
 export class LookHandler extends SelectIndexHandler {
-    constructor(input, engine) {
-        super(input, engine);
+    constructor(engine) {
+        super(engine);
     }
 
     selectTile() {
@@ -776,8 +776,8 @@ export class LookHandler extends SelectIndexHandler {
 }
 
 export class SingleRangedAttackHandler extends SelectIndexHandler {
-    constructor(input, engine, callback) {
-        super(input, engine);
+    constructor(engine, callback) {
+        super(engine);
 
         this.callback = callback;
     }
@@ -798,8 +798,8 @@ export class SingleRangedAttackHandler extends SelectIndexHandler {
 }
 
 export class AreaRangedAttackHandler extends SelectIndexHandler {
-    constructor(input, engine, radius, callback) {
-        super(input, engine);
+    constructor(engine, radius, callback) {
+        super(engine);
 
         this.radius = radius;
         this.callback = callback;

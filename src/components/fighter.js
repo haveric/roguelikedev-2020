@@ -79,7 +79,7 @@ export default class Fighter extends BaseComponent {
         const engine = this.getEngine();
         const scene = engine.scene;
         if (this.parent === engine.player) {
-            engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
+            engine.eventHandler = new PlayerDeadEventHandler(engine);
 
             engine.player.energy = 0;
             const players = engine.players;
@@ -123,7 +123,7 @@ export default class Fighter extends BaseComponent {
             this.parent.name = this.parent.originalName;
             this.parent.ai = this.parent.originalAI;
             if (this.parent === engine.player) {
-                engine.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
+                engine.eventHandler = new MainGameEventHandler(engine);
 
                 scene.socket.emit("s-playerRevived", { roomId: scene.room.roomId, playerId: engine.player.playerId});
                 engine.player.energy = 5;

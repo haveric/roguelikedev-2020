@@ -79,7 +79,7 @@ export class ResurrectionConsumable extends Consumable {
             }
         }
 
-        this.getEngine().eventHandler = new SelectDirectionHandler(this.getEngine().scene.input, this.getEngine(), targets, function(dx, dy, x, y) {
+        this.getEngine().eventHandler = new SelectDirectionHandler(this.getEngine(), targets, function(dx, dy, x, y) {
             return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
         });
 
@@ -156,7 +156,7 @@ export class ConfusionConsumable extends Consumable {
         this.getEngine().ui.messageLog.text("Select a target location.").build();
 
         this.getEngine().ui.inventoryMenu.hide();
-        this.getEngine().eventHandler = new SingleRangedAttackHandler(this.getEngine().scene.input, this.getEngine(), function(x, y) {
+        this.getEngine().eventHandler = new SingleRangedAttackHandler(this.getEngine(), function(x, y) {
             return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
         });
 
@@ -196,7 +196,7 @@ export class GrenadeDamageConsumable extends Consumable {
         this.getEngine().ui.messageLog.text("Select a target location.").build();
 
         this.getEngine().ui.inventoryMenu.hide();
-        this.getEngine().eventHandler = new AreaRangedAttackHandler(this.getEngine().scene.input, this.getEngine(), this.radius, function(x, y) {
+        this.getEngine().eventHandler = new AreaRangedAttackHandler(this.getEngine(), this.radius, function(x, y) {
             return new ItemAction(actor, inventorySlot, {"x": x, "y": y});
         });
 
