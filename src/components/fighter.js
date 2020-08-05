@@ -10,7 +10,6 @@ export default class Fighter extends BaseComponent {
         this.baseHpMax = hp;
         this.baseDefense = defense;
         this.basePower = power;
-        this.power = power;
         this.invulnerable = invulnerable;
     }
 
@@ -33,7 +32,7 @@ export default class Fighter extends BaseComponent {
     getDefense() {
         let bonus = 0;
         if (this.parent.equipment) {
-            bonus = this.parent.equipment.defenseBonus();
+            bonus = this.parent.equipment.getDefenseBonus();
         }
         return this.baseDefense + bonus;
     }
