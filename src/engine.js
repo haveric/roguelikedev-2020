@@ -11,7 +11,6 @@ export default class Engine {
         self.zoomLevel = 1;
         self.debugEnabled = false;
 
-        self.eventHandler = new MainGameEventHandler(scene.input, this);
         self.ui = new UI(scene.scene.get("SceneGameUI"), this);
         self.gameMap = null;
         self.gameMaps = {};
@@ -19,6 +18,10 @@ export default class Engine {
         self.players = players;
 
         self.enemyTurn = 0;
+    }
+
+    setMainEventHandler() {
+        this.eventHandler = new MainGameEventHandler(this.scene.input, this);
     }
 
     createSprites(startX, startY, endX, endY) {

@@ -20,6 +20,7 @@ export default class UI {
 
     hideDialog() {
         this.fullScreenDialog.hideDialog();
+        this.engine.setMainEventHandler();
     }
 
     // put a message

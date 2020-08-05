@@ -15,7 +15,6 @@ export class SceneGame extends Phaser.Scene {
         this.room = data.room;
         this.socket = data.socket;
 
-        this.player;
         this.otherPlayers = [];
         this.players = [];
 
