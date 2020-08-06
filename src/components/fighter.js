@@ -1,15 +1,25 @@
 import RenderOrder from "../renderOrder";
 import { PlayerDeadEventHandler, MainGameEventHandler } from "../eventHandler";
 import BaseComponent from "./baseComponent";
+import Entity from "../entity/entity"; // eslint-disable-line no-unused-vars
+import MinMax from "../attributeTypes/minMax"; // eslint-disable-line no-unused-vars
 
 export default class Fighter extends BaseComponent {
-    constructor(entity, hp, defense, power, invulnerable=false) {
+    /**
+     *
+     * @param {Entity} entity
+     * @param {integer} hp
+     * @param {integer} defense
+     * @param {MinMax} powerMinMax
+     * @param {boolean} invulnerable
+     */
+    constructor(entity, hp, defense, powerMinMax, invulnerable = false) {
         super(entity);
 
         this._hp = hp;
         this.baseHpMax = hp;
         this.baseDefense = defense;
-        this.basePower = power;
+        this.basePowerMinMax = powerMinMax;
         this.invulnerable = invulnerable;
     }
 
@@ -26,7 +36,7 @@ export default class Fighter extends BaseComponent {
         if (this.parent.equipment) {
             bonus = this.parent.equipment.getPowerBonus();
         }
-        return this.basePower + bonus;
+        return this.basePowerMinMax.getValue() + bonus;
     }
 
     getDefense() {
@@ -89,10 +99,10 @@ export default class Fighter extends BaseComponent {
                     player.deathBoost();
                 }
 
-                scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+                scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
             }
 
-            scene.socket.emit("s-playerDied", { roomId: scene.room.roomId, playerId: engine.player.playerId});
+            scene.socket.emit("s-playerDied", { roomId: scene.room.roomId, playerId: engine.player.playerId });
         }
 
         this.parent.renderOrder = RenderOrder.CORPSE;
@@ -125,7 +135,7 @@ export default class Fighter extends BaseComponent {
             if (this.parent === engine.player) {
                 engine.eventHandler = new MainGameEventHandler(engine);
 
-                scene.socket.emit("s-playerRevived", { roomId: scene.room.roomId, playerId: engine.player.playerId});
+                scene.socket.emit("s-playerRevived", { roomId: scene.room.roomId, playerId: engine.player.playerId });
                 engine.player.energy = 5;
                 const players = engine.players;
                 for (let i = 0; i < players.length; i++) {
@@ -134,7 +144,7 @@ export default class Fighter extends BaseComponent {
                         player.reviveDrain();
                     }
 
-                    scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+                    scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
                 }
             }
 
