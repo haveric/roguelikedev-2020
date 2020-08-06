@@ -149,7 +149,7 @@ io.on("connection", function (socket) {
 
                 if (players.length >= minPlayersAllowed) {
                     for (let i = 0; i < players.length; i++) {
-                        if (players[i].ready === false) {
+                        if (!players[i].ready) {
                             allPlayersReady = false;
                             break;
                         }
