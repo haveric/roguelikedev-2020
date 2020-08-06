@@ -1,6 +1,6 @@
 import { COLORS } from "../constants/colors";
 
-export default class FullScreenDialog {
+export default class EndGameDialog {
     constructor(ui) {
         this.ui = ui;
         this.scene = ui.scene;
@@ -14,6 +14,10 @@ export default class FullScreenDialog {
         if(this.dialog) {
             this.dialog.scaleDownDestroy(100);
         }
+    }
+
+    updateText(text) {
+        this.dialog.getElement("content").setText(text);
     }
 
     _createLabel(text) {
@@ -55,7 +59,8 @@ export default class FullScreenDialog {
             content: self._createLabel(text),
 
             actions: [
-                self._createLabel("Close")
+                self._createLabel("Restart"),
+                // self._createLabel("Return to Lobby") TODO: Re-add once return to lobby works for scenes
             ],
 
             space: {
@@ -90,14 +95,20 @@ export default class FullScreenDialog {
                 mode: "release"
             }
         })
-        .setDraggable("background")   // Draggable-background
         .layout()
-        .popUp(1000);
+        .popUp(500);
 
-        this.dialog.on("button.click", function (button) {
-            if (button.text === "Close") {
-                this.ui.engine.scene.events.emit("ui-closeFullScreenDialog", this.ui.engine);
-            }
+        this.dialog.on("button.click", function (button, groupName, index) {
+            const gameScene = this.ui.engine.scene;
+            if (index === 0) {
+                if (button.text === "Restart") {
+                    button.setText("Waiting...");
+                    button.width = 150;
+                    gameScene.socket.emit("s-endGameVoteRestart", { roomId: gameScene.room.roomId, playerId: this.ui.engine.player.playerId});
+                }
+            }/* else if (index === 1) {
+                gameScene.socket.emit("s-endGameReturnToLobby", { roomId: gameScene.room.roomId});
+            }*/ //TODO: Re-add once return to lobby works for scenes
         }, this)
         .on("button.over", function (button) {
             button.getElement("background").setStrokeStyle(1, 0xffffff);

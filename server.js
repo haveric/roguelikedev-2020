@@ -266,6 +266,50 @@ io.on("connection", function (socket) {
         io.sockets.in("room-" + roomId).emit("c-createDebugRoom");
     });
 
+    /* TODO: Re-add once return to lobby works for scenes
+    socket.on("s-endGameReturnToLobby", function(data) {
+        const roomId = data.roomId;
+
+        io.sockets.in("room-" + roomId).emit("c-endGameReturnToLobby");
+        movePlayerFromRoomToLobby(socket, roomId);
+    });
+     */
+
+    socket.on("s-endGameVoteRestart", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
+
+        const room = rooms[roomId];
+        const players = room.players;
+
+        let numVotedToRestart = 0;
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
+
+            if (player.playerId === playerId) {
+                player.votedToRestart = true;
+                numVotedToRestart += 1;
+            } else if (player.votedToRestart) {
+                numVotedToRestart += 1;
+            }
+        }
+
+        if (numVotedToRestart === players.length) {
+            // Reset player variables for a new game
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
+                player.energy = 5;
+                player.energyMax = 10;
+                player.alive = true;
+                player.votedToRestart = false;
+            }
+
+            io.sockets.in("room-" + roomId).emit("c-endGameRestart");
+        } else {
+            io.sockets.in("room-" + roomId).emit("c-endGameVoteRestart", { playerId: playerId });
+        }
+    });
+
     socket.on("s-regenMap", function(data) {
         const roomId = data.roomId;
         const room = rooms[roomId];
@@ -312,11 +356,12 @@ io.on("connection", function (socket) {
             }
         }
 
-        if (numExhaustedPlayers === players.length) {
-            // TODO: Game Over
-        }
-
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+
+        // Game over
+        if (numExhaustedPlayers === players.length) {
+            io.sockets.in("room-" + roomId).emit("c-showEndGameDialog");
+        }
     });
 });
 
@@ -380,6 +425,28 @@ function removeUserFromLobby(socket) {
     delete lobby.users[socket.id];
     socket.broadcast.emit("lobbyUpdate", lobbyStats);
 }
+/* TODO: Re-add once return to lobby works for scenes
+function movePlayerFromRoomToLobby(socket, roomId) {
+    const room = rooms[roomId];
+
+    let indexToDelete = -1;
+    for (let i = 0; i < room.players.length; i++) {
+        const player = room.players[i];
+        if (player.playerId === socket.id) {
+            indexToDelete = i;
+            break;
+        }
+    }
+
+    if (indexToDelete !== -1) {
+        room.players.splice(indexToDelete, 1);
+    }
+
+    killRoom(socket, roomId);
+    lobbyStats.playersInRooms -= 1;
+    addUserToLobby(socket);
+}
+ */
 
 function moveUserToRoomCreate(socket, roomId) {
     lobbyStats.numRooms += 1;
@@ -456,6 +523,7 @@ function createNewPlayer(socket, playerName) {
         ready: false,
         energy: 5,
         energyMax: 10,
-        alive: true
+        alive: true,
+        votedToRestart: false
     };
 }

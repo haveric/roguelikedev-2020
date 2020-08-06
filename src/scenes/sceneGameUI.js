@@ -52,9 +52,9 @@ export class SceneGameUI extends Phaser.Scene {
             }
         }, this);
 
-        game.events.on("ui-closeDialog", function(engine) {
+        game.events.on("ui-closeFullScreenDialog", function(engine) {
             if (self.enabled) {
-                engine.ui.hideDialog();
+                engine.ui.hideFullScreenDialog();
             }
         }, this);
     }

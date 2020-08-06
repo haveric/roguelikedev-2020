@@ -15,42 +15,12 @@ export class SceneGame extends Phaser.Scene {
         this.room = data.room;
         this.socket = data.socket;
 
-        this.otherPlayers = [];
-        this.players = [];
-
         Srand.seed(this.room.seed);
         console.log("Seed: " + this.room.seed);
     }
 
     create() {
         const self = this;
-
-        Object.keys(self.room.players).forEach(function(index) {
-            const player = self.room.players[index];
-
-            const newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
-            if (player.playerId === self.socket.id) {
-                self.player = newPlayer;
-                self.players.push(self.player);
-            } else {
-                const otherPlayer = newPlayer;
-
-                self.otherPlayers.push(otherPlayer);
-                self.players.push(otherPlayer);
-            }
-        });
-
-        // let isHost = self.room.players[0].playerId == self.socket.id;
-        this.engine = new Engine(this, self.player, self.players);
-
-        self.generatePlayerShip();
-        self.createDebugMap();
-
-        if (self.player) {
-            self.events.emit("ui-enable", self.engine);
-            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
-            self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
-        }
 
         self.socket.on("c-createDebugRoom", function () {
             const debugMap = self.engine.getGameMap("DEBUG");
@@ -152,8 +122,89 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
-        self.engine.ui.messageLog.text("Welcome to Tethered, ", "#000066").text(self.player.name, "#" + self.player.sprite.color).text("!", "#000066").build();
+        self.socket.on("c-showEndGameDialog", function() {
+            self.engine.ui.showEndGameDialog();
+        });
+//TODO: Figure out how switch to lobby, kill SceneGameUI and reset SceneSetup
+/*
+        self.socket.on("c-endGameReturnToLobby", function() {
+            self.engine.ui.endGameDialog.hideDialog();
+            self.scene.start("SceneLobby");
+        });
+*/
+        self.socket.on("c-endGameRestart", function() {
+            self.engine.ui.endGameDialog.hideDialog();
+            self.startNewGame();
+        });
+
+        self.socket.on("c-endGameVoteRestart", function(data) {
+            const playerId = data.playerId;
+
+            if (self.player.playerId !== playerId) {
+                self.engine.ui.updateEndGameDialogOtherPlayerWaiting();
+            }
+        });
+
+        self.events.on("shutdown", function() {
+            if (this.engine) {
+                this.engine.teardown();
+            }
+            self.socket.off("c-createDebugRoom");
+            self.socket.off("c-regenMap");
+            self.socket.off("c-performAction");
+            self.socket.off("updatePlayerData");
+            self.socket.off("c-showEndGameDialog");
+            self.socket.off("c-endGameReturnToLobby");
+            self.socket.off("c-endGameRestart");
+            self.socket.off("c-endGameVoteRestart");
+        });
+
+        self.startNewGame();
         self.engine.ui.showControls();
+    }
+
+    startNewGame() {
+        if (this.engine) {
+            this.engine.teardown();
+        }
+        this.createNewPlayers();
+        this.engine = new Engine(this, this.player, this.players);
+        this.initPlayerUI();
+        this.generatePlayerShip();
+        this.createDebugMap();
+
+        this.engine.ui.messageLog.text("Welcome to Tethered, ", "#000066").text(this.player.name, "#" + this.player.sprite.color).text("!", "#000066").build();
+        // Set after maps are created to avoid movement on non-existent maps
+        this.engine.setMainEventHandler();
+    }
+
+    createNewPlayers() {
+        const self = this;
+        this.otherPlayers = [];
+        this.players = [];
+        Object.keys(self.room.players).forEach(function(index) {
+            const player = self.room.players[index];
+
+            const newPlayer = new EntityFactories.player(player.playerId, player.x, player.y, player.name, player.color, player.energy, player.energyMax);
+            if (player.playerId === self.socket.id) {
+                self.player = newPlayer;
+                self.players.push(self.player);
+            } else {
+                const otherPlayer = newPlayer;
+
+                self.otherPlayers.push(otherPlayer);
+                self.players.push(otherPlayer);
+            }
+        });
+    }
+
+    initPlayerUI() {
+        const self = this;
+        if (self.player) {
+            self.events.emit("ui-enable", self.engine);
+            self.events.emit("ui-updateHp", { hp: self.player.fighter.getHp(), hpMax: self.player.fighter.getMaxHp() });
+            self.events.emit("ui-updateEnergy", {energy: self.player.energy, energyMax: self.player.energyMax });
+        }
     }
 
     updateCameraView(objectToFollow) {
