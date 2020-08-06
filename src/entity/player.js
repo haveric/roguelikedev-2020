@@ -20,4 +20,12 @@ export default class Player extends Actor {
         this.energyMax = energyMax;
         this.hasSharedVision = true;
     }
+
+    deathBoost() {
+        this.energy += 30;
+    }
+
+    reviveDrain() {
+        this.energy = 5;
+    }
 }

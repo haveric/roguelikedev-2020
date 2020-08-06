@@ -94,16 +94,6 @@ export default class FullScreenDialog {
         .layout()
         .popUp(1000);
 
-        this.scene.tweens.add({
-            targets: self.dialog,
-            scaleX: 1,
-            scaleY: 1,
-            ease: "Bounce",
-            duration: 1000,
-            repeat: 0,
-            yoyo: false
-        });
-
         this.dialog.on("button.click", function (button) {
             if (button.text === "Close") {
                 this.ui.engine.scene.events.emit("ui-closeDialog", this.ui.engine);

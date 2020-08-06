@@ -11,7 +11,6 @@ export default class Engine {
         self.zoomLevel = 1;
         self.debugEnabled = false;
 
-        self.eventHandler = new MainGameEventHandler(scene.input, this);
         self.ui = new UI(scene.scene.get("SceneGameUI"), this);
         self.gameMap = null;
         self.gameMaps = {};
@@ -19,6 +18,10 @@ export default class Engine {
         self.players = players;
 
         self.enemyTurn = 0;
+    }
+
+    setMainEventHandler() {
+        this.eventHandler = new MainGameEventHandler(this);
     }
 
     createSprites(startX, startY, endX, endY) {
@@ -129,21 +132,21 @@ export default class Engine {
         this.lastExploredFovTiles = [];
     }
 
+    isEntityAPlayer(entity) {
+        for (let i = 0; i < this.players.length; i++) {
+            if (entity === this.players[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     handleEnemyTurns() {
         for (let i = 0; i < this.gameMap.entities.length; i++) {
             const entity = this.gameMap.entities[i];
 
-            let isPlayer = false;
-            for (let j = 0; j < this.players.length; j++) {
-                const player = this.players[j];
-
-                if (entity === player) {
-                    isPlayer = true;
-                    break;
-                }
-            }
-
-            if (!isPlayer) {
+            if (!this.isEntityAPlayer(entity)) {
                 if (i % 2 === this.enemyTurn) {
                     if (entity.ai) {
                         entity.ai.perform(true);

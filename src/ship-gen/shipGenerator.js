@@ -271,6 +271,10 @@ export class Ship {
             new EntityFactories.medkit(7, 10).place(debugGameMapUp);
             new EntityFactories.medkit(7, 11).place(debugGameMapUp);
 
+            new EntityFactories.ferventDust(9, 11).place(debugGameMapUp);
+            new EntityFactories.masterBlaster(11, 11).place(debugGameMapUp);
+            new EntityFactories.directionalShield(13, 11).place(debugGameMapUp);
+
             this.engineRef.addGameMap(debugGameMapDown);
             this.engineRef.addGameMap(debugGameMapUp);
 

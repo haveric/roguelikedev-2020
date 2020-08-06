@@ -102,7 +102,7 @@ export class MeleeAction extends ActionWithDirection {
         const messageLog = this.getEngine().ui.messageLog;
         if (target) {
             if (doAction) {
-                const damage = this.entityRef.fighter.power - target.fighter.defense;
+                const damage = this.entityRef.fighter.getPower() - target.fighter.getDefense();
                 messageLog.text(this.entityRef.name, "#" + this.entityRef.sprite.color).text(" attacks ").text(target.name, "#" + target.sprite.color);
 
                 if (damage > 0) {
@@ -246,19 +246,8 @@ export class BumpAction extends ActionWithDirection {
         const tiles = this.getGameMap().locations[destX][destY].tiles;
         const target = this.getTargetActor();
 
-        let entityIsPlayer = false;
-        let targetIsPlayer = false;
-        for (let i = 0; i < this.getEngine().players.length; i++) {
-            const player = this.getEngine().players[i];
-            if (this.entityRef === player) {
-                entityIsPlayer = true;
-            }
-
-            if (target === player) {
-                targetIsPlayer = true;
-            }
-        }
-
+        const entityIsPlayer = this.getEngine().isEntityAPlayer(this.entityRef);
+        const targetIsPlayer = this.getEngine().isEntityAPlayer(target);
 
         if ((this.friendlyFire || entityIsPlayer !== targetIsPlayer) && target) {
             return new MeleeAction(this.entityRef, this.dx, this.dy, target).perform(doAction);
@@ -328,7 +317,28 @@ export class InteractWithTileAction extends Action {
 
             success = true;
         } else {
-            success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
+            const allPlayersRequired = this.getGameMap().locations[actorX][actorY].tileComponentCheck("interactable", "isAllPlayersRequired");
+            if (this.getEngine().isEntityAPlayer(this.entityRef) && allPlayersRequired) {
+                const players = this.getEngine().players;
+                let numSuccesses = 0;
+
+                for (let i = 0; i < players.length; i++) {
+                    const player = players[i];
+                    if (this.getGameMap().locations[player.x][player.y].tileHasComponent("interactable")) {
+                        numSuccesses += 1;
+                    }
+                }
+
+                if (numSuccesses === players.length) {
+                    success = true;
+                } else {
+                    const messageLog = this.getEngine().ui.messageLog;
+                    messageLog.text("You must gather your party before leaving.").build();
+                    success = false;
+                }
+            } else {
+                success = this.getGameMap().locations[actorX][actorY].tileHasComponent("interactable");
+            }
         }
 
         return new ActionResult(this, success);
@@ -440,7 +450,14 @@ export class DropItemAction extends ItemAction {
 
     perform(doAction) {
         if (doAction) {
-            this.entityRef.inventory.dropByIndex(this.inventorySlot);
+            const item = this.entityRef.inventory.dropByIndex(this.inventorySlot);
+
+            // handle de-equipping dropped items automatically
+            if (item.equippable && this.entityRef.equipment) {
+                if(this.entityRef.equipment.mainHand === item || this.entityRef.equipment.offHand === item) {
+                    this.entityRef.equipment.toggleEquip(item);
+                }
+            }
         }
 
         return new ActionResult(this, true);
@@ -448,5 +465,51 @@ export class DropItemAction extends ItemAction {
 
     toString() {
         return { action: "DropItemAction", args: { inventorySlot: this.inventorySlot }};
+    }
+}
+
+export class EquipAction extends Action {
+    constructor(entity, inventorySlot) {
+        super(entity);
+        this.inventorySlot = inventorySlot;
+    }
+
+    perform(doAction) {
+        if (doAction) {
+            // check if entity has equipment
+            const messageLog = this.getEngine().ui.messageLog;
+            const equippable = this.entityRef.inventory.items[this.inventorySlot];
+            if(this.entityRef.equipment && equippable.equippable) {
+                this.results = this.entityRef.equipment.toggleEquip(equippable);
+                const self = this;
+                this.results.forEach(function (result) {
+                    const equipped = result.equipped;
+                    const dequipped = result.dequipped;
+                    let playerString;
+                    if (self.isCurrentPlayer()) {
+                        playerString = "You";
+                    } else {
+                        playerString = self.entityRef.name;
+                    }
+                    if (equipped) {
+                        messageLog.text(playerString + " equipped the " + equippable.name + "!").build();
+                    }
+                    if (dequipped) {
+                        messageLog.text(playerString + " dequipped the " + equippable.name + "!").build();
+                    }
+                });
+            } else {
+                if (this.isCurrentPlayer()) {
+                    messageLog.text("You are unable to equip this item.").build();
+                }
+                return new ActionResult(this, false, false);
+            }
+        }
+
+        return new ActionResult(this, true);
+    }
+
+    toString() {
+        return { action: "EquipAction", args: { inventorySlot: this.inventorySlot }};
     }
 }

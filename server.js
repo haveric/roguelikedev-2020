@@ -216,7 +216,7 @@ io.on("connection", function (socket) {
                     if (player.playerId === playerId) {
                         player.energy -= 1;
                     } else {
-                        if (player.energy < player.energyMax) {
+                        if (player.alive && player.energy < player.energyMax) {
                             player.energy += 1;
                         }
                     }
@@ -225,6 +225,38 @@ io.on("connection", function (socket) {
 
             io.sockets.in("room-" + roomId).emit("c-performAction", { playerId: playerId, actionData: actionData });
             io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+        }
+    });
+
+    socket.on("s-playerDied", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
+
+        const room = rooms[roomId];
+        const players = room.players;
+
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
+
+            if (player.playerId === playerId) {
+                player.alive = false;
+            }
+        }
+    });
+
+    socket.on("s-playerRevived", function(data) {
+        const roomId = data.roomId;
+        const playerId = data.playerId;
+
+        const room = rooms[roomId];
+        const players = room.players;
+
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
+
+            if (player.playerId === playerId) {
+                player.alive = true;
+            }
         }
     });
 
@@ -252,21 +284,36 @@ io.on("connection", function (socket) {
         for (let i = 0; i < players.length; i++) {
             const player = players[i];
 
-            if (player.playerId === playerId) {
-                if (data.energyMax) {
-                    player.energyMax = data.energyMax;
-                }
+            if (player.alive) {
+                if (player.playerId === playerId) {
+                    if (data.energyMax !== undefined) {
+                        player.energyMax = data.energyMax;
+                    }
 
-                if (data.energy) {
-                    player.energy = data.energy;
+                    if (data.energy !== undefined) {
+                        player.energy = data.energy;
+                    } else {
+                        player.energy -= 1;
+                    }
                 } else {
-                    player.energy -= 1;
-                }
-            } else {
-                if (giveEnergy && player.energy < player.energyMax) {
-                    player.energy += 1;
+                    if (giveEnergy && player.energy < player.energyMax) {
+                        player.energy += 1;
+                    }
                 }
             }
+        }
+
+        let numExhaustedPlayers = 0;
+        for (let i = 0; i < players.length; i++) {
+            const player = players[i];
+
+            if (!player.alive || player.energy === 0) {
+                numExhaustedPlayers += 1;
+            }
+        }
+
+        if (numExhaustedPlayers === players.length) {
+            // TODO: Game Over
         }
 
         io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
@@ -408,6 +455,7 @@ function createNewPlayer(socket, playerName) {
         sprite: "player",
         ready: false,
         energy: 5,
-        energyMax: 10
+        energyMax: 10,
+        alive: true
     };
 }

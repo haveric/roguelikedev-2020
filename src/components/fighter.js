@@ -7,11 +7,34 @@ export default class Fighter extends BaseComponent {
         super(entity);
 
         this._hp = hp;
-
-        this.hpMax = hp;
-        this.defense = defense;
-        this.power = power;
+        this.baseHpMax = hp;
+        this.baseDefense = defense;
+        this.basePower = power;
         this.invulnerable = invulnerable;
+    }
+
+    getMaxHp() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.getMaxHpBonus();
+        }
+        return this.baseHpMax + bonus;
+    }
+
+    getPower() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.getPowerBonus();
+        }
+        return this.basePower + bonus;
+    }
+
+    getDefense() {
+        let bonus = 0;
+        if (this.parent.equipment) {
+            bonus = this.parent.equipment.getDefenseBonus();
+        }
+        return this.baseDefense + bonus;
     }
 
     getHp() {
@@ -20,7 +43,7 @@ export default class Fighter extends BaseComponent {
 
     setHp(hp) {
         if (!this.invulnerable) {
-            this._hp = Math.max(0, Math.min(hp, this.hpMax));
+            this._hp = Math.max(0, Math.min(hp, this.getMaxHp()));
 
             if (this._hp === 0 && this.parent.ai) {
                 this.die();
@@ -33,7 +56,7 @@ export default class Fighter extends BaseComponent {
     }
 
     isAtMaxHp() {
-        return this._hp === this.hpMax;
+        return this._hp === this.getMaxHp();
     }
 
     heal(amount) {
@@ -42,8 +65,8 @@ export default class Fighter extends BaseComponent {
         }
 
         let newHp = this._hp + amount;
-        if (newHp > this.hpMax) {
-            newHp = this.hpMax;
+        if (newHp > this.getMaxHp()) {
+            newHp = this.getMaxHp();
         }
 
         const amountRecovered = newHp - this._hp;
@@ -54,8 +77,22 @@ export default class Fighter extends BaseComponent {
 
     die() {
         const engine = this.getEngine();
+        const scene = engine.scene;
         if (this.parent === engine.player) {
-            engine.eventHandler = new PlayerDeadEventHandler(engine.scene.input, engine);
+            engine.eventHandler = new PlayerDeadEventHandler(engine);
+
+            engine.player.energy = 0;
+            const players = engine.players;
+            for (let i = 0; i < players.length; i++) {
+                const player = players[i];
+                if (player !== engine.player) {
+                    player.deathBoost();
+                }
+
+                scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+            }
+
+            scene.socket.emit("s-playerDied", { roomId: scene.room.roomId, playerId: engine.player.playerId});
         }
 
         this.parent.renderOrder = RenderOrder.CORPSE;
@@ -79,13 +116,26 @@ export default class Fighter extends BaseComponent {
 
     revive() {
         const engine = this.getEngine();
+        const scene = engine.scene;
         if (this._hp <= 0) {
             this.parent.renderOrder = RenderOrder.ACTOR;
             this.parent.sprite.updateSprite(this.parent.originalSpriteName, this.parent.originalColor);
             this.parent.name = this.parent.originalName;
             this.parent.ai = this.parent.originalAI;
             if (this.parent === engine.player) {
-                engine.eventHandler = new MainGameEventHandler(engine.scene.input, engine);
+                engine.eventHandler = new MainGameEventHandler(engine);
+
+                scene.socket.emit("s-playerRevived", { roomId: scene.room.roomId, playerId: engine.player.playerId});
+                engine.player.energy = 5;
+                const players = engine.players;
+                for (let i = 0; i < players.length; i++) {
+                    const player = players[i];
+                    if (player !== engine.player) {
+                        player.reviveDrain();
+                    }
+
+                    scene.socket.emit("updateEnergy", { roomId: scene.room.roomId, playerId: player.playerId, energy: player.energy, energyMax: player.energyMax, giveEnergy: false});
+                }
             }
 
             this.parent.blocksMovement = true;
@@ -93,6 +143,6 @@ export default class Fighter extends BaseComponent {
             this.getEngine().ui.messageLog.text(this.parent.name, "#" + this.parent.sprite.color).text(" has been revived!").build();
         }
 
-        this.setHp(this.hpMax);
+        this.setHp(this.getMaxHp());
     }
 }
