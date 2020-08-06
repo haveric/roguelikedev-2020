@@ -125,13 +125,13 @@ export class SceneGame extends Phaser.Scene {
         self.socket.on("c-showEndGameDialog", function() {
             self.engine.ui.showEndGameDialog();
         });
-//TODO: Figure out how switch to lobby, kill SceneGameUI and reset SceneSetup
-/*
+        //TODO: Figure out how switch to lobby, kill SceneGameUI and reset SceneSetup
+        /*
         self.socket.on("c-endGameReturnToLobby", function() {
             self.engine.ui.endGameDialog.hideDialog();
             self.scene.start("SceneLobby");
         });
-*/
+        */
         self.socket.on("c-endGameRestart", function() {
             self.engine.ui.endGameDialog.hideDialog();
             self.startNewGame();
