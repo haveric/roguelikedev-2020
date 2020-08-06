@@ -11,7 +11,7 @@ export default class MinMax {
         this.max = max;
     }
 
-    getValue() {
+    getRandomValueInRange() {
         return Srand.intInRange(this.min, this.max);
     }
 }

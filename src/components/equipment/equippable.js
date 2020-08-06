@@ -9,14 +9,14 @@ export class Equippable extends BaseComponent {
      *
      * @param {Entity} entity
      * @param {EquipmentSlots} slot
-     * @param {MinMax} powerBonus
+     * @param {MinMax} powerBonusMinMax
      * @param {integer} defenseBonus
      * @param {integer} maxHpBonus
      */
-    constructor(entity, slot, powerBonus, defenseBonus, maxHpBonus) {
+    constructor(entity, slot, powerBonusMinMax, defenseBonus, maxHpBonus) {
         super(entity);
         this.slot = slot;
-        this.powerBonus = powerBonus || new MinMax(0, 0);
+        this.powerBonusMinMax = powerBonusMinMax || new MinMax(0, 0);
         this.defenseBonus = defenseBonus || 0;
         this.maxHpBonus = maxHpBonus || 0;
     }
@@ -25,6 +25,6 @@ export class Equippable extends BaseComponent {
      * @returns {integer}
      */
     getPowerBonus() {
-        return this.powerBonus.getValue();
+        return this.powerBonusMinMax.getRandomValueInRange();
     }
 }

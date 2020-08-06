@@ -36,7 +36,7 @@ export default class Fighter extends BaseComponent {
         if (this.parent.equipment) {
             bonus = this.parent.equipment.getPowerBonus();
         }
-        return this.basePowerMinMax.getValue() + bonus;
+        return this.basePowerMinMax.getRandomValueInRange() + bonus;
     }
 
     getDefense() {
