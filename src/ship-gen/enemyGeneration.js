@@ -78,8 +78,6 @@ export default class EnemyGenerator {
         return enemyObj.name;
     }
 
-
-
     /**
      * Load up the total weights based on adjustments and room info (TODO).
      */
