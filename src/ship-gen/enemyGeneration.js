@@ -8,15 +8,21 @@ export default class EnemyGenerator {
 
     /**
      *
-     * @param {GameMap} gameMap
+     * @param {integer} difficultyLevel - The difficulty level to select the weights for (1-X)
+     * @param {GameMap} gameMap - GameMap instance
      */
-    constructor(gameMap) {
+    constructor(difficultyLevel, gameMap) {
+        this.difficultyLevel = difficultyLevel;
         this.gameMap = gameMap;
 
         this._loaded = false;
-        this._chances = [];
-        this._enemies = [];
-        this._sumEnemyWeights = 0;
+        this._enemyChances = {};
+        this._enemies = {};
+        this._sumEnemyWeights = {};
+
+        this._rarityChances = [];
+        this._enemyRarities = [];
+        this._sumEnemyRarityWeights = 0;
     }
 
     /**
@@ -53,7 +59,8 @@ export default class EnemyGenerator {
      * @returns {EnemyPrefab} prefab
      */
     _selectEnemy() {
-        return this._enemies[ChoiceIndex.select(this._chances, this._sumEnemyWeights)];
+        const rarity = this._enemyRarities[ChoiceIndex.select(this._rarityChances, this._sumEnemyRarityWeights)];
+        return this._enemies[rarity][ChoiceIndex.select(this._enemyChances[rarity], this._sumEnemyWeights[rarity])];
     }
 
     /**
@@ -81,23 +88,40 @@ export default class EnemyGenerator {
 
         const chances = [];
         const enemies = [];
+        const rarityChances = [];
+        const enemyRarities = [];
         let runningSum = 0;
+        let runningRaritySum = 0;
 
         Object.keys(EnemyRarity).forEach(enemyRarityKey => {
             const enemiesForRarity = EnemyGenerator.EnemyList[EnemyRarity[enemyRarityKey].name];
-            const spawnWeight = EnemyRarity[enemyRarityKey].spawnWeight;
+            const raritySpawnWeight = EnemyRarity[enemyRarityKey].spawnWeight;
+
+            runningRaritySum += raritySpawnWeight;
+            enemyRarities.push(EnemyRarity[enemyRarityKey].name);
+            rarityChances.push(raritySpawnWeight);
+
+            enemies[enemyRarityKey] = [];
+            chances[enemyRarityKey] = [];
+
+            // Reset sum
+            runningSum = 0;
 
             enemiesForRarity.forEach(enemy => {
-                runningSum += spawnWeight;
-                chances.push(spawnWeight);
-                enemies.push(enemy);
+                const enemyWeight = enemy.getWeightForDifficultyLevel(this.difficultyLevel);
+                runningSum += enemyWeight;
+                chances[enemyRarityKey].push(enemyWeight);
+                enemies[enemyRarityKey].push(enemy);
             });
+
+            this._sumEnemyWeights[enemyRarityKey] = runningSum;
         });
 
         this._loaded = true;
         this._enemies = enemies;
-        this._chances = chances;
-        this._sumEnemyWeights = runningSum;
+        this._enemyRarities = enemyRarities;
+        this._enemyChances = chances;
+        this._sumEnemyRarityWeights = runningRaritySum;
     }
 }
 
@@ -110,13 +134,13 @@ export const EnemyRarity = {
 
 EnemyGenerator.EnemyList = {
     "Vermin": [
-        new EnemyPrefab("AttackDog", (x, y) => EntityFactories.attackDog(x, y)),
+        new EnemyPrefab("AttackDog", [10], (x, y) => EntityFactories.attackDog(x, y)),
     ],
     "Common": [
-        new EnemyPrefab("SpacePirate", (x, y) => EntityFactories.spacePirate(x, y)),
+        new EnemyPrefab("SpacePirate", [10], (x, y) => EntityFactories.spacePirate(x, y)),
     ],
     "Uncommon": [
-        new EnemyPrefab("AutomatedTurret", (x, y) => EntityFactories.automatedTurret(x, y)),
+        new EnemyPrefab("AutomatedTurret", [10], (x, y) => EntityFactories.automatedTurret(x, y)),
     ],
     "Rare": []
 };

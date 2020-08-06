@@ -8,9 +8,11 @@ export default class ItemGenerator {
 
     /**
      *
-     * @param {GameMap} gameMap
+     * @param {integer} difficultyLevel - The difficulty level to select the weights for (1-X)
+     * @param {GameMap} gameMap - GameMap instance
      */
-    constructor(gameMap) {
+    constructor(difficultyLevel, gameMap) {
+        this.difficultyLevel = difficultyLevel;
         this.gameMap = gameMap;
 
         this._loaded = false;
@@ -104,8 +106,9 @@ export default class ItemGenerator {
             runningSum = 0;
 
             itemsForRarity.forEach(item => {
-                runningSum += item.weight;
-                chances[itemRarityKey].push(item.weight);
+                const itemWeight = item.getWeightForDifficultyLevel(this.difficultyLevel);
+                runningSum += itemWeight;
+                chances[itemRarityKey].push(itemWeight);
                 items[itemRarityKey].push(item);
             });
 
@@ -129,16 +132,16 @@ export const ItemRarity = {
 
 ItemGenerator.ItemList = {
     "Junk": [
-        new ItemPrefab("Medkit", 10, (x, y) => EntityFactories.medkit(x, y)),
-        new ItemPrefab("Grenade", 5, (x, y) => EntityFactories.grenade(x, y)),
+        new ItemPrefab("Medkit", [10], (x, y) => EntityFactories.medkit(x, y)),
+        new ItemPrefab("Grenade", [5, 6, 7, 8, 9, 10], (x, y) => EntityFactories.grenade(x, y)),
     ],
     "Common": [
-        new ItemPrefab("LaserCharge", 10, (x, y) => EntityFactories.laserCharge(x, y)),
+        new ItemPrefab("LaserCharge", [10], (x, y) => EntityFactories.laserCharge(x, y)),
     ],
     "Uncommon": [
-        new ItemPrefab("ConfuseRay", 10, (x, y) => EntityFactories.confuseRay(x, y)),
+        new ItemPrefab("ConfuseRay", [10], (x, y) => EntityFactories.confuseRay(x, y)),
     ],
     "Rare": [
-        new ItemPrefab("ResurrectionInjector", 10, (x, y) => EntityFactories.resurrectionInjector(x, y)),
+        new ItemPrefab("ResurrectionInjector", [10], (x, y) => EntityFactories.resurrectionInjector(x, y)),
     ]
 };

@@ -159,8 +159,10 @@ export class Ship {
             }
         }
 
-        const itemGenerator = new ItemGenerator(this.gameMap);
-        const enemyGenerator = new EnemyGenerator(this.gameMap);
+        const difficultyLevel = 1;
+
+        const itemGenerator = new ItemGenerator(difficultyLevel, this.gameMap);
+        const enemyGenerator = new EnemyGenerator(difficultyLevel, this.gameMap);
 
         for (let i = 1; i < this.rooms.length; i++) {
             itemGenerator.setRoom(this.rooms[i]);
