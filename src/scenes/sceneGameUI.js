@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { COLORS } from "../constants/colors";
 
 export class SceneGameUI extends Phaser.Scene {
     constructor() {
@@ -15,18 +16,14 @@ export class SceneGameUI extends Phaser.Scene {
         const self = this;
         const game = self.scene.get("SceneGame");
 
-        const DARK_YELLOW = 0xccc300;
-        const BRIGHT_YELLOW = 0xfff400;
-        const DARK_ORANGE = 0x996300;
-
         game.events.on("ui-enable", function(engine) {
             self.enabled = true;
 
             self.healthBarMax = self.add.rectangle(30, 20, 200, 30).setFillStyle(0xff9898).setOrigin(0);
             self.healthBar = self.add.rectangle(30, 20, 200, 30).setFillStyle(0xff3232).setOrigin(0);
 
-            self.energyBarMax = self.add.rectangle(30, 60, 200, 30).setFillStyle(DARK_YELLOW).setOrigin(0);
-            self.energyBar = self.add.rectangle(30, 60, 200, 30).setFillStyle(BRIGHT_YELLOW).setOrigin(0);
+            self.energyBarMax = self.add.rectangle(30, 60, 200, 30).setFillStyle(COLORS.DARK_YELLOW).setOrigin(0);
+            self.energyBar = self.add.rectangle(30, 60, 200, 30).setFillStyle(COLORS.BRIGHT_YELLOW).setOrigin(0);
 
             self.hpText = self.add.text(35, 22, "HP: 0 / 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true } });
             self.energyText = self.add.text(35, 62, "Energy: 0", {font: "20px Arial", fill: "#ffffff", shadow: { offsetX: 1, offsetY: 1, blur: 2, fill: true  } });
@@ -46,7 +43,7 @@ export class SceneGameUI extends Phaser.Scene {
                 if(self.energy === 0) {
                     self.tweens.add({
                         targets: self.energyBarMax,
-                        fillColor: { from: DARK_YELLOW, to: DARK_ORANGE},
+                        fillColor: { from: COLORS.DARK_YELLOW, to: COLORS.DARK_ORANGE},
                         ease: "Stepped",
                         duration: 0,
                         repeat: 2,
