@@ -108,6 +108,7 @@ export default class ItemGenerator {
         this._loaded = true;
         this._items = items;
         this._itemRarities = itemRarities;
+        this._rarityChances = rarityChances;
         this._itemChances = chances;
         this._sumItemRarityWeights = runningRaritySum;
     }

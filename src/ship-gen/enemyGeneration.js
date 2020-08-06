@@ -108,6 +108,7 @@ export default class EnemyGenerator {
         this._loaded = true;
         this._enemies = enemies;
         this._enemyRarities = enemyRarities;
+        this._rarityChances = rarityChances;
         this._enemyChances = chances;
         this._sumEnemyRarityWeights = runningRaritySum;
     }
