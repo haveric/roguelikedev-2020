@@ -26,11 +26,11 @@ export default class Equipment extends BaseComponent {
         let bonus = 0;
 
         if(this.mainHand && this.mainHand.equippable) {
-            bonus += this.mainHand.equippable.powerBonus;
+            bonus += this.mainHand.equippable.getPowerBonus();
         }
 
         if(this.offHand && this.offHand.equippable) {
-            bonus += this.offHand.equippable.powerBonus;
+            bonus += this.offHand.equippable.getPowerBonus();
         }
 
         return bonus;

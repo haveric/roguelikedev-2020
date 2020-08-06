@@ -11,6 +11,7 @@ import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeD
 import Equipment from "./components/equipment/equipment";
 import { Equippable } from "./components/equipment/equippable";
 import { EquipmentSlots } from "./components/equipment/equipmentSlots";
+import MinMax from "./attributeTypes/minMax";
 
 export default class EntityFactories { }
 
@@ -20,7 +21,7 @@ EntityFactories.credits = (x, y, amount) => {
 
 EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
     const entity = new Player(socketId, x, y, name, "This is you or your companion, tethered together.", new Sprite("player", color), energy, energyMax);
-    entity.setComponent("fighter", new Fighter(entity, 30, 2, 5));
+    entity.setComponent("fighter", new Fighter(entity, 30, 2, new MinMax(4,6)));
     entity.setComponent("ai", new BaseAI(entity));
     entity.setComponent("inventory", new Inventory(entity, 26));
     entity.setComponent("equipment", new Equipment());
@@ -29,14 +30,14 @@ EntityFactories.player = (socketId, x, y, name, color, energy, energyMax) => {
 
 EntityFactories.targetDummy = (x, y) => {
     const entity = new Actor(x, y, "Target Dummy", "It just stands there, mocking you.", new Sprite("targetDummy"));
-    entity.setComponent("fighter", new Fighter(entity, 1, 0, 0, true));
+    entity.setComponent("fighter", new Fighter(entity, 1, 0, new MinMax(0,0), true));
     entity.setComponent("ai", new BaseAI(entity));
     return entity;
 };
 
 EntityFactories.spacePirate = (x, y) => {
     const entity = new Actor(x, y, "Space Pirate", "A Pirate. In space! He has a menacing look.", new Sprite("spacePirate"));
-    entity.setComponent("fighter", new Fighter(entity, 16, 1, 4));
+    entity.setComponent("fighter", new Fighter(entity, 16, 1, new MinMax(3,5)));
     entity.setComponent("ai", new HostileEnemy(entity));
     const inventory = new Inventory(entity, 10);
     const creditsAmount = Srand.intInRange(0, 100);
@@ -49,14 +50,14 @@ EntityFactories.spacePirate = (x, y) => {
 
 EntityFactories.attackDog = (x, y) => {
     const entity = new Actor(x, y, "Attack Dog", "Faithful companion to pirates; looking mighty hungry for flesh.", new Sprite("attackDog"), false);
-    entity.setComponent("fighter", new Fighter(entity, 10, 0, 3));
+    entity.setComponent("fighter", new Fighter(entity, 10, 0, new MinMax(2,4)));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
 };
 
 EntityFactories.automatedTurret = (x, y) => {
     const entity = new Actor(x, y, "Automated Turret", "Deadly Turret, pointing straight at you and defending whatever is nearby from you.", new Sprite("automatedTurret"));
-    entity.setComponent("fighter", new Fighter(entity, 20, 2, 6));
+    entity.setComponent("fighter", new Fighter(entity, 20, 2, new MinMax(4,8)));
     entity.setComponent("ai", new HostileEnemy(entity));
     return entity;
 };
@@ -93,18 +94,18 @@ EntityFactories.resurrectionInjector = (x, y) => {
 
 EntityFactories.directionalShield = (x, y) => {
     const entity = new Item(x, y, "Directional Shield", "Equips in the off hand to provide a minor defense bonus.", new Sprite("shield"), 2);
-    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, 0, 3, 0));
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, new MinMax(0,0), 3, 0));
     return entity;
 };
 
 EntityFactories.ferventDust = (x, y) => {
     const entity = new Item(x, y, "Fervent Dust", "Equips in the off hand to provide a minor health bonus.", new Sprite("dust"), 2);
-    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, 0, 0, 20));
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.OFF_HAND, new MinMax(0,0), 0, 20));
     return entity;
 };
 
 EntityFactories.masterBlaster = (x, y) => {
     const entity = new Item(x, y, "Master Blaster", "Equips in the main hand to provide a minor damage bonus.", new Sprite("blaster"), 2);
-    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.MAIN_HAND, 5, 0, 0));
+    entity.setComponent("equippable", new Equippable(entity, EquipmentSlots.MAIN_HAND, new MinMax(3,5), 0, 0));
     return entity;
 };
