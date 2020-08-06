@@ -27,32 +27,22 @@ export default class EnemyGenerator {
 
     /**
      * Spawn an enemy in the generator's currently defined room
+     *
+     * @param {RectangularRoom} rectangularRoom
      */
-    spawnEnemy() {
-        if (this._loaded === false) {
+    spawnEnemy(rectangularRoom) {
+        if (!this._loaded) {
             this.loadWeights();
         }
 
-        if (this.rectangularRoom === null) {
-            console.log("Room not defined, cannot spawn item.");
-        }
-
-        const coords = this.rectangularRoom.getRandomXYInRoom();
+        const coords = rectangularRoom.getRandomXYInRoom();
 
         const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
         if (!entity) {
             const enemySpawnedName = this._generateEnemy(coords.x, coords.y, this.gameMap);
 
-            console.log("Spawning " + enemySpawnedName + " in: " + this.rectangularRoom);
+            console.log("Spawning " + enemySpawnedName + " in: " + rectangularRoom);
         }
-    }
-
-    /**
-     *
-     * @param {RectangularRoom} rectangularRoom
-     */
-    setRoom(rectangularRoom) {
-        this.rectangularRoom = rectangularRoom;
     }
 
     /**

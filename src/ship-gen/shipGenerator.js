@@ -165,8 +165,6 @@ export class Ship {
         const enemyGenerator = new EnemyGenerator(difficultyLevel, this.gameMap);
 
         for (let i = 1; i < this.rooms.length; i++) {
-            itemGenerator.setRoom(this.rooms[i]);
-            enemyGenerator.setRoom(this.rooms[i]);
             this.placeEntitiesInRoom(this.rooms[i], itemGenerator, enemyGenerator);
         }
 
@@ -353,14 +351,14 @@ export class Ship {
         console.log("Spawning " + numMonstersToSpawn + " enemies in room: " + rectangularRoom);
 
         for (let i = 0; i < numMonstersToSpawn; i++) {
-            enemyGenerator.spawnEnemy();
+            enemyGenerator.spawnEnemy(rectangularRoom);
         }
 
         const numItemsToSpawn = Srand.intInRange(0, this.shipOptions.maxItemsPerRoom);
         console.log("Spawning " + numItemsToSpawn + " items in room: " + rectangularRoom);
 
         for (let i = 0; i < numItemsToSpawn; i++) {
-            itemGenerator.spawnItem();
+            itemGenerator.spawnItem(rectangularRoom);
         }
     }
 }

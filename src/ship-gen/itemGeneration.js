@@ -27,32 +27,22 @@ export default class ItemGenerator {
 
     /**
      * Spawn an item in the generators currently defined room
+     *
+     * @param {RectangularRoom} rectangularRoom
      */
-    spawnItem() {
-        if (this._loaded === false) {
+    spawnItem(rectangularRoom) {
+        if (!this._loaded) {
             this.loadWeights();
         }
 
-        if (this.rectangularRoom === null) {
-            console.log("Room not defined, cannot spawn item.");
-        }
-
-        const coords = this.rectangularRoom.getRandomXYInRoom();
+        const coords = rectangularRoom.getRandomXYInRoom();
 
         const entity = this.gameMap.getBlockingEntityAtLocation(coords.x, coords.y);
         if (!entity) {
             const itemSpawnedName = this._generateItem(coords.x, coords.y, this.gameMap);
 
-            console.log("Spawning " + itemSpawnedName + " in: " + this.rectangularRoom);
+            console.log("Spawning " + itemSpawnedName + " in: " + rectangularRoom);
         }
-    }
-
-    /**
-     *
-     * @param {RectangularRoom} rectangularRoom
-     */
-    setRoom(rectangularRoom) {
-        this.rectangularRoom = rectangularRoom;
     }
 
     /**
