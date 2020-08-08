@@ -19,19 +19,20 @@ const lobby = {
 let isDevMode = false;
 
 // Command line arguments
-var myArgs = process.argv.slice(2);
+const args = process.argv;
+for (let i = 2; i < args.length; i++) {
+    const arg = args[i];
 
-switch (myArgs[0]) {
-    case 'devmode':
-        isDevMode = true;
-        break;
-    default:
-        console.log('Bad command line arg sent to server.');
-        break;
+    switch (arg) {
+        case "devmode":
+            isDevMode = true;
+            break;
+        default:
+            break;
+    }
 }
 
 let minPlayersAllowed = 2;
-
 if (isDevMode) {
     minPlayersAllowed = 1;
 }
