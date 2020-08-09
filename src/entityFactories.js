@@ -82,7 +82,7 @@ EntityFactories.confuseRay = (x, y) => {
 
 EntityFactories.grenade = (x, y) => {
     const entity = new Item(x, y, "Grenade", "Standard military issue explosive device. Pull pin and throw.", new Sprite("grenade"), 4);
-    entity.setComponent("consumable", new GrenadeDamageConsumable(entity, 12, 3));
+    entity.setComponent("consumable", new GrenadeDamageConsumable(entity, new MinMax(10,15), 3));
     return entity;
 };
 

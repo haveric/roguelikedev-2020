@@ -4,6 +4,7 @@ import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHand
 import BaseComponent from "./baseComponent";
 import Inventory from "./inventory";
 import { ConfusedEnemy } from "./ai";
+import MinMax from "../attributeTypes/minMax";
 
 export class Consumable extends BaseComponent {
     constructor(entity) {
@@ -186,9 +187,16 @@ export class ConfusionConsumable extends Consumable {
 }
 
 export class GrenadeDamageConsumable extends Consumable {
-    constructor(entity, damage, radius) {
+
+    /**
+     *
+     * @param {Entity} entity - Entity to attach this component to.
+     * @param {MinMax} damageMinMax - MinMax representing damage this can possibly cause.
+     * @param {integer} radius - Radius in tiles that the component will affect.
+     */
+    constructor(entity, damageMinMax, radius) {
         super(entity);
-        this.damage = damage;
+        this.damageMinMax = damageMinMax || new MinMax(0,0);
         this.radius = radius;
     }
 
@@ -215,8 +223,9 @@ export class GrenadeDamageConsumable extends Consumable {
                 const actor = actors[i];
                 if (actor.distance(targetXY.x, targetXY.y) < this.radius) {
                     if (doAction) {
-                        messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + this.damage + " damage!").build();
-                        actor.fighter.takeDamage(this.damage);
+                        const damage = this.damageMinMax.getRandomValueInRange();
+                        messageLog.text("The ").text(actor.name, "#" + actor.sprite.color).text(" is hit with a flurry of shrapnel, taking " + damage + " damage!").build();
+                        actor.fighter.takeDamage(damage);
                     }
                     targetsHit = true;
                 }
