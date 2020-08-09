@@ -131,8 +131,11 @@ ItemGenerator.ItemList = {
     ],
     "Uncommon": [
         new ItemPrefab("ConfuseRay", [10], (x, y) => EntityFactories.confuseRay(x, y)),
+        new ItemPrefab("DirectionalShield", [5], (x, y) => EntityFactories.directionalShield(x, y)),
+        new ItemPrefab("MasterBlaster", [2], (x, y) => EntityFactories.masterBlaster(x, y)),
     ],
     "Rare": [
         new ItemPrefab("ResurrectionInjector", [10], (x, y) => EntityFactories.resurrectionInjector(x, y)),
+        new ItemPrefab("FerventDust", [10], (x, y) => EntityFactories.ferventDust(x, y)),
     ]
 };
