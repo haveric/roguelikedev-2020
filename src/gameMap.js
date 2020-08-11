@@ -17,24 +17,14 @@ export default class GameMap {
         this.offsetWidth = this.width * Tilemaps.getTileMap().frameWidth;
         this.offsetHeight = this.height * Tilemaps.getTileMap().frameHeight;
 
-        this.locations = create2dArray(this.width);
-        for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.height; j++) {
-                this.locations[i][j] = new GameMapLocation(this);
-            }
-        }
-
         this.lastExploredFovTiles = [];
+        this.locations = create2dArray(this.width);
         this.shroud = create2dArray(this.width);
-        for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.height; j++) {
-                this.shroud[i][j] = new FovTile(i, j);
-            }
-        }
-
         this.highlight = create2dArray(this.width);
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
+                this.locations[i][j] = new GameMapLocation(this);
+                this.shroud[i][j] = new FovTile(i, j);
                 this.highlight[i][j] = new HighlightTile(i, j);
             }
         }
