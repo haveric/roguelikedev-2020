@@ -1,6 +1,6 @@
 import BaseComponent from "../baseComponent";
 import MinMax from "../../attributeTypes/minMax";
-import { EquipmentSlots } from "./equipmentSlots"; // eslint-disable-line no-unused-vars
+import EquipmentSlots from "./equipmentSlots"; // eslint-disable-line no-unused-vars
 import Entity from "../../entity/entity"; // eslint-disable-line no-unused-vars
 
 export class Equippable extends BaseComponent {

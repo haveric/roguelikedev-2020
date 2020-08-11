@@ -1,4 +1,4 @@
-export const COLORS = {
+const Colors = Object.freeze({
     UGLY_BROWN: 0x4e342e,
     LIGHT_BROWN: 0x7b5e57,
     COLOR_LIGHT: 0x7b5e57,
@@ -6,4 +6,6 @@ export const COLORS = {
     DARK_YELLOW: 0xccc300,
     BRIGHT_YELLOW: 0xfff400,
     DARK_ORANGE: 0x996300
-};
+});
+
+export default Colors;

@@ -10,7 +10,7 @@ import { BaseAI, HostileEnemy } from "./components/ai";
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
 import Equipment from "./components/equipment/equipment";
 import { Equippable } from "./components/equipment/equippable";
-import { EquipmentSlots } from "./components/equipment/equipmentSlots";
+import EquipmentSlots from "./components/equipment/equipmentSlots";
 import MinMax from "./attributeTypes/minMax";
 
 export default class EntityFactories { }

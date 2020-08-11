@@ -1,4 +1,4 @@
-import RenderOrder from "../renderOrder";
+import RenderOrder from "../utils/renderOrder";
 import { PlayerDeadEventHandler, MainGameEventHandler } from "../eventHandler";
 import BaseComponent from "./baseComponent";
 import Entity from "../entity/entity"; // eslint-disable-line no-unused-vars

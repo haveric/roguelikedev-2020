@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { getSpriteDetails, hexToRgb } from "../../utils";
 import Tilemaps from "../tilemaps";
-import { COLORS } from "../constants/colors";
+import Colors from "../utils/colors";
 
 export class SceneSetup extends Phaser.Scene {
     constructor() {
@@ -61,7 +61,7 @@ export class SceneSetup extends Phaser.Scene {
                             const text = button.getElement("text");
 
                             if (data.player.ready) {
-                                icon.setFillStyle(COLORS.COLOR_LIGHT);
+                                icon.setFillStyle(Colors.COLOR_LIGHT);
                                 text.setText("Ready");
                             } else {
                                 icon.setFillStyle(undefined);
@@ -270,7 +270,7 @@ const createPlayerSelector = function(scene, index, player) {
         setValueCallback: function (button, value) {
             if (isCurrentPlayer) {
                 scene.ready = value;
-                button.getElement("icon").setFillStyle((value) ? COLORS.COLOR_LIGHT : undefined);
+                button.getElement("icon").setFillStyle((value) ? Colors.COLOR_LIGHT : undefined);
                 scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, ready: value });
 
                 if (value) {
@@ -310,11 +310,11 @@ const createPlayerSelector = function(scene, index, player) {
 const createButton = function (scene, text, isCurrentPlayer) {
     const background = scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10);
     if (isCurrentPlayer) {
-        background.setStrokeStyle(2, COLORS.COLOR_LIGHT);
+        background.setStrokeStyle(2, Colors.COLOR_LIGHT);
     }
     return scene.rexUI.add.label({
         background: background,
-        icon: scene.add.circle(0, 0, 10).setStrokeStyle(1, COLORS.COLOR_DARK),
+        icon: scene.add.circle(0, 0, 10).setStrokeStyle(1, Colors.COLOR_DARK),
         text: scene.add.text(0, 0, text, {
             fontSize: 18
         }),
@@ -329,7 +329,7 @@ const createButton = function (scene, text, isCurrentPlayer) {
 
 const createStartGameButton = function(scene, text) {
     const background = scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10);
-    background.setStrokeStyle(2, COLORS.COLOR_LIGHT);
+    background.setStrokeStyle(2, Colors.COLOR_LIGHT);
     const startButton = scene.rexUI.add.label({
         x: 0, y: 0,
         background: background,

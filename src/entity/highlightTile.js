@@ -1,6 +1,6 @@
 import Entity from "./entity";
 import Sprite from "../sprite";
-import RenderOrder from "../renderOrder";
+import RenderOrder from "../utils/renderOrder";
 
 export default class HighlightTile extends Entity {
     /**

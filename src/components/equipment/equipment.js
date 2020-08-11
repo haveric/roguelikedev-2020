@@ -1,4 +1,4 @@
-import { EquipmentSlots } from "./equipmentSlots";
+import EquipmentSlots from "./equipmentSlots";
 import BaseComponent from "../baseComponent";
 
 export default class Equipment extends BaseComponent {

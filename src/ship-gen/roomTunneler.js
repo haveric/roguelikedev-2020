@@ -1,6 +1,6 @@
 import Srand from "seeded-rand";
 import Tiles from "./tilefactories";
-import RenderOrder from "../renderOrder";
+import RenderOrder from "../utils/renderOrder";
 
 export class RoomTunneler {
     constructor(gameMap, rooms, room1, room2, width) {

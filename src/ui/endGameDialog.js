@@ -1,4 +1,4 @@
-import { COLORS } from "../constants/colors";
+import Colors from "../utils/colors";
 
 export default class EndGameDialog {
     constructor(ui) {
@@ -26,7 +26,7 @@ export default class EndGameDialog {
             width: 40, // Minimum width of round-rectangle
             height: 40, // Minimum height of round-rectangle
 
-            background: self.scene.rexUI.add.roundRectangle(0, 0, 100, 40, 20, COLORS.LIGHT_BROWN),
+            background: self.scene.rexUI.add.roundRectangle(0, 0, 100, 40, 20, Colors.LIGHT_BROWN),
 
             text: self.scene.add.text(0, 0, text, {
                 fontSize: "24px"
@@ -52,7 +52,7 @@ export default class EndGameDialog {
                 centerY: "center"
             },
 
-            background: self.scene.rexUI.add.roundRectangle(0, 0, 100, 100, 20, COLORS.UGLY_BROWN),
+            background: self.scene.rexUI.add.roundRectangle(0, 0, 100, 100, 20, Colors.UGLY_BROWN),
 
             title: self._createLabel(title).setDraggable(),
 

@@ -1,7 +1,7 @@
 import Srand from "seeded-rand";
 import GameMap from "../gameMap";
 import EntityFactories from "../entityFactories";
-import RenderOrder from "../renderOrder";
+import RenderOrder from "../utils/renderOrder";
 import Tiles from "./tilefactories";
 import { RoomConstants, BreachRoom, Bridge, RoomTypeFactories, RectangularRoom } from "./roomTypes";
 import { RoomTunneler } from "./roomTunneler.js";

@@ -1,5 +1,5 @@
 import Tilemaps from "../tilemaps";
-import RenderOrder from "../renderOrder"; // eslint-disable-line no-unused-vars
+import RenderOrder from "../utils/renderOrder"; // eslint-disable-line no-unused-vars
 import Sprite from "../sprite"; // eslint-disable-line no-unused-vars
 
 export default class Entity {

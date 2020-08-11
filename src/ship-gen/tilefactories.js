@@ -4,7 +4,7 @@ import Stairs from "../components/interactable/stairs";
 import Embark from "../components/interactable/embark";
 import Tile from "../entity/tile";
 import Sprite from "../sprite";
-import RenderOrder from "../renderOrder";
+import RenderOrder from "../utils/renderOrder";
 import TeleportToShip from "../components/interactable/teleportToShip";
 
 export default class Tiles { }
