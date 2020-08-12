@@ -32,30 +32,34 @@ export default class Engine {
         endX = endX || this.gameMap.width;
         endY = endY || this.gameMap.height;
 
+        const tileMap = Tilemaps.getTileMap();
+        const frameWidth = tileMap.frameWidth;
+        const frameHeight = tileMap.frameHeight;
+        const tileMapName = tileMap.name;
         for (let i = 0; i < this.gameMap.entities.length; i++) {
             const entity = this.gameMap.entities[i];
 
-            const x = this.gameMap.offsetWidth + (entity.x * Tilemaps.getTileMap().frameWidth);
-            const y = this.gameMap.offsetHeight + (entity.y * Tilemaps.getTileMap().frameHeight);
+            const x = this.gameMap.offsetWidth + (entity.x * frameWidth);
+            const y = this.gameMap.offsetHeight + (entity.y * frameHeight);
 
             entity.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
         }
 
         for (let i = startX; i < endX; i++) {
+            const x = this.gameMap.offsetWidth + (i * frameWidth);
             for (let j = startY; j < endY; j++) {
-                const x = this.gameMap.offsetWidth + (i * Tilemaps.getTileMap().frameWidth);
-                const y = this.gameMap.offsetHeight + (j * Tilemaps.getTileMap().frameHeight);
+                const y = this.gameMap.offsetHeight + (j * frameHeight);
 
                 const tiles = this.gameMap.locations[i][j].tiles;
                 for (let k = 0; k < tiles.length; k++) {
                     const tile = tiles[k];
-                    tile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
+                    tile.sprite.create(this.scene, x, y, tileMapName);
                 }
 
                 if (tiles.length) {
                     const shroudTile = this.gameMap.shroud[i][j];
                     if (shroudTile) {
-                        shroudTile.sprite.create(this.scene, x, y, Tilemaps.getTileMap().name);
+                        shroudTile.sprite.create(this.scene, x, y, tileMapName);
                     }
                 }
             }
