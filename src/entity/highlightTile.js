@@ -1,6 +1,7 @@
 import Entity from "./entity";
 import Sprite from "../sprite";
 import RenderOrder from "../utils/renderOrder";
+import Tilemaps from "../tilemaps";
 
 export default class HighlightTile extends Entity {
     /**
@@ -17,6 +18,14 @@ export default class HighlightTile extends Entity {
     }
 
     render() {
+        if (!this.sprite.spriteObject) {
+            const gameMap = this.getGameMap();
+            const spriteX = gameMap.offsetWidth + (this.x * Tilemaps.getTileMap().frameWidth);
+            const spriteY = gameMap.offsetHeight + (this.y * Tilemaps.getTileMap().frameHeight);
+
+            this.sprite.create(gameMap.engineRef.scene, spriteX, spriteY, Tilemaps.getTileMap().name);
+        }
+
         this.sprite.spriteObject.setDepth(this.renderOrder);
 
         if (this.visible) {

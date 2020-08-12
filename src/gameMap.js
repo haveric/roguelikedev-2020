@@ -25,7 +25,10 @@ export default class GameMap {
             for (let j = 0; j < this.height; j++) {
                 this.locations[i][j] = new GameMapLocation(this);
                 this.shroud[i][j] = new FovTile(i, j);
+                this.shroud[i][j].parent = this;
+
                 this.highlight[i][j] = new HighlightTile(i, j);
+                this.highlight[i][j].parent = this;
             }
         }
     }

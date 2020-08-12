@@ -65,7 +65,7 @@ export default class FovTile extends Entity {
     }
 
     render() {
-        if (this.explored) {
+        if (this.sprite.spriteObject && this.explored) {
             if (this.visible) {
                 if (this.lightSources.length === 0) {
                     this.sprite.spriteObject.setAlpha(0);
