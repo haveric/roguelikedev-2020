@@ -1,5 +1,4 @@
-import OpenAction from "../actions/actionWithDirection/openAction";
-import CloseAction from "../actions/actionWithDirection/closeAction";
+import {OpenAction, CloseAction} from "../actions/";
 import EventHandler from "./_eventHandler";
 import InventoryActivateEventHandler from "./askUserEventHandler/inventoryEventHandler/inventoryActivateEventHandler";
 import InventoryDropEventHandler from "./askUserEventHandler/inventoryEventHandler/inventoryDropEventHandler";

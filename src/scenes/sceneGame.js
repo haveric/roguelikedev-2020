@@ -3,19 +3,8 @@ import Srand from "seeded-rand";
 import Engine from "../engine";
 import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
 import EntityFactories from "../entityFactories";
-import DebugAction from "../actions/action/debugAction";
-import MeleeAction from "../actions/actionWithDirection/meleeAction";
-import MovementAction from "../actions/actionWithDirection/movementAction";
-import OpenAction from "../actions/actionWithDirection/openAction";
-import CloseAction from "../actions/actionWithDirection/closeAction";
-import WarpAction from "../actions/action/warpAction";
-import PickupAction from "../actions/action/pickupAction";
-import InteractWithTileAction from "../actions/action/interactWithTileAction";
-import ItemAction from "../actions/itemAction/_itemAction";
-import EquipAction from "../actions/action/equipAction";
-import DropItemAction from "../actions/itemAction/dropItemAction";
+import * as Actions from "../actions/";
 import InventoryEventHandler from "../eventHandler/askUserEventHandler/inventoryEventHandler/_inventoryEventHandler";
-import WaitAction from "../actions/action/waitAction";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -66,40 +55,40 @@ export class SceneGame extends Phaser.Scene {
                 if (playerId === player.playerId) {
                     switch (actionData.action) {
                         case "WaitAction":
-                            new WaitAction(player).perform(true);
+                            new Actions.WaitAction(player).perform(true);
                             break;
                         case "MeleeAction":
-                            new MeleeAction(player, args.dx, args.dy).perform(true);
+                            new Actions.MeleeAction(player, args.dx, args.dy).perform(true);
                             break;
                         case "MovementAction":
-                            new MovementAction(player, args.dx, args.dy).perform(true);
+                            new Actions.MovementAction(player, args.dx, args.dy).perform(true);
                             break;
                         case "OpenAction":
-                            new OpenAction(player, args.dx, args.dy).perform(true);
+                            new Actions.OpenAction(player, args.dx, args.dy).perform(true);
                             break;
                         case "CloseAction":
-                            new CloseAction(player, args.dx, args.dy).perform(true);
+                            new Actions.CloseAction(player, args.dx, args.dy).perform(true);
                             break;
                         case "WarpAction":
-                            new WarpAction(player, args.x, args.y).perform(true);
+                            new Actions.WarpAction(player, args.x, args.y).perform(true);
                             break;
                         case "PickupAction":
-                            new PickupAction(player).perform(true);
+                            new Actions.PickupAction(player).perform(true);
                             break;
                         case "InteractWithTileAction":
-                            new InteractWithTileAction(player).perform(true);
+                            new Actions.InteractWithTileAction(player).perform(true);
                             break;
                         case "ItemAction":
-                            new ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
+                            new Actions.ItemAction(player, args.inventorySlot, args.targetXY).perform(true);
                             break;
                         case "EquipAction":
-                            new EquipAction(player, args.inventorySlot).perform(true);
+                            new Actions.EquipAction(player, args.inventorySlot).perform(true);
                             break;
                         case "DropItemAction":
-                            new DropItemAction(player, args.inventorySlot).perform(true);
+                            new Actions.DropItemAction(player, args.inventorySlot).perform(true);
                             break;
                         case "DebugAction":
-                            new DebugAction(player).perform(true);
+                            new Actions.DebugAction(player).perform(true);
                             break;
                         default:
                             console.error("Unrecognized action: " + actionData.action);

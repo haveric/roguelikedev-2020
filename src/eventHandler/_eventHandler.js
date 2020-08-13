@@ -1,13 +1,6 @@
 import Tilemaps from "../tilemaps";
 import Item from "../entity/item";
-import BumpAction from "../actions/actionWithDirection/bumpAction";
-import WarpAction from "../actions/action/warpAction";
-import DebugAction from "../actions/action/debugAction";
-import PickupAction from "../actions/action/pickupAction";
-import InteractWithTileAction from "../actions/action/interactWithTileAction";
-import DropItemAction from "../actions/itemAction/dropItemAction";
-import EquipAction from "../actions/action/equipAction";
-import WaitAction from "../actions/action/waitAction";
+import * as Actions from "../actions/";
 
 export default class EventHandler {
     constructor(engine) {
@@ -130,31 +123,31 @@ export default class EventHandler {
     }
 
     move(dx, dy) {
-        this.performAction(new BumpAction(this.engineRef.player, dx, dy));
+        this.performAction(new Actions.BumpAction(this.engineRef.player, dx, dy));
     }
 
     warp(x, y) {
-        this.performAction(new WarpAction(this.engineRef.player, x, y));
+        this.performAction(new Actions.WarpAction(this.engineRef.player, x, y));
     }
 
     wait() {
-        this.performAction(new WaitAction(this.engineRef.player));
+        this.performAction(new Actions.WaitAction(this.engineRef.player));
     }
 
     pickup() {
-        this.performAction(new PickupAction(this.engineRef.player));
+        this.performAction(new Actions.PickupAction(this.engineRef.player));
     }
 
     interactWithTile() {
-        this.performAction(new InteractWithTileAction(this.engineRef.player));
+        this.performAction(new Actions.InteractWithTileAction(this.engineRef.player));
     }
 
     dropItem(inventorySlot) {
-        this.performAction(new DropItemAction(this.engineRef.player, inventorySlot));
+        this.performAction(new Actions.DropItemAction(this.engineRef.player, inventorySlot));
     }
 
     equipItem(inventorySlot) {
-        this.performAction(new EquipAction(this.engineRef.player, inventorySlot));
+        this.performAction(new Actions.EquipAction(this.engineRef.player, inventorySlot));
     }
 
     performAction(action) {
@@ -192,7 +185,7 @@ export default class EventHandler {
     debug() {
         const scene = this.engineRef.scene;
         const player = this.engineRef.player;
-        this.performAction(new DebugAction(this.engineRef.player));
+        this.performAction(new Actions.DebugAction(this.engineRef.player));
         player.energy = 5000;
         player.energyMax = 5000;
         this.engineRef.debugEnabled = true;

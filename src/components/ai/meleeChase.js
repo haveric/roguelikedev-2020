@@ -1,8 +1,6 @@
 import {BaseAI} from "./_baseAi";
 import Srand from "seeded-rand";
-import MeleeAction from "../../actions/actionWithDirection/meleeAction";
-import BumpAction from "../../actions/actionWithDirection/bumpAction";
-import WaitAction from "../../actions/action/waitAction";
+import {MeleeAction, BumpAction, WaitAction} from "../../actions/";
 
 export class MeleeChaseEnemy extends BaseAI {
     constructor(entity) {

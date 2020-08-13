@@ -1,6 +1,6 @@
 import {BaseAI} from "./_baseAi";
 import Srand from "seeded-rand";
-import BumpAction from "../../actions/actionWithDirection/bumpAction";
+import {BumpAction} from "../../actions/";
 
 export class ConfusedEnemy extends BaseAI {
     constructor(entity, previousAI, turnsRemaining) {

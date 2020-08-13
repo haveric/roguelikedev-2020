@@ -3,7 +3,7 @@ import BaseComponent from "./_baseComponent";
 import Inventory from "./inventory";
 import { ConfusedEnemy } from "./ai/confusedEnemy";
 import MinMax from "../attributeTypes/minMax";
-import ItemAction from "../actions/itemAction/_itemAction";
+import {ItemAction} from "../actions/";
 import SelectDirectionHandler from "../eventHandler/askUserEventHandler/selectDirectionEventHandler";
 import SingleRangedAttackHandler from "../eventHandler/askUserEventHandler/selectIndexHandler/singleRangedAttackHandler";
 import AreaRangedAttackHandler from "../eventHandler/askUserEventHandler/selectIndexHandler/areaRangedAttackHandler";
