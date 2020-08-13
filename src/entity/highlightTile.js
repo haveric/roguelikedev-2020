@@ -1,4 +1,4 @@
-import Entity from "./entity";
+import Entity from "./_entity";
 import Sprite from "../sprite";
 import RenderOrder from "../utils/renderOrder";
 import Tilemaps from "../tilemaps";

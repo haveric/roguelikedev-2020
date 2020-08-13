@@ -1,5 +1,5 @@
-import EquipmentSlots from "./equipmentSlots";
-import BaseComponent from "../baseComponent";
+import EquipmentSlots from "../../utils/equipmentSlots";
+import BaseComponent from "../_baseComponent";
 
 export default class Equipment extends BaseComponent {
     constructor(entity, mainHand, offHand) {

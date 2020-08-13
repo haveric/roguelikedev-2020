@@ -1,7 +1,7 @@
-import { MainGameEventHandler } from "./eventHandler";
 import { FovAdamMillazo } from "./fov";
 import Tilemaps from "./tilemaps";
 import UI from "./ui/ui";
+import MainGameEventHandler from "./eventHandler/mainGameEventHandler";
 
 export default class Engine {
     constructor(scene, player, players) {

@@ -1,4 +1,4 @@
-import Interactable from "../interactable";
+import Interactable from "./_interactable";
 
 export default class Embark extends Interactable {
     constructor(entity) {

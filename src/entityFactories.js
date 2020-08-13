@@ -5,12 +5,13 @@ import Srand from "seeded-rand";
 import Actor from "./entity/actor";
 import Inventory from "./components/inventory";
 import Item from "./entity/item";
-import { BaseAI, HostileEnemy } from "./components/ai";
+import { BaseAI } from "./components/ai/_baseAi";
+import { MeleeChaseEnemy } from "./components/ai/meleeChase";
 
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
 import Equipment from "./components/equipment/equipment";
 import { Equippable } from "./components/equipment/equippable";
-import EquipmentSlots from "./components/equipment/equipmentSlots";
+import EquipmentSlots from "./utils/equipmentSlots";
 import MinMax from "./attributeTypes/minMax";
 
 export default class EntityFactories { }
@@ -38,7 +39,7 @@ EntityFactories.targetDummy = (x, y) => {
 EntityFactories.spacePirate = (x, y) => {
     const entity = new Actor(x, y, "Space Pirate", "A Pirate. In space! He has a menacing look.", new Sprite("spacePirate"));
     entity.setComponent("fighter", new Fighter(entity, 16, 1, new MinMax(3,5)));
-    entity.setComponent("ai", new HostileEnemy(entity));
+    entity.setComponent("ai", new MeleeChaseEnemy(entity));
     const inventory = new Inventory(entity, 10);
     const creditsAmount = Srand.intInRange(0, 100);
     if (creditsAmount > 0) {
@@ -51,14 +52,14 @@ EntityFactories.spacePirate = (x, y) => {
 EntityFactories.attackDog = (x, y) => {
     const entity = new Actor(x, y, "Attack Dog", "Faithful companion to pirates; looking mighty hungry for flesh.", new Sprite("attackDog"), false);
     entity.setComponent("fighter", new Fighter(entity, 10, 0, new MinMax(2,4)));
-    entity.setComponent("ai", new HostileEnemy(entity));
+    entity.setComponent("ai", new MeleeChaseEnemy(entity));
     return entity;
 };
 
 EntityFactories.automatedTurret = (x, y) => {
     const entity = new Actor(x, y, "Automated Turret", "Deadly Turret, pointing straight at you and defending whatever is nearby from you.", new Sprite("automatedTurret"));
     entity.setComponent("fighter", new Fighter(entity, 20, 2, new MinMax(4,8)));
-    entity.setComponent("ai", new HostileEnemy(entity));
+    entity.setComponent("ai", new MeleeChaseEnemy(entity));
     return entity;
 };
 

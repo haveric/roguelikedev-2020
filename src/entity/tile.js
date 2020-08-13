@@ -1,4 +1,4 @@
-import Entity from "./entity";
+import Entity from "./_entity";
 import Sprite from "../sprite"; // eslint-disable-line no-unused-vars
 
 export default class Tile extends Entity {

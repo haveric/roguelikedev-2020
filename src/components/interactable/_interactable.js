@@ -1,4 +1,4 @@
-import BaseComponent from "./baseComponent";
+import BaseComponent from "../_baseComponent";
 
 export default class Interactable extends BaseComponent {
     constructor(entity, allPlayersRequired=false) {

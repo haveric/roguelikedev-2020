@@ -1,5 +1,5 @@
 import RenderOrder from "../utils/renderOrder";
-import Entity from "./entity";
+import Entity from "./_entity";
 
 export default class Item extends Entity {
     /**

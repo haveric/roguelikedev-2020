@@ -3,8 +3,19 @@ import Srand from "seeded-rand";
 import Engine from "../engine";
 import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
 import EntityFactories from "../entityFactories";
-import { InventoryEventHandler } from "../eventHandler";
-import { WaitAction, MeleeAction, MovementAction, OpenAction, CloseAction, WarpAction, PickupAction, InteractWithTileAction, ItemAction, DropItemAction, DebugAction, EquipAction } from "../actions";
+import DebugAction from "../actions/action/debugAction";
+import MeleeAction from "../actions/actionWithDirection/meleeAction";
+import MovementAction from "../actions/actionWithDirection/movementAction";
+import OpenAction from "../actions/actionWithDirection/openAction";
+import CloseAction from "../actions/actionWithDirection/closeAction";
+import WarpAction from "../actions/action/warpAction";
+import PickupAction from "../actions/action/pickupAction";
+import InteractWithTileAction from "../actions/action/interactWithTileAction";
+import ItemAction from "../actions/itemAction/_itemAction";
+import EquipAction from "../actions/action/equipAction";
+import DropItemAction from "../actions/itemAction/dropItemAction";
+import InventoryEventHandler from "../eventHandler/askUserEventHandler/inventoryEventHandler/_inventoryEventHandler";
+import WaitAction from "../actions/action/waitAction";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
