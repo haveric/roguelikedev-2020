@@ -1,4 +1,4 @@
-import Interactable from "../interactable";
+import Interactable from "./_interactable";
 
 export default class Stairs extends Interactable {
     constructor(entity, floor) {

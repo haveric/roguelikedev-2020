@@ -1,8 +1,9 @@
 import RenderOrder from "../utils/renderOrder";
-import { PlayerDeadEventHandler, MainGameEventHandler } from "../eventHandler";
-import BaseComponent from "./baseComponent";
-import Entity from "../entity/entity"; // eslint-disable-line no-unused-vars
+import BaseComponent from "./_baseComponent";
+import Entity from "../entity/_entity"; // eslint-disable-line no-unused-vars
 import MinMax from "../attributeTypes/minMax"; // eslint-disable-line no-unused-vars
+import PlayerDeadEventHandler from "../eventHandler/playerDeadEventHandler";
+import MainGameEventHandler from "../eventHandler/mainGameEventHandler";
 
 export default class Fighter extends BaseComponent {
     /**

@@ -1,10 +1,12 @@
-import { ItemAction } from "../actions";
 import Actor from "../entity/actor";
-import { SingleRangedAttackHandler, AreaRangedAttackHandler, SelectDirectionHandler } from "../eventHandler";
-import BaseComponent from "./baseComponent";
+import BaseComponent from "./_baseComponent";
 import Inventory from "./inventory";
-import { ConfusedEnemy } from "./ai";
+import { ConfusedEnemy } from "./ai/confusedEnemy";
 import MinMax from "../attributeTypes/minMax";
+import {ItemAction} from "../actions/";
+import SelectDirectionHandler from "../eventHandler/askUserEventHandler/selectDirectionEventHandler";
+import SingleRangedAttackHandler from "../eventHandler/askUserEventHandler/selectIndexHandler/singleRangedAttackHandler";
+import AreaRangedAttackHandler from "../eventHandler/askUserEventHandler/selectIndexHandler/areaRangedAttackHandler";
 
 export class Consumable extends BaseComponent {
     constructor(entity) {
