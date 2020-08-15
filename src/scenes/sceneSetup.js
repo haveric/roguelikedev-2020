@@ -41,7 +41,7 @@ export class SceneSetup extends Phaser.Scene {
             createPlayerSelectorFromLoader(self, player);
         });
 
-        self.socket.on("roomUpdatePlayer", function(data) {
+        self.socket.on("c-roomUpdatePlayer", function(data) {
             if (data.player && data.player.playerId !== self.socket.id) {
                 const playerId = data.player.playerId;
 
@@ -87,15 +87,15 @@ export class SceneSetup extends Phaser.Scene {
             }
         });
 
-        self.socket.on("startGame", function(room) {
+        self.socket.on("c-startGame", function(room) {
             self.scene.start("SceneGameUI");
             self.scene.start("SceneGame", {room: room, socket: this});
         });
 
         self.events.on("shutdown", function() {
             self.socket.off("roomAddPlayer");
-            self.socket.off("roomUpdatePlayer");
-            self.socket.off("startGame");
+            self.socket.off("c-roomUpdatePlayer");
+            self.socket.off("c-startGame");
         });
     }
 }
@@ -198,7 +198,7 @@ const createPlayerSelector = function(scene, index, player) {
                     if (!scene.ready) {
                         player.name = text;
                         textObject.text = text;
-                        scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
+                        scene.socket.emit("s-roomUpdatePlayer", { name: player.name });
                     }
                 }
             };
@@ -271,7 +271,7 @@ const createPlayerSelector = function(scene, index, player) {
             if (isCurrentPlayer) {
                 scene.ready = value;
                 button.getElement("icon").setFillStyle((value) ? Colors.COLOR_LIGHT : undefined);
-                scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, ready: value });
+                scene.socket.emit("s-roomUpdatePlayer", { ready: value });
 
                 if (value) {
                     scene.playerNameField.off("pointerdown");
@@ -286,7 +286,7 @@ const createPlayerSelector = function(scene, index, player) {
                                 if (!scene.ready) {
                                     player.name = text;
                                     textObject.text = text;
-                                    scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, name: player.name });
+                                    scene.socket.emit("s-roomUpdatePlayer", { name: player.name });
                                 }
                             }
                         };
@@ -357,7 +357,7 @@ const createStartGameButton = function(scene, text) {
     }).layout();
 
     buttons.on("button.click", function(/*button, index, pointer, event*/) {
-        scene.socket.emit("startGame", { roomId: scene.room.roomId, playerId: scene.socket.id } );
+        scene.socket.emit("s-startGame");
     });
 
     return buttons;
@@ -391,7 +391,7 @@ const createColorPickerDialog = function (scene, player) {
                 hexColor = "0" + hexColor;
             }
 
-            scene.socket.emit("roomUpdatePlayer", { roomId: scene.room.roomId, playerId: scene.socket.id, color: hexColor });
+            scene.socket.emit("s-roomUpdatePlayer", { color: hexColor });
         } else {
             objectPanel.setFillStyle(Phaser.Display.Color.GetColor(0, 0, 0));
         }
