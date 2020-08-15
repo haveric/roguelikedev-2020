@@ -65,32 +65,32 @@ export class SceneLobby extends Phaser.Scene {
                 } else {
                     playerName = "Player 1";
                 }
-                socket.emit("createRoom", playerName);
+                socket.emit("server-createRoom", playerName);
             } else if (index === 1) {
                 self.joinDialog = createJoinDialog(self);
             }
         });
 
-        socket.on("lobbyUpdate", function(lobbyStats) {
+        socket.on("lobby-update", function(lobbyStats) {
             self.lobbyCount.setText("Lobby: " + lobbyStats.numUsers);
             self.roomCount.setText("Rooms: " + lobbyStats.numRooms);
             self.playerCount.setText("- Players: " + lobbyStats.playersInRooms);
             self.spectatorCount.setText("- Spectators: " + lobbyStats.spectatorsInRooms);
         });
 
-        socket.on("roomJoin", function(room) {
+        socket.on("lobby-roomJoin", function(room) {
             self.scene.start("SceneSetup", {room: room, socket: this});
         });
 
-        socket.on("startSpectatingGame", function(room) {
+        socket.on("lobby-startSpectatingGame", function(room) {
             self.scene.start("SceneGameUI");
             self.scene.start("SceneGame", {room: room, socket: this});
         });
 
         self.events.on("shutdown", function() {
-            socket.off("lobbyUpdate");
-            socket.off("roomJoin");
-            socket.off("startSpectatingGame");
+            socket.off("lobby-update");
+            socket.off("lobby-roomJoin");
+            socket.off("lobby-startSpectatingGame");
         });
     }
 
@@ -204,14 +204,13 @@ const createJoinDialog = function (scene) {
             } else {
                 playerName = "Player 2";
             }
-            socket.emit("joinRoom", { roomId: roomId, playerName: playerName } );
+            socket.emit("server-joinRoom", { roomId: roomId, playerName: playerName } );
         }).on("cancel", function(/*button, groupName, index*/) {
             scene.joinDialogErrorField.setText("");
             scene.rexUI.hide(this);
         });
 
-        socket.on("roomJoinFailed", function(message) {
-            console.log("Error Message: ", message);
+        socket.on("lobby-roomJoinFailed", function(message) {
             scene.joinDialogErrorField.setText(message);
         });
     }

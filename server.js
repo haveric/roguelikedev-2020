@@ -54,7 +54,7 @@ io.on("connection", function (socket) {
         removeUserFromLobby(socket);
     });
 
-    socket.on("createRoom", function(playerName) {
+    socket.on("server-createRoom", function(playerName) {
         const roomId = createRoomId();
 
         rooms[roomId] = {
@@ -72,23 +72,23 @@ io.on("connection", function (socket) {
         const newPlayer = createNewPlayer(socket, playerName);
         rooms[roomId].players.push(newPlayer);
 
-        socket.emit("roomJoin", rooms[roomId]);
+        socket.emit("lobby-roomJoin", rooms[roomId]);
         socket.join("room-" + roomId);
     });
 
-    socket.on("joinRoom", function(data) {
+    socket.on("server-joinRoom", function(data) {
         const playerName = data.playerName;
         let roomId = data.roomId;
         if (roomId) {
             roomId = roomId.toUpperCase();
         } else {
-            socket.emit("roomJoinFailed", "No room defined.");
+            socket.emit("lobby-roomJoinFailed", "No room defined.");
             return;
         }
 
         const room = rooms[roomId];
         if (!room) {
-            socket.emit("roomJoinFailed", "Room " + roomId + " does not exist.");
+            socket.emit("lobby-roomJoinFailed", "Room " + roomId + " does not exist.");
         } else {
             if (room.players.length < 2) {
                 const newPlayer = createNewPlayer(socket, playerName);
@@ -96,8 +96,8 @@ io.on("connection", function (socket) {
 
                 moveUserToRoomJoin(socket, roomId);
 
-                io.sockets.in("room-" + roomId).emit("roomAddPlayer", newPlayer);
-                io.sockets.in("room-" + roomId).emit("c-roomUpdatePlayer", { initialPlayerId: room.players[0].playerId, allPlayersReady: false });
+                io.sockets.in("room-" + roomId).emit("setup-roomAddPlayer", newPlayer);
+                io.sockets.in("room-" + roomId).emit("setup-updatePlayer", { initialPlayerId: room.players[0].playerId, allPlayersReady: false });
             } else {
                 room.spectators.push(socket.id);
 
@@ -105,16 +105,16 @@ io.on("connection", function (socket) {
             }
 
             if (room.gameState === "setup") {
-                socket.emit("roomJoin", room);
+                socket.emit("lobby-roomJoin", room);
             } else if (room.gameState === "play") {
-                socket.emit("startSpectatingGame", room);
+                socket.emit("lobby-startSpectatingGame", room);
             }
 
             socket.join("room-" + roomId);
         }
     });
 
-    socket.on("s-roomUpdatePlayer", function(data) {
+    socket.on("server-roomUpdatePlayer", function(data) {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const room = rooms[roomId];
@@ -158,14 +158,14 @@ io.on("connection", function (socket) {
                     allPlayersReady = false;
                 }
 
-                io.sockets.in("room-" + roomId).emit("c-roomUpdatePlayer", { player: player, initialPlayerId: players[0].playerId, allPlayersReady: allPlayersReady });
+                io.sockets.in("room-" + roomId).emit("setup-updatePlayer", { player: player, initialPlayerId: players[0].playerId, allPlayersReady: allPlayersReady });
             } else {
-                io.sockets.in("room-" + roomId).emit("c-roomUpdatePlayer", { player: player });
+                io.sockets.in("room-" + roomId).emit("setup-updatePlayer", { player: player });
             }
         }
     });
 
-    socket.on("s-startGame", function() {
+    socket.on("server-startGame", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
 
@@ -175,11 +175,11 @@ io.on("connection", function (socket) {
         if (players[0].playerId === playerId) {
             room.gameState = "play";
 
-            io.sockets.in("room-" + roomId).emit("c-startGame", room);
+            io.sockets.in("room-" + roomId).emit("setup-startGame", room);
         }
     });
 
-    socket.on("s-performAction", function(data) {
+    socket.on("server-performAction", function(data) {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const actionData = data.actionData;
@@ -217,12 +217,12 @@ io.on("connection", function (socket) {
                 }
             }
 
-            io.sockets.in("room-" + roomId).emit("c-performAction", { playerId: playerId, actionData: actionData });
-            io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+            io.sockets.in("room-" + roomId).emit("game-performAction", { playerId: playerId, actionData: actionData });
+            io.sockets.in("room-" + roomId).emit("game-updatePlayerData", players);
         }
     });
 
-    socket.on("s-playerDied", function() {
+    socket.on("server-playerDied", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const room = rooms[roomId];
@@ -237,7 +237,7 @@ io.on("connection", function (socket) {
         }
     });
 
-    socket.on("s-playerRevived", function() {
+    socket.on("server-playerRevived", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const room = rooms[roomId];
@@ -252,24 +252,24 @@ io.on("connection", function (socket) {
         }
     });
 
-    socket.on("s-createDebugRoom", function() {
+    socket.on("server-createDebugRoom", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
 
-        io.sockets.in("room-" + roomId).emit("c-createDebugRoom");
+        io.sockets.in("room-" + roomId).emit("game-createDebugRoom");
     });
 
     /* TODO: Re-add once return to lobby works for scenes
-    socket.on("s-endGameReturnToLobby", function() {
+    socket.on("server-endGameReturnToLobby", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
 
-        io.sockets.in("room-" + roomId).emit("c-endGameReturnToLobby");
+        io.sockets.in("room-" + roomId).emit("game-endGameReturnToLobby");
         movePlayerFromRoomToLobby(socket, roomId);
     });
      */
 
-    socket.on("s-endGameVoteRestart", function() {
+    socket.on("server-endGameVoteRestart", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const room = rooms[roomId];
@@ -297,21 +297,21 @@ io.on("connection", function (socket) {
                 player.votedToRestart = false;
             }
 
-            io.sockets.in("room-" + roomId).emit("c-endGameRestart");
+            io.sockets.in("room-" + roomId).emit("game-endGameRestart");
         } else {
-            io.sockets.in("room-" + roomId).emit("c-endGameVoteRestart", { playerId: playerId });
+            io.sockets.in("room-" + roomId).emit("game-endGameVoteRestart", { playerId: playerId });
         }
     });
 
-    socket.on("s-regenMap", function() {
+    socket.on("server-regenMap", function() {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const room = rooms[roomId];
         room.seed = generateRandomSeed();
-        io.sockets.in("room-" + roomId).emit("c-regenMap", { seed: room.seed });
+        io.sockets.in("room-" + roomId).emit("game-regenMap", { seed: room.seed });
     });
 
-    socket.on("s-updateEnergy", function(data) {
+    socket.on("server-updateEnergy", function(data) {
         const playerId = socket.id;
         const roomId = lobby.users[playerId].roomId;
         const giveEnergy = data.giveEnergy;
@@ -350,11 +350,11 @@ io.on("connection", function (socket) {
             }
         }
 
-        io.sockets.in("room-" + roomId).emit("updatePlayerData", players);
+        io.sockets.in("room-" + roomId).emit("game-updatePlayerData", players);
 
         // Game over
         if (numExhaustedPlayers === players.length) {
-            io.sockets.in("room-" + roomId).emit("c-showEndGameDialog");
+            io.sockets.in("room-" + roomId).emit("game-showEndGameDialog");
         }
     });
 });
@@ -370,8 +370,8 @@ function addUserToLobby(socket) {
 
     lobbyStats.numUsers += 1;
 
-    socket.emit("lobbyUpdate", lobbyStats);
-    socket.broadcast.emit("lobbyUpdate", lobbyStats);
+    socket.emit("lobby-update", lobbyStats);
+    socket.broadcast.emit("lobby-update", lobbyStats);
 }
 
 function removeUserFromLobby(socket) {
@@ -417,7 +417,7 @@ function removeUserFromLobby(socket) {
     }
 
     delete lobby.users[socket.id];
-    socket.broadcast.emit("lobbyUpdate", lobbyStats);
+    socket.broadcast.emit("lobby-update", lobbyStats);
 }
 /* TODO: Re-add once return to lobby works for scenes
 function movePlayerFromRoomToLobby(socket, roomId) {
@@ -454,7 +454,7 @@ function moveUserToRoomJoin(socket, roomId) {
 
     lobby.users[socket.id].roomId = roomId;
 
-    socket.broadcast.emit("lobbyUpdate", lobbyStats);
+    socket.broadcast.emit("lobby-update", lobbyStats);
 }
 
 function moveSpectatorToRoom(socket, roomId) {
@@ -463,7 +463,7 @@ function moveSpectatorToRoom(socket, roomId) {
 
     lobby.users[socket.id].spectatorRoomId = roomId;
 
-    socket.broadcast.emit("lobbyUpdate", lobbyStats);
+    socket.broadcast.emit("lobby-update", lobbyStats);
 }
 
 function killRoom(socket, roomId) {
@@ -473,7 +473,7 @@ function killRoom(socket, roomId) {
         delete rooms[roomId];
         lobbyStats.numRooms -= 1;
 
-        socket.broadcast.emit("lobbyUpdate", lobbyStats);
+        socket.broadcast.emit("lobby-update", lobbyStats);
     }
 }
 

@@ -100,10 +100,10 @@ export default class Fighter extends BaseComponent {
                     player.deathBoost();
                 }
 
-                scene.socket.emit("s-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
+                scene.socket.emit("server-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
             }
 
-            scene.socket.emit("s-playerDied");
+            scene.socket.emit("server-playerDied");
         }
 
         this.parent.renderOrder = RenderOrder.CORPSE;
@@ -136,7 +136,7 @@ export default class Fighter extends BaseComponent {
             if (this.parent === engine.player) {
                 engine.eventHandler = new MainGameEventHandler(engine);
 
-                scene.socket.emit("s-playerRevived");
+                scene.socket.emit("server-playerRevived");
                 engine.player.energy = 5;
                 const players = engine.players;
                 for (let i = 0; i < players.length; i++) {
@@ -145,7 +145,7 @@ export default class Fighter extends BaseComponent {
                         player.reviveDrain();
                     }
 
-                    scene.socket.emit("s-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
+                    scene.socket.emit("server-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
                 }
             }
 

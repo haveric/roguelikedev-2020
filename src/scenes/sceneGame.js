@@ -22,7 +22,7 @@ export class SceneGame extends Phaser.Scene {
     create() {
         const self = this;
 
-        self.socket.on("c-createDebugRoom", function () {
+        self.socket.on("game-createDebugRoom", function () {
             const debugMap = self.engine.getGameMap("DEBUG");
             self.engine.setGameMap(debugMap);
             self.engine.createSprites();
@@ -36,7 +36,7 @@ export class SceneGame extends Phaser.Scene {
             self.updateCameraView();
         });
 
-        self.socket.on("c-regenMap", function (data) {
+        self.socket.on("game-regenMap", function (data) {
             const newSeed = data.seed;
             self.room.seed = newSeed;
             Srand.seed(newSeed);
@@ -45,7 +45,7 @@ export class SceneGame extends Phaser.Scene {
             self.generateNewShip();
         });
 
-        self.socket.on("c-performAction", function (data) {
+        self.socket.on("game-performAction", function (data) {
             const playerId = data.playerId;
             const actionData = data.actionData;
             const args = actionData.args;
@@ -111,7 +111,7 @@ export class SceneGame extends Phaser.Scene {
             self.engine.updateFov();
         });
 
-        self.socket.on("updatePlayerData", function (players) {
+        self.socket.on("game-updatePlayerData", function (players) {
             for (let i = 0; i < players.length; i++) {
                 const player = players[i];
                 if (player.playerId === self.socket.id) {
@@ -122,22 +122,22 @@ export class SceneGame extends Phaser.Scene {
             }
         });
 
-        self.socket.on("c-showEndGameDialog", function() {
+        self.socket.on("game-showEndGameDialog", function() {
             self.engine.ui.showEndGameDialog();
         });
         //TODO: Figure out how switch to lobby, kill SceneGameUI and reset SceneSetup
         /*
-        self.socket.on("c-endGameReturnToLobby", function() {
+        self.socket.on("game-endGameReturnToLobby", function() {
             self.engine.ui.endGameDialog.hideDialog();
             self.scene.start("SceneLobby");
         });
         */
-        self.socket.on("c-endGameRestart", function() {
+        self.socket.on("game-endGameRestart", function() {
             self.engine.ui.endGameDialog.hideDialog();
             self.startNewGame();
         });
 
-        self.socket.on("c-endGameVoteRestart", function(data) {
+        self.socket.on("game-endGameVoteRestart", function(data) {
             const playerId = data.playerId;
 
             if (self.player.playerId !== playerId) {
@@ -149,14 +149,14 @@ export class SceneGame extends Phaser.Scene {
             if (this.engine) {
                 this.engine.teardown();
             }
-            self.socket.off("c-createDebugRoom");
-            self.socket.off("c-regenMap");
-            self.socket.off("c-performAction");
-            self.socket.off("updatePlayerData");
-            self.socket.off("c-showEndGameDialog");
-            self.socket.off("c-endGameReturnToLobby");
-            self.socket.off("c-endGameRestart");
-            self.socket.off("c-endGameVoteRestart");
+            self.socket.off("game-createDebugRoom");
+            self.socket.off("game-regenMap");
+            self.socket.off("game-performAction");
+            self.socket.off("game-updatePlayerData");
+            self.socket.off("game-showEndGameDialog");
+            self.socket.off("game-endGameReturnToLobby");
+            self.socket.off("game-endGameRestart");
+            self.socket.off("game-endGameVoteRestart");
         });
 
         self.startNewGame();

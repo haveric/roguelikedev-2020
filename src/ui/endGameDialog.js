@@ -104,10 +104,10 @@ export default class EndGameDialog {
                 if (button.text === "Restart") {
                     button.setText("Waiting...");
                     button.width = 150;
-                    gameScene.socket.emit("s-endGameVoteRestart");
+                    gameScene.socket.emit("server-endGameVoteRestart");
                 }
             }/* else if (index === 1) {
-                gameScene.socket.emit("s-endGameReturnToLobby");
+                gameScene.socket.emit("server-endGameReturnToLobby");
             }*/ //TODO: Re-add once return to lobby works for scenes
         }, this)
         .on("button.over", function (button) {

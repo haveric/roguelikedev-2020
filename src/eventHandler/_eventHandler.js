@@ -155,7 +155,7 @@ export default class EventHandler {
             const actionResult = action.perform(false);
             if (actionResult.success) {
                 const scene = this.engineRef.scene;
-                scene.socket.emit("s-performAction", {useEnergy: actionResult.useEnergy, actionData: actionResult.action.toString()});
+                scene.socket.emit("server-performAction", {useEnergy: actionResult.useEnergy, actionData: actionResult.action.toString()});
             }
         }
     }
@@ -191,7 +191,7 @@ export default class EventHandler {
         this.engineRef.debugEnabled = true;
 
         scene.events.emit("ui-updateEnergy", { energy: player.energy, energyMax: player.energyMax });
-        scene.socket.emit("s-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
+        scene.socket.emit("server-updateEnergy", { energy: player.energy, energyMax: player.energyMax, giveEnergy: false });
     }
 
     addEnergy() {
@@ -200,16 +200,16 @@ export default class EventHandler {
         player.energy = 5000;
         player.energyMax = 5000;
         scene.events.emit("ui-updateEnergy", { energy: player.energy, energyMax: player.energyMax });
-        scene.socket.emit("s-updateEnergy", { energy: player.energy, energyMax: player.energyMax });
+        scene.socket.emit("server-updateEnergy", { energy: player.energy, energyMax: player.energyMax });
     }
 
     debugRoom() {
         const scene = this.engineRef.scene;
-        scene.socket.emit("s-createDebugRoom");
+        scene.socket.emit("server-createDebugRoom");
     }
 
     regenMap() {
         const scene = this.engineRef.scene;
-        scene.socket.emit("s-regenMap");
+        scene.socket.emit("server-regenMap");
     }
 }
