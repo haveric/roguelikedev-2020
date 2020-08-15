@@ -8,10 +8,6 @@ const create2dArray = (rows) => {
     return array;
 };
 
-const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
 const getSpriteDetails = (tilemap, spriteName, color) => {
     let spriteDetails;
     if (tilemap.tiles[spriteName]) {
@@ -55,6 +51,5 @@ const hexToRgb = (hex) => {
 };
 
 exports.create2dArray = create2dArray;
-exports.getRandomInt = getRandomInt;
 exports.getSpriteDetails = getSpriteDetails;
 exports.hexToRgb = hexToRgb;

@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io").listen(server);
-const getRandomInt = require("./utils.js").getRandomInt;
+const Srand = require("seeded-rand");
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const rooms = {};
@@ -503,7 +503,7 @@ function generateRandomRoomId() {
 function generateRandomSeed() {
     let num = "";
     for (let i = 0; i < 9; i++) {
-        num += getRandomInt(0, 9);
+        num += Srand.intInRange(0, 9);
     }
     return num;
 }

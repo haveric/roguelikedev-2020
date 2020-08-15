@@ -1,5 +1,5 @@
 import Srand from "seeded-rand";
-import { create2dArray } from "../../utils";
+import { create2dArray } from "../utils/utils";
 
 export class RectangularRoom {
     constructor(x, y, width, height, name) {

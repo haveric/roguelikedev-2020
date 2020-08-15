@@ -1,4 +1,4 @@
-import { getSpriteDetails } from "../utils";
+import { getSpriteDetails } from "./utils/utils";
 import Tilemaps from "./tilemaps";
 
 export default class Sprite {

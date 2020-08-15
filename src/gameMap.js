@@ -1,4 +1,4 @@
-import { create2dArray } from "../utils";
+import { create2dArray } from "./utils/utils";
 import FovTile from "./entity/fovTile";
 import HighlightTile from "./entity/highlightTile";
 import Tilemaps from "./tilemaps";

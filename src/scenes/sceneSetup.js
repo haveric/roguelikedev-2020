@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { getSpriteDetails, hexToRgb } from "../../utils";
+import { getSpriteDetails, hexToRgb } from "../utils/utils";
 import Tilemaps from "../tilemaps";
 import Colors from "../utils/colors";
 
