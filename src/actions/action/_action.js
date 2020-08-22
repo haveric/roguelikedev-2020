@@ -15,6 +15,9 @@ export default class Action {
         return this.entityRef === this.getEngine().player;
     }
 
+    /**
+     * @param {boolean} doAction - Boolean that represents whether action should be performed, or if it's just a check.
+     */
     perform(/*doAction*/) {
         console.error("Not Implemented");
     }

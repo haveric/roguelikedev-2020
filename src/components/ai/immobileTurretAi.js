@@ -1,11 +1,13 @@
 import {BaseAI} from "./_baseAi";
 import Srand from "seeded-rand";
-import {MeleeAction, WaitAction} from "../../actions";
+import {RangedAttackAction, WaitAction} from "../../actions";
 
 export class ImmobileTurretAi extends BaseAI {
     constructor(entity) {
         super(entity);
-        this.path = [];
+
+        // TEMPORARY - fighter needs range or something
+        this.range = 2;
     }
 
     perform() {
@@ -30,11 +32,9 @@ export class ImmobileTurretAi extends BaseAI {
         // Only take action if a player exists
         if (closestPlayer) {
             if (this.getGameMap().getShroud()[this.parent.x][this.parent.y].visible) {
-                if (closestDistance <= 1) {
-                    return new MeleeAction(this.parent, closestPlayer.x - this.parent.x, closestPlayer.y - this.parent.y).perform(true);
+                if (closestDistance <= this.range) {
+                    return new RangedAttackAction(this.parent, closestPlayer.x, closestPlayer.y).perform(true);
                 }
-
-                this.path = this.getPathTo(closestPlayer.x, closestPlayer.y);
             }
 
         }
