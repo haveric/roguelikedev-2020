@@ -73,3 +73,7 @@ Tiles.teleporterDebugRoom = (x, y) => {
     return tile;
 };
 
+Tiles.rangeZone = (x, y, color) => {
+    const tile = new Tile(x, y, "Ranged Zone", "Something around you can shoot here.", new Sprite("rangeIndicator", color), true, false, RenderOrder.FLOOR_ZONE);
+    return tile;
+};
