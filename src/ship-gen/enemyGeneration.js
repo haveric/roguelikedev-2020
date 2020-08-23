@@ -115,9 +115,9 @@ export default class EnemyGenerator {
 }
 
 export const EnemyRarity = {
-    Vermin: { name: "Vermin", spawnWeight: 70 },
+    Vermin: { name: "Vermin", spawnWeight: 50 },
     Common: { name: "Common", spawnWeight: 25 },
-    Uncommon: { name: "Uncommon", spawnWeight: 5 },
+    Uncommon: { name: "Uncommon", spawnWeight: 15 },
     Rare: { name: "Rare", spawnWeight: 0 } // 0 due to having none in the current list
 };
 
