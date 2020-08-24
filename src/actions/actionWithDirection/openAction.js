@@ -15,6 +15,10 @@ export default class OpenAction extends ActionWithDirection {
         let success;
         if (doAction) {
             success = this.getGameMap().locations[destX][destY].tileComponentRun("openable", "open");
+            if (this.isCurrentPlayer()) {
+                const open = this.getEngine().scene.sound.add("open-close");
+                open.play();
+            }
         } else {
             const check = this.getGameMap().locations[destX][destY].tileComponentCheck("openable", "getIsOpen");
 

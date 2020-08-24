@@ -21,7 +21,10 @@ export default class MovementAction extends ActionWithDirection {
             if (doAction) {
                 this.entityRef.move(this.getEngine(), this.dx, this.dy);
             }
-
+            if (this.isCurrentPlayer()) {
+                const footstep = this.getEngine().scene.sound.add("footstep");
+                footstep.play();
+            }
             success = true;
         }
 

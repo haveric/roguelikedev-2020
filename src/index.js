@@ -8,6 +8,9 @@ import {SceneGameUI} from "./scenes/sceneGameUI";
 const config = {
     type: Phaser.AUTO,
     parent: "tethered",
+    audio: {
+        disableWebAudio: true
+    },
     dom: {
         createContainer: true
     },
