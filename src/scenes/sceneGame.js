@@ -5,6 +5,7 @@ import { GeneratorOptions, Ship } from "../ship-gen/shipGenerator";
 import EntityFactories from "../entityFactories";
 import * as Actions from "../actions/";
 import InventoryEventHandler from "../eventHandler/askUserEventHandler/inventoryEventHandler/_inventoryEventHandler";
+import Colors from "../utils/colors";
 
 export class SceneGame extends Phaser.Scene {
     constructor() {
@@ -172,6 +173,7 @@ export class SceneGame extends Phaser.Scene {
         if (this.engine) {
             this.engine.teardown();
         }
+        this.initBackground();
         this.createNewPlayers();
         this.engine = new Engine(this, this.player, this.players);
         this.initPlayerUI();
@@ -256,5 +258,63 @@ export class SceneGame extends Phaser.Scene {
         this.engine.updateFov();
 
         this.updateCameraView();
+    }
+
+    initBackground() {
+        // large numbers to account for entire play area; adjust as needed
+        const PLAY_PIXEL_WIDTH = 4500;
+        const PLAY_PIXEL_HEIGHT = 2800;
+        const NUMBER_OF_STARS = 350;
+        const STAR_TRAVEL = -30;
+
+        this.graphics = this.add.graphics({ lineStyle: { width: 2, color: Colors.BLACK  }, fillStyle: { color: Colors.WHITE }});
+        this.drawArea = new Phaser.Geom.Rectangle(0, 0, PLAY_PIXEL_WIDTH, PLAY_PIXEL_HEIGHT);
+        this.points = [];
+        this.index = 0;
+
+        // initialize starting stars
+        for (let i = 0; i < NUMBER_OF_STARS; i++)
+        {
+            // if we omit a parameter, new Point instance will be created and returned
+            const point = this.drawArea.getRandomPoint();
+            const star = this.add.star(point.x, point.y, 4, 1, 2, Colors.WHITE);
+            this.points.push(point);
+            const self = this;
+            this.tweens.add({
+                targets: star,
+                duration: 5000,
+                ease: "Linear",
+                repeat: -1,
+                x: {
+                    getEnd: function () {
+                        self.points[i].x += STAR_TRAVEL;
+                        return self.points[i].x;
+                    },
+                    getStart: function () {
+                        const x = self.points[i].x;
+                        if(x <= 0) {
+                            self.points[i].x = PLAY_PIXEL_WIDTH + Math.abs(x);
+                            return self.points[i].x;
+                        }
+                        return x;
+                    }
+                },
+                y: {
+                    getEnd: function () {
+                        self.points[i].y += STAR_TRAVEL;
+                        return self.points[i].y;
+                    },
+                    getStart: function () {
+                        const y = self.points[i].y;
+                        if(y <= 0) {
+                            self.points[i].y = PLAY_PIXEL_HEIGHT + Math.abs(y);
+                            return self.points[i].y;
+                        }
+                        return y;
+                    }
+                }
+
+            });
+        }
     }
 }
