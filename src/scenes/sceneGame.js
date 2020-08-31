@@ -11,6 +11,11 @@ export class SceneGame extends Phaser.Scene {
         super("SceneGame");
     }
 
+    preload() {
+        this.load.audio("footstep", "src/assets/audio/step.mp3");
+        this.load.audio("open-close", "src/assets/audio/open.mp3");
+    }
+
     init(data) {
         this.room = data.room;
         this.socket = data.socket;
