@@ -7,6 +7,7 @@ import Inventory from "./components/inventory";
 import Item from "./entity/item";
 import { BaseAI } from "./components/ai/_baseAi";
 import { MeleeChaseEnemy } from "./components/ai/meleeChase";
+import { ImmobileTurretAi } from "./components/ai/immobileTurretAi";
 
 import { HealingConsumable, LaserDamageConsumable, ConfusionConsumable, GrenadeDamageConsumable, ResurrectionConsumable } from "./components/consumable";
 import Equipment from "./components/equipment/equipment";
@@ -59,7 +60,7 @@ EntityFactories.attackDog = (x, y) => {
 EntityFactories.automatedTurret = (x, y) => {
     const entity = new Actor(x, y, "Automated Turret", "Deadly Turret, pointing straight at you and defending whatever is nearby from you.", new Sprite("automatedTurret"));
     entity.setComponent("fighter", new Fighter(entity, 20, 2, new MinMax(4,8)));
-    entity.setComponent("ai", new MeleeChaseEnemy(entity));
+    entity.setComponent("ai", new ImmobileTurretAi(entity));
     return entity;
 };
 

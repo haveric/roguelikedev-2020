@@ -38,6 +38,13 @@ export default class GameMap {
         return this;
     }
 
+    /**
+     * @returns {Array<Array<FovTile>}
+     */
+    getShroud() {
+        return this.shroud;
+    }
+
     getBlockingEntityAtLocation(x, y) {
         let foundEntity = null;
         for (let i = 0; i < this.entities.length; i++) {

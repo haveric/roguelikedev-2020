@@ -38,6 +38,10 @@ export default class Sprite {
         this.spriteObject.setDepth(this.parent.renderOrder);
     }
 
+    setVisible(isVisible) {
+        this.spriteObject.setVisible(isVisible);
+    }
+
     move(dx, dy) {
         if (this.spriteObject) {
             this.spriteObject.x += dx;

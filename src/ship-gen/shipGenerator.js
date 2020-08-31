@@ -275,6 +275,8 @@ export class Ship {
             new EntityFactories.masterBlaster(11, 11).place(debugGameMapUp);
             new EntityFactories.directionalShield(13, 11).place(debugGameMapUp);
 
+            new EntityFactories.automatedTurret(12, 5).place(debugGameMapUp);
+
             this.engineRef.addGameMap(debugGameMapDown);
             this.engineRef.addGameMap(debugGameMapUp);
 

@@ -66,6 +66,9 @@ export class SceneGame extends Phaser.Scene {
                         case "MeleeAction":
                             new Actions.MeleeAction(player, args.dx, args.dy).perform(true);
                             break;
+                        case "RangedAttackAction":
+                            new Actions.RangedAttackAction(player, args.dx, args.dy).perform(true);
+                            break;
                         case "MovementAction":
                             new Actions.MovementAction(player, args.dx, args.dy).perform(true);
                             break;

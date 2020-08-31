@@ -85,7 +85,8 @@ Tilemaps.getTileMap = () => {
             "blaster": {
                 frame: 182,
                 color: "800080"
-            }
+            },
+            "rangeIndicator": 176
         }
     };
 };
